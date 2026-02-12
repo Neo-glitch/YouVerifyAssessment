@@ -100,7 +100,7 @@ private fun DialogActionButtons(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (hasSingleButton) {
-            YVStoreSecondaryButton(
+            YVStorePrimaryButton(
                 text = primaryButtonText,
                 onClick = {
                     onPrimaryButtonClick()

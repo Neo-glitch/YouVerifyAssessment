@@ -35,22 +35,44 @@ import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.button.YVStorePrimaryButton
 import org.neo.yvstore.core.ui.component.input.YVStoreInputSensitiveIcon
 import org.neo.yvstore.core.ui.component.input.YVStoreTextInput
+import org.neo.yvstore.core.ui.component.dialog.YVStoreErrorDialog
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
+import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.core.ui.component.text.StyledPart
 import org.neo.yvstore.core.ui.component.text.YVStoreMultiStyleText
 import org.neo.yvstore.core.ui.extension.noRippleClearFocusClickable
+import org.neo.yvstore.core.ui.model.TextInputFieldState
 
 @Composable
 fun LoginScreen(
     onNavigateToSignUp: () -> Unit,
+    onLoginSuccess: (String) -> Unit,
     viewModel: LoginViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    ObserveAsEvents(viewModel.uiEvent) { event ->
+        when (event) {
+            is LoginUiEvent.LoginSuccess -> onLoginSuccess(event.message)
+        }
+    }
+
+    if (uiState.loginState is LoginState.Error) {
+        YVStoreErrorDialog(
+            title = "Login Failed",
+            description = (uiState.loginState as LoginState.Error).message,
+            onDismiss = viewModel::dismissError,
+            onPrimaryButtonClick = viewModel::dismissError,
+            primaryButtonText = "OK",
+        )
+    }
+
     LoginScreen(
         uiState = uiState,
         onEmailChange = viewModel::onEmailChange,
+        onEmailBlur = viewModel::onEmailBlur,
         onPasswordChange = viewModel::onPasswordChange,
+        onPasswordBlur = viewModel::onPasswordBlur,
         onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
         onLoginClick = viewModel::login,
         onCreateAccountClick = onNavigateToSignUp,
@@ -61,7 +83,9 @@ fun LoginScreen(
 private fun LoginScreen(
     uiState: LoginUiState,
     onEmailChange: (String) -> Unit,
+    onEmailBlur: () -> Unit,
     onPasswordChange: (String) -> Unit,
+    onPasswordBlur: () -> Unit,
     onTogglePasswordVisibility: () -> Unit,
     onLoginClick: () -> Unit,
     onCreateAccountClick: () -> Unit,
@@ -82,17 +106,23 @@ private fun LoginScreen(
 
             Spacer(modifier = Modifier.height(48.dp))
             LoginForm(
-                email = uiState.email,
-                password = uiState.password,
+                email = uiState.email.value,
+                password = uiState.password.value,
                 isPasswordVisible = uiState.isPasswordVisible,
+                emailError = uiState.email.errorMsg,
+                passwordError = uiState.password.errorMsg,
+                enabled = uiState.loginState !is LoginState.Loading,
                 onEmailChange = onEmailChange,
+                onEmailBlur = onEmailBlur,
                 onPasswordChange = onPasswordChange,
+                onPasswordBlur = onPasswordBlur,
                 onTogglePasswordVisibility = onTogglePasswordVisibility,
             )
 
             Spacer(modifier = Modifier.height(32.dp))
             LoginButton(
                 isLoading = uiState.loginState is LoginState.Loading,
+                enabled = uiState.areAllInputsValid,
                 onClick = onLoginClick,
             )
 
@@ -136,17 +166,28 @@ private fun LoginForm(
     email: String,
     password: String,
     isPasswordVisible: Boolean,
+    emailError: String?,
+    passwordError: String?,
+    enabled: Boolean,
     onEmailChange: (String) -> Unit,
+    onEmailBlur: () -> Unit,
     onPasswordChange: (String) -> Unit,
+    onPasswordBlur: () -> Unit,
     onTogglePasswordVisibility: () -> Unit,
 ) {
     YVStoreTextInput(
         value = email,
         onValueChange = onEmailChange,
+        onFocusChange = { isFocused ->
+            if (!isFocused) onEmailBlur()
+        },
         label = stringResource(R.string.login_email_label),
         placeholder = stringResource(R.string.login_email_placeholder),
         keyboardType = KeyboardType.Email,
-        imeAction = ImeAction.Next
+        imeAction = ImeAction.Next,
+        enabled = enabled,
+        error = emailError,
+        showError = emailError != null
     )
 
     Spacer(modifier = Modifier.height(16.dp))
@@ -154,9 +195,13 @@ private fun LoginForm(
     YVStoreTextInput(
         value = password,
         onValueChange = onPasswordChange,
+        onFocusChange = { isFocused ->
+            if (!isFocused) onPasswordBlur()
+        },
         label = stringResource(R.string.login_password_label),
         placeholder = stringResource(R.string.login_password_placeholder),
         keyboardType = KeyboardType.Password,
+        enabled = enabled,
         visualTransformation = if (isPasswordVisible) {
             VisualTransformation.None
         } else {
@@ -170,13 +215,16 @@ private fun LoginForm(
                 showSensitiveInfo = isPasswordVisible,
             )
         },
-        imeAction = ImeAction.Done
+        imeAction = ImeAction.Done,
+        error = passwordError,
+        showError = passwordError != null
     )
 }
 
 @Composable
 private fun LoginButton(
     isLoading: Boolean,
+    enabled: Boolean,
     onClick: () -> Unit,
 ) {
     YVStorePrimaryButton(
@@ -184,6 +232,7 @@ private fun LoginButton(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         loading = isLoading,
+        enabled = enabled,
     )
 }
 
@@ -220,7 +269,37 @@ private fun LoginScreenPreview() {
         LoginScreen(
             uiState = LoginUiState(),
             onEmailChange = {},
+            onEmailBlur = {},
             onPasswordChange = {},
+            onPasswordBlur = {},
+            onTogglePasswordVisibility = {},
+            onLoginClick = {},
+            onCreateAccountClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LoginScreenWithErrorsPreview() {
+    YVStoreTheme {
+        LoginScreen(
+            uiState = LoginUiState(
+                email = TextInputFieldState(
+                    value = "bad",
+                    hasLostFocus = true,
+                    errorMsg = "Invalid email format"
+                ),
+                password = TextInputFieldState(
+                    value = "",
+                    hasLostFocus = true,
+                    errorMsg = "Password is required"
+                )
+            ),
+            onEmailChange = {},
+            onEmailBlur = {},
+            onPasswordChange = {},
+            onPasswordBlur = {},
             onTogglePasswordVisibility = {},
             onLoginClick = {},
             onCreateAccountClick = {},

@@ -1,7 +1,7 @@
 package org.neo.yvstore.features.auth.data.datasource.local
 
 import kotlinx.coroutines.flow.Flow
-import org.neo.yvstore.features.auth.data.datasource.local.model.CacheUser
+import org.neo.yvstore.core.data.model.CacheUser
 
 interface AuthLocalDatasource {
     suspend fun saveUser(user: CacheUser)

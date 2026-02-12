@@ -3,7 +3,6 @@ package org.neo.yvstore.features.auth.data.datasource.remote
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import org.neo.yvstore.core.common.exception.EmailNotVerifiedException
 import org.neo.yvstore.features.auth.data.datasource.remote.model.AuthUser
 import org.neo.yvstore.features.auth.data.datasource.remote.model.UserSignUpRequest
 
@@ -41,9 +40,6 @@ class AuthRemoteDatasourceImpl(
             .set(userSignUpRequest)
             .await()
 
-        authResult.user?.sendEmailVerification()?.await()
-
-        // Sign out to prevent auto-login
         auth.signOut()
     }
 
@@ -52,12 +48,6 @@ class AuthRemoteDatasourceImpl(
         val authResult = auth.signInWithEmailAndPassword(email, password).await()
         val uid = authResult.user?.uid
             ?: throw IllegalStateException("Sign in succeeded but UID is null")
-
-        // Check email verification
-        if (authResult.user?.isEmailVerified != true) {
-            auth.signOut()
-            throw EmailNotVerifiedException()
-        }
 
         // Retrieve user profile from Firestore
         val documentSnapshot = firestore.collection("users")

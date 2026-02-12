@@ -1,4 +1,4 @@
-package org.neo.yvstore.core.util
+package org.neo.yvstore.core.ui.util
 
 // Test tags for input components
 const val INPUT_ERROR_TAG = "input_error_tag"

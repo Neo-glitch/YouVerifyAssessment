@@ -5,14 +5,14 @@ import org.neo.yvstore.core.cache.AppCache
 import org.neo.yvstore.core.cache.getObject
 import org.neo.yvstore.core.cache.observeObject
 import org.neo.yvstore.core.cache.saveObject
-import org.neo.yvstore.features.auth.data.datasource.local.model.CacheUser
+import org.neo.yvstore.core.data.model.CacheUser
 
 class AuthLocalDatasourceImpl(
     private val appCache: AppCache
 ) : AuthLocalDatasource {
 
     companion object {
-        private const val KEY_AUTH_USER = "auth_user"
+        const val KEY_AUTH_USER = "auth_user"
     }
 
     override suspend fun saveUser(user: CacheUser) {

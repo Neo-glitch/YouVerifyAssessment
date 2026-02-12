@@ -1,7 +1,7 @@
 package org.neo.yvstore.features.auth.domain.repository
 
 import org.neo.yvstore.core.domain.model.Resource
-import org.neo.yvstore.features.auth.domain.model.User
+import org.neo.yvstore.core.domain.model.User
 
 /**
  * Repository interface for authentication operations.

@@ -42,25 +42,50 @@ import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.button.YVStorePrimaryButton
 import org.neo.yvstore.core.ui.component.input.YVStoreInputSensitiveIcon
 import org.neo.yvstore.core.ui.component.input.YVStoreTextInput
+import org.neo.yvstore.core.ui.component.dialog.YVStoreErrorDialog
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
+import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.core.ui.component.text.StyledPart
 import org.neo.yvstore.core.ui.component.text.YVStoreMultiStyleText
 import org.neo.yvstore.core.ui.extension.noRippleClearFocusClickable
+import org.neo.yvstore.core.ui.model.TextInputFieldState
 
 @Composable
 fun SignUpScreen(
     onNavigateBack: () -> Unit,
+    onSignUpSuccess: (String) -> Unit,
     viewModel: SignUpViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    ObserveAsEvents(viewModel.uiEvent) { event ->
+        when (event) {
+            is SignUpEvent.Success -> onSignUpSuccess(event.message)
+        }
+    }
+
+    if (uiState.signUpState is SignUpState.Error) {
+        YVStoreErrorDialog(
+            title = "Sign Up Failed",
+            description = (uiState.signUpState as SignUpState.Error).message,
+            onDismiss = viewModel::dismissError,
+            onPrimaryButtonClick = viewModel::dismissError,
+            primaryButtonText = "OK",
+        )
+    }
+
     SignUpScreen(
         uiState = uiState,
         onEmailChange = viewModel::onEmailChange,
+        onEmailBlur = viewModel::onEmailBlur,
         onFirstNameChange = viewModel::onFirstNameChange,
+        onFirstNameBlur = viewModel::onFirstNameBlur,
         onLastNameChange = viewModel::onLastNameChange,
+        onLastNameBlur = viewModel::onLastNameBlur,
         onPasswordChange = viewModel::onPasswordChange,
+        onPasswordBlur = viewModel::onPasswordBlur,
         onConfirmPasswordChange = viewModel::onConfirmPasswordChange,
+        onConfirmPasswordBlur = viewModel::onConfirmPasswordBlur,
         onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
         onToggleConfirmPasswordVisibility = viewModel::toggleConfirmPasswordVisibility,
         onSignUpClick = viewModel::signUp,
@@ -72,10 +97,15 @@ fun SignUpScreen(
 private fun SignUpScreen(
     uiState: SignUpUiState,
     onEmailChange: (String) -> Unit,
+    onEmailBlur: () -> Unit,
     onFirstNameChange: (String) -> Unit,
+    onFirstNameBlur: () -> Unit,
     onLastNameChange: (String) -> Unit,
+    onLastNameBlur: () -> Unit,
     onPasswordChange: (String) -> Unit,
+    onPasswordBlur: () -> Unit,
     onConfirmPasswordChange: (String) -> Unit,
+    onConfirmPasswordBlur: () -> Unit,
     onTogglePasswordVisibility: () -> Unit,
     onToggleConfirmPasswordVisibility: () -> Unit,
     onSignUpClick: () -> Unit,
@@ -99,18 +129,29 @@ private fun SignUpScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
             SignUpForm(
-                email = uiState.email,
-                firstName = uiState.firstName,
-                lastName = uiState.lastName,
-                password = uiState.password,
-                confirmPassword = uiState.confirmPassword,
+                email = uiState.email.value,
+                firstName = uiState.firstName.value,
+                lastName = uiState.lastName.value,
+                password = uiState.password.value,
+                confirmPassword = uiState.confirmPassword.value,
                 isPasswordVisible = uiState.isPasswordVisible,
                 isConfirmPasswordVisible = uiState.isConfirmPasswordVisible,
+                emailError = uiState.email.errorMsg,
+                firstNameError = uiState.firstName.errorMsg,
+                lastNameError = uiState.lastName.errorMsg,
+                passwordError = uiState.password.errorMsg,
+                confirmPasswordError = uiState.confirmPassword.errorMsg,
+                enabled = uiState.signUpState !is SignUpState.Loading,
                 onEmailChange = onEmailChange,
+                onEmailBlur = onEmailBlur,
                 onFirstNameChange = onFirstNameChange,
+                onFirstNameBlur = onFirstNameBlur,
                 onLastNameChange = onLastNameChange,
+                onLastNameBlur = onLastNameBlur,
                 onPasswordChange = onPasswordChange,
+                onPasswordBlur = onPasswordBlur,
                 onConfirmPasswordChange = onConfirmPasswordChange,
+                onConfirmPasswordBlur = onConfirmPasswordBlur,
                 onTogglePasswordVisibility = onTogglePasswordVisibility,
                 onToggleConfirmPasswordVisibility = onToggleConfirmPasswordVisibility,
             )
@@ -118,6 +159,7 @@ private fun SignUpScreen(
             Spacer(modifier = Modifier.height(32.dp))
             SignUpButton(
                 isLoading = uiState.signUpState is SignUpState.Loading,
+                enabled = uiState.areAllInputsValid,
                 onClick = onSignUpClick,
             )
 
@@ -179,21 +221,38 @@ private fun SignUpForm(
     confirmPassword: String,
     isPasswordVisible: Boolean,
     isConfirmPasswordVisible: Boolean,
+    emailError: String?,
+    firstNameError: String?,
+    lastNameError: String?,
+    passwordError: String?,
+    confirmPasswordError: String?,
+    enabled: Boolean,
     onEmailChange: (String) -> Unit,
+    onEmailBlur: () -> Unit,
     onFirstNameChange: (String) -> Unit,
+    onFirstNameBlur: () -> Unit,
     onLastNameChange: (String) -> Unit,
+    onLastNameBlur: () -> Unit,
     onPasswordChange: (String) -> Unit,
+    onPasswordBlur: () -> Unit,
     onConfirmPasswordChange: (String) -> Unit,
+    onConfirmPasswordBlur: () -> Unit,
     onTogglePasswordVisibility: () -> Unit,
     onToggleConfirmPasswordVisibility: () -> Unit,
 ) {
     YVStoreTextInput(
         value = email,
         onValueChange = onEmailChange,
+        onFocusChange = { isFocused ->
+            if (!isFocused) onEmailBlur()
+        },
         label = stringResource(R.string.signup_email_label),
         placeholder = stringResource(R.string.signup_email_placeholder),
         keyboardType = KeyboardType.Email,
         imeAction = ImeAction.Next,
+        enabled = enabled,
+        error = emailError,
+        showError = emailError != null
     )
 
     Spacer(modifier = Modifier.height(16.dp))
@@ -202,10 +261,16 @@ private fun SignUpForm(
         YVStoreTextInput(
             value = firstName,
             onValueChange = onFirstNameChange,
+            onFocusChange = { isFocused ->
+                if (!isFocused) onFirstNameBlur()
+            },
             label = stringResource(R.string.signup_first_name_label),
             placeholder = stringResource(R.string.signup_first_name_placeholder),
             modifier = Modifier.weight(1f),
             imeAction = ImeAction.Next,
+            enabled = enabled,
+            error = firstNameError,
+            showError = firstNameError != null
         )
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -213,10 +278,16 @@ private fun SignUpForm(
         YVStoreTextInput(
             value = lastName,
             onValueChange = onLastNameChange,
+            onFocusChange = { isFocused ->
+                if (!isFocused) onLastNameBlur()
+            },
             label = stringResource(R.string.signup_last_name_label),
             placeholder = stringResource(R.string.signup_last_name_placeholder),
             modifier = Modifier.weight(1f),
             imeAction = ImeAction.Next,
+            enabled = enabled,
+            error = lastNameError,
+            showError = lastNameError != null
         )
     }
 
@@ -225,9 +296,13 @@ private fun SignUpForm(
     YVStoreTextInput(
         value = password,
         onValueChange = onPasswordChange,
+        onFocusChange = { isFocused ->
+            if (!isFocused) onPasswordBlur()
+        },
         label = stringResource(R.string.signup_password_label),
         placeholder = stringResource(R.string.signup_password_placeholder),
         keyboardType = KeyboardType.Password,
+        enabled = enabled,
         visualTransformation = if (isPasswordVisible) {
             VisualTransformation.None
         } else {
@@ -242,6 +317,8 @@ private fun SignUpForm(
             )
         },
         imeAction = ImeAction.Next,
+        error = passwordError,
+        showError = passwordError != null
     )
 
     Spacer(modifier = Modifier.height(16.dp))
@@ -249,9 +326,13 @@ private fun SignUpForm(
     YVStoreTextInput(
         value = confirmPassword,
         onValueChange = onConfirmPasswordChange,
+        onFocusChange = { isFocused ->
+            if (!isFocused) onConfirmPasswordBlur()
+        },
         label = stringResource(R.string.signup_confirm_password_label),
         placeholder = stringResource(R.string.signup_confirm_password_placeholder),
         keyboardType = KeyboardType.Password,
+        enabled = enabled,
         visualTransformation = if (isConfirmPasswordVisible) {
             VisualTransformation.None
         } else {
@@ -266,12 +347,15 @@ private fun SignUpForm(
             )
         },
         imeAction = ImeAction.Done,
+        error = confirmPasswordError,
+        showError = confirmPasswordError != null
     )
 }
 
 @Composable
 private fun SignUpButton(
     isLoading: Boolean,
+    enabled: Boolean,
     onClick: () -> Unit,
 ) {
     YVStorePrimaryButton(
@@ -279,6 +363,7 @@ private fun SignUpButton(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         loading = isLoading,
+        enabled = enabled,
     )
 }
 
@@ -318,10 +403,60 @@ private fun SignUpScreenPreview() {
         SignUpScreen(
             uiState = SignUpUiState(),
             onEmailChange = {},
+            onEmailBlur = {},
             onFirstNameChange = {},
+            onFirstNameBlur = {},
             onLastNameChange = {},
+            onLastNameBlur = {},
             onPasswordChange = {},
+            onPasswordBlur = {},
             onConfirmPasswordChange = {},
+            onConfirmPasswordBlur = {},
+            onTogglePasswordVisibility = {},
+            onToggleConfirmPasswordVisibility = {},
+            onSignUpClick = {},
+            onNavigateBack = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SignUpScreenWithErrorsPreview() {
+    YVStoreTheme {
+        SignUpScreen(
+            uiState = SignUpUiState(
+                email = TextInputFieldState(
+                    value = "bad",
+                    hasLostFocus = true,
+                    errorMsg = "Invalid email format"
+                ),
+                firstName = TextInputFieldState(
+                    value = "A",
+                    hasLostFocus = true,
+                    errorMsg = "Name is too short"
+                ),
+                password = TextInputFieldState(
+                    value = "123",
+                    hasLostFocus = true,
+                    errorMsg = "Password must be at least 6 characters"
+                ),
+                confirmPassword = TextInputFieldState(
+                    value = "456",
+                    hasLostFocus = true,
+                    errorMsg = "Passwords do not match"
+                )
+            ),
+            onEmailChange = {},
+            onEmailBlur = {},
+            onFirstNameChange = {},
+            onFirstNameBlur = {},
+            onLastNameChange = {},
+            onLastNameBlur = {},
+            onPasswordChange = {},
+            onPasswordBlur = {},
+            onConfirmPasswordChange = {},
+            onConfirmPasswordBlur = {},
             onTogglePasswordVisibility = {},
             onToggleConfirmPasswordVisibility = {},
             onSignUpClick = {},

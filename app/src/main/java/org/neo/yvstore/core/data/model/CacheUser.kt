@@ -1,4 +1,4 @@
-package org.neo.yvstore.features.auth.data.datasource.local.model
+package org.neo.yvstore.core.data.model
 
 import kotlinx.serialization.Serializable
 

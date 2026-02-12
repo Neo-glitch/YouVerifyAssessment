@@ -1,4 +1,4 @@
-package org.neo.yvstore.features.auth.domain.model
+package org.neo.yvstore.core.domain.model
 
 /**
  * Domain model representing an authenticated user.

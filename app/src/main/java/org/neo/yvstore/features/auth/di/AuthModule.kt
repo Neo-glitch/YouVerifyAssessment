@@ -10,6 +10,8 @@ import org.neo.yvstore.features.auth.data.datasource.remote.AuthRemoteDatasource
 import org.neo.yvstore.features.auth.data.datasource.remote.AuthRemoteDatasourceImpl
 import org.neo.yvstore.features.auth.data.repository.AuthRepositoryImpl
 import org.neo.yvstore.features.auth.domain.repository.AuthRepository
+import org.neo.yvstore.features.auth.domain.usecase.LoginUseCase
+import org.neo.yvstore.features.auth.domain.usecase.SignUpUseCase
 import org.neo.yvstore.features.auth.presentation.screens.login.LoginViewModel
 import org.neo.yvstore.features.auth.presentation.screens.signup.SignUpViewModel
 
@@ -18,6 +20,10 @@ val authModule = module {
     factoryOf(::AuthRemoteDatasourceImpl) { bind<AuthRemoteDatasource>() }
     factoryOf(::AuthLocalDatasourceImpl) { bind<AuthLocalDatasource>() }
     factoryOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
+
+    // Domain layer - Use cases
+    factoryOf(::SignUpUseCase)
+    factoryOf(::LoginUseCase)
 
     // Presentation layer
     viewModelOf(::LoginViewModel)

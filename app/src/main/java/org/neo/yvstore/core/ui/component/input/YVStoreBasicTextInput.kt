@@ -53,10 +53,10 @@ import androidx.compose.ui.unit.sp
 import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.designSystem.util.DISABLED_CONTENT_ALPHA
-import org.neo.yvstore.core.util.INPUT_ERROR_TAG
-import org.neo.yvstore.core.util.INPUT_LABEL_TAG
-import org.neo.yvstore.core.util.INPUT_PLACE_HOLDER_TAG
-import org.neo.yvstore.core.util.INPUT_SENSITIVE_BUTTON_TAG
+import org.neo.yvstore.core.ui.util.INPUT_ERROR_TAG
+import org.neo.yvstore.core.ui.util.INPUT_LABEL_TAG
+import org.neo.yvstore.core.ui.util.INPUT_PLACE_HOLDER_TAG
+import org.neo.yvstore.core.ui.util.INPUT_SENSITIVE_BUTTON_TAG
 
 val YVStoreOutlinedTextInputColors: TextFieldColors
     @Composable
