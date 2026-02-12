@@ -138,7 +138,7 @@ fun YVStoreInputSensitiveIcon(
             imageVector = ImageVector.vectorResource(drawableRes),
             colorFilter = colorFilter,
             contentDescription = if (showSensitiveInfo) "Hide password" else "Show password",
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(20.dp),
         )
     }
 }
@@ -303,7 +303,7 @@ private fun TextFieldDecorationBox(
         colors = textFieldColors,
         singleLine = singleLine,
         enabled = enabled,
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(12.dp),
         container = {
             OutlinedTextFieldContainer(
                 enabled = enabled,

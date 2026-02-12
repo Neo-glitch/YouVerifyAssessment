@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -22,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -33,6 +35,7 @@ import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.button.YVStorePrimaryButton
 import org.neo.yvstore.core.ui.component.input.YVStoreInputSensitiveIcon
 import org.neo.yvstore.core.ui.component.input.YVStoreTextInput
+import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.core.ui.component.text.StyledPart
 import org.neo.yvstore.core.ui.component.text.YVStoreMultiStyleText
 import org.neo.yvstore.core.ui.extension.noRippleClearFocusClickable
@@ -63,41 +66,40 @@ private fun LoginScreen(
     onLoginClick: () -> Unit,
     onCreateAccountClick: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Spacer(modifier = Modifier.weight(1f))
+    YVStoreScaffold { paddingValues ->
+        Column(
+            modifier = Modifier
+                .imePadding()
+                .padding(paddingValues)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            LoginHeader()
 
-        LoginHeader()
+            Spacer(modifier = Modifier.height(48.dp))
+            LoginForm(
+                email = uiState.email,
+                password = uiState.password,
+                isPasswordVisible = uiState.isPasswordVisible,
+                onEmailChange = onEmailChange,
+                onPasswordChange = onPasswordChange,
+                onTogglePasswordVisibility = onTogglePasswordVisibility,
+            )
 
-        Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(32.dp))
+            LoginButton(
+                isLoading = uiState.loginState is LoginState.Loading,
+                onClick = onLoginClick,
+            )
 
-        LoginForm(
-            email = uiState.email,
-            password = uiState.password,
-            isPasswordVisible = uiState.isPasswordVisible,
-            onEmailChange = onEmailChange,
-            onPasswordChange = onPasswordChange,
-            onTogglePasswordVisibility = onTogglePasswordVisibility,
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        LoginButton(
-            isLoading = uiState.loginState is LoginState.Loading,
-            onClick = onLoginClick,
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        SignUpPrompt(onClick = onCreateAccountClick)
-
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
+            SignUpPrompt(onClick = onCreateAccountClick)
+            Spacer(modifier = Modifier.weight(1f))
+        }
     }
 }
 
@@ -144,6 +146,7 @@ private fun LoginForm(
         label = stringResource(R.string.login_email_label),
         placeholder = stringResource(R.string.login_email_placeholder),
         keyboardType = KeyboardType.Email,
+        imeAction = ImeAction.Next
     )
 
     Spacer(modifier = Modifier.height(16.dp))
@@ -157,7 +160,9 @@ private fun LoginForm(
         visualTransformation = if (isPasswordVisible) {
             VisualTransformation.None
         } else {
-            PasswordVisualTransformation()
+            PasswordVisualTransformation(
+                mask = '*'
+            )
         },
         trailingIcon = {
             YVStoreInputSensitiveIcon(
@@ -165,6 +170,7 @@ private fun LoginForm(
                 showSensitiveInfo = isPasswordVisible,
             )
         },
+        imeAction = ImeAction.Done
     )
 }
 

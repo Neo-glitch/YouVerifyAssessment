@@ -16,4 +16,19 @@
     <string name="login_button">Login</string>
     <string name="login_no_account_prompt">Don\'t have an account? Create Account</string>
     <string name="login_create_account_action">Create Account</string>
+    <string name="signup_title">Register</string>
+    <string name="signup_subtitle">Create your YV Store account</string>
+    <string name="signup_email_label">Email</string>
+    <string name="signup_email_placeholder">Enter your email</string>
+    <string name="signup_first_name_label">First Name</string>
+    <string name="signup_first_name_placeholder">First name</string>
+    <string name="signup_last_name_label">Last Name</string>
+    <string name="signup_last_name_placeholder">Last name</string>
+    <string name="signup_password_label">Password</string>
+    <string name="signup_password_placeholder">Enter your password</string>
+    <string name="signup_confirm_password_label">Confirm Password</string>
+    <string name="signup_confirm_password_placeholder">Confirm your password</string>
+    <string name="signup_button">Sign Up</string>
+    <string name="signup_has_account_prompt">Already have an account? Login</string>
+    <string name="signup_login_action">Login</string>
 </resources>

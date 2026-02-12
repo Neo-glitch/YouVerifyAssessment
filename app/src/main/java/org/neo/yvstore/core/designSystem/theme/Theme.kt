@@ -7,6 +7,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color.Companion.White
 import org.neo.yvstore.core.designSystem.color.DarkYVStoreColors
 import org.neo.yvstore.core.designSystem.color.LightYVStoreColors
 import org.neo.yvstore.core.designSystem.color.LocalYVStoreColors
@@ -78,7 +79,13 @@ val LightColorScheme = lightColorScheme(
     error = md_theme_light_error,
     onError = md_theme_light_onError,
     errorContainer = md_theme_light_errorContainer,
-    onErrorContainer = md_theme_light_onErrorContainer
+    onErrorContainer = md_theme_light_onErrorContainer,
+    // default for nav bars
+    surfaceContainer = White,
+    // dialog surface colors
+    surfaceContainerHigh = White,
+    // surface for text fields
+    surfaceContainerHighest = White,
 )
 
 val DarkColorScheme = darkColorScheme(
@@ -105,7 +112,13 @@ val DarkColorScheme = darkColorScheme(
     error = md_theme_dark_error,
     onError = md_theme_dark_onError,
     errorContainer = md_theme_dark_errorContainer,
-    onErrorContainer = md_theme_dark_onErrorContainer
+    onErrorContainer = md_theme_dark_onErrorContainer,
+    // default for nav bars
+    surfaceContainer = White,
+    // dialog surface colors
+    surfaceContainerHigh = White,
+    // surface for text fields
+    surfaceContainerHighest = White,
 )
 
 @Composable
