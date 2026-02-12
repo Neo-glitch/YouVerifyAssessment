@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="org.neo.yvstore" />
+                  <option name="mobileSdkAppId" value="1:92402410430:android:a804a9c47dd816ab884fef" />
+                  <option name="projectId" value="yv-store-43b25" />
+                  <option name="projectNumber" value="92402410430" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

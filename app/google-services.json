@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "92402410430",
+    "project_id": "yv-store-43b25",
+    "storage_bucket": "yv-store-43b25.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:92402410430:android:a804a9c47dd816ab884fef",
+        "android_client_info": {
+          "package_name": "org.neo.yvstore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTzOTOyCi2NoKybGBQQkSglo0PcREOKBk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,8 @@
 package org.neo.yvstore.core.ui.component.input
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -50,7 +53,6 @@ import androidx.compose.ui.unit.sp
 import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.designSystem.util.DISABLED_CONTENT_ALPHA
-import org.neo.yvstore.core.ui.animations.AnimatedVisibilityFadeInOut
 import org.neo.yvstore.core.util.INPUT_ERROR_TAG
 import org.neo.yvstore.core.util.INPUT_LABEL_TAG
 import org.neo.yvstore.core.util.INPUT_PLACE_HOLDER_TAG
@@ -348,7 +350,11 @@ fun YVStoreInputStatusRow(
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier.fillMaxWidth()) {
-        AnimatedVisibilityFadeInOut(showError) {
+        AnimatedVisibility(
+            visible = showError,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
             YVStoreInputError(text = error.orEmpty())
         }
 
