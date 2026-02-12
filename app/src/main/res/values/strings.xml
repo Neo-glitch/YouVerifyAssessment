@@ -3,4 +3,8 @@
     <string name="app_bar_nav_icon_content_desc">Navigate back</string>
     <string name="empty_error_state_image_content_desc">Empty state illustration</string>
     <string name="loading_label">Loading…</string>
+    <string name="home_nav_label">Home</string>
+    <string name="cart_nav_label">Cart</string>
+    <string name="orders_nav_label">Orders</string>
+    <string name="profile_nav_label">Profile</string>
 </resources>

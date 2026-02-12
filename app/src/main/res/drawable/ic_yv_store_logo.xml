@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Rounded square background -->
+    <path
+        android:fillColor="#006874"
+        android:pathData="M20,2 L80,2 Q98,2 98,20 L98,80 Q98,98 80,98 L20,98 Q2,98 2,80 L2,20 Q2,2 20,2 Z" />
+
+    <!-- Shopping bag body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,44 L70,44 L67,74 Q67,78 63,78 L37,78 Q33,78 33,74 Z" />
+
+    <!-- Shopping bag handle -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M38,44 C38,28 62,28 62,44" />
+
+    <!-- Bag fold line for depth -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#006874"
+        android:strokeWidth="1.5"
+        android:pathData="M32,50 L68,50" />
+
+    <!-- Small accent tag hanging from handle -->
+    <path
+        android:fillColor="#9EEFF9"
+        android:pathData="M60,34 L67,30 L69,35 L62,39 Z" />
+
+    <!-- Tag hole -->
+    <path
+        android:fillColor="#006874"
+        android:pathData="M64.5,33 A1.2,1.2 0 1,1 64.5,33.01 Z" />
+
+</vector>
