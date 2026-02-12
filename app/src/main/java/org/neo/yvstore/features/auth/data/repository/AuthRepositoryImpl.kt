@@ -2,19 +2,16 @@ package org.neo.yvstore.features.auth.data.repository
 
 import org.neo.yvstore.core.common.util.ExceptionHandler
 import org.neo.yvstore.core.domain.model.Resource
+import org.neo.yvstore.features.auth.data.datasource.local.AuthLocalDatasource
 import org.neo.yvstore.features.auth.data.datasource.remote.AuthRemoteDatasource
+import org.neo.yvstore.features.auth.data.mapper.toCacheUser
 import org.neo.yvstore.features.auth.data.mapper.toUser
 import org.neo.yvstore.features.auth.domain.model.User
 import org.neo.yvstore.features.auth.domain.repository.AuthRepository
 
-/**
- * Implementation of AuthRepository that coordinates remote datasource operations.
- * Catches exceptions from datasource and wraps results in Resource.
- *
- * @property remoteDatasource Remote datasource for Firebase operations
- */
 class AuthRepositoryImpl(
-    private val remoteDatasource: AuthRemoteDatasource
+    private val remoteDatasource: AuthRemoteDatasource,
+    private val localDatasource: AuthLocalDatasource
 ) : AuthRepository {
 
     override suspend fun signUp(
@@ -34,7 +31,9 @@ class AuthRepositoryImpl(
     override suspend fun signIn(email: String, password: String): Resource<User> {
         return try {
             val authUser = remoteDatasource.signIn(email, password)
-            Resource.Success(authUser.toUser())
+            val user = authUser.toUser()
+            localDatasource.saveUser(user.toCacheUser())
+            Resource.Success(user)
         } catch (e: Exception) {
             Resource.Error(ExceptionHandler.getErrorMessage(e))
         }

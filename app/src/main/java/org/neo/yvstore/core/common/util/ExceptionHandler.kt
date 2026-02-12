@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.FirebaseFirestoreException.Code
+import org.neo.yvstore.core.common.exception.EmailNotVerifiedException
 import java.io.IOException
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -23,6 +24,7 @@ object ExceptionHandler {
     private const val USER_NOT_FOUND_MSG = "Account not found"
     private const val USER_DISABLED_MSG = "This account has been disabled"
     private const val EMAIL_IN_USE_MSG = "An account with this email already exists"
+    private const val EMAIL_NOT_VERIFIED_MSG = "Your email address has not been verified. Please check your inbox and verify your email before signing in."
     private const val WEAK_PASSWORD_MSG = "Password is too weak"
     private const val TOO_MANY_REQUESTS_MSG = "Too many attempts. Please try again later"
     private const val RE_AUTH_REQUIRED_MSG = "Please sign in again to continue"
@@ -51,6 +53,7 @@ object ExceptionHandler {
             is FirebaseAuthRecentLoginRequiredException -> RE_AUTH_REQUIRED_MSG
             is FirebaseTooManyRequestsException -> TOO_MANY_REQUESTS_MSG
             is FirebaseNetworkException -> NO_INTERNET_MSG
+            is EmailNotVerifiedException -> EMAIL_NOT_VERIFIED_MSG
 
             // ── Firestore ──
             is FirebaseFirestoreException -> getFirestoreErrorMessage(throwable)
