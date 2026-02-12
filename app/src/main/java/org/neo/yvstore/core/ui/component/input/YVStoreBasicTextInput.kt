@@ -47,6 +47,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.designSystem.util.DISABLED_CONTENT_ALPHA
 import org.neo.yvstore.core.ui.animations.AnimatedVisibilityFadeInOut
@@ -128,16 +129,16 @@ fun YVStoreInputSensitiveIcon(
     ) {
         val drawableRes =
             if (showSensitiveInfo) {
-                android.R.drawable.menu_frame
+                R.drawable.ic_eye_open
             } else {
-                android.R.drawable.menu_full_frame
+                R.drawable.ic_eye_closed
             }
 
         Image(
             imageVector = ImageVector.vectorResource(drawableRes),
             colorFilter = colorFilter,
-            contentDescription = null,
-            modifier = Modifier.size(16.dp),
+            contentDescription = if (showSensitiveInfo) "Hide password" else "Show password",
+            modifier = Modifier.size(24.dp),
         )
     }
 }
