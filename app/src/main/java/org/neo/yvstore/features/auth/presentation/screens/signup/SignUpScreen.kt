@@ -231,7 +231,9 @@ private fun SignUpForm(
         visualTransformation = if (isPasswordVisible) {
             VisualTransformation.None
         } else {
-            PasswordVisualTransformation()
+            PasswordVisualTransformation(
+                mask = '*'
+            )
         },
         trailingIcon = {
             YVStoreInputSensitiveIcon(
@@ -253,7 +255,9 @@ private fun SignUpForm(
         visualTransformation = if (isConfirmPasswordVisible) {
             VisualTransformation.None
         } else {
-            PasswordVisualTransformation()
+            PasswordVisualTransformation(
+                mask = '*'
+            )
         },
         trailingIcon = {
             YVStoreInputSensitiveIcon(
