@@ -1,0 +1,18 @@
+package org.neo.yvstore.core.database.di
+
+import androidx.room.Room
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
+import org.neo.yvstore.core.database.YVStoreDatabase
+
+val databaseModule = module {
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            YVStoreDatabase::class.java,
+            "yvstore_database"
+        ).build()
+    }
+
+    single { get<YVStoreDatabase>().productDao() }
+}
