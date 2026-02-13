@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.button.YVStoreTextButton
+import org.neo.yvstore.core.ui.component.grid.NonlazyGrid
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.features.product.presentation.model.ProductUi
 import org.neo.yvstore.features.product.presentation.screen.productList.components.CartIconButton
@@ -28,14 +29,14 @@ import org.neo.yvstore.features.product.presentation.screen.productList.componen
 import org.neo.yvstore.features.product.presentation.screen.productList.components.SearchBarPlaceholder
 
 @Composable
-fun ProductsListScreen(
+fun HomeProductListScreen(
     onNavigateToCart: () -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToProductDetails: (String) -> Unit,
     onViewAllClick: () -> Unit,
     hasCartItems: Boolean = false,
 ) {
-    ProductsListScreen(
+    HomeProductListScreen(
         products = placeholderProducts,
         hasCartItems = hasCartItems,
         promoTitle = "Clearance Sales",
@@ -49,7 +50,7 @@ fun ProductsListScreen(
 }
 
 @Composable
-private fun ProductsListScreen(
+private fun HomeProductListScreen(
     products: List<ProductUi>,
     hasCartItems: Boolean,
     promoTitle: String,
@@ -75,13 +76,11 @@ private fun ProductsListScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
             SearchBarPlaceholder(
                 onClick = onNavigateToSearch,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
             PromoBanner(
                 title = promoTitle,
                 discountText = promoDiscountText,
@@ -89,14 +88,12 @@ private fun ProductsListScreen(
             )
 
             Spacer(modifier = Modifier.height(24.dp))
-
             ProductsSectionHeader(
                 title = "Products",
                 onViewAllClick = onViewAllClick,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
             ProductsGrid(
                 products = products,
                 onProductClick = onNavigateToProductDetails,
@@ -158,28 +155,19 @@ private fun ProductsGrid(
     products: List<ProductUi>,
     onProductClick: (String) -> Unit,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        products.chunked(2).forEach { rowProducts ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                rowProducts.forEach { product ->
-                    ProductCard(
-                        modifier = Modifier.weight(1f),
-                        name = product.name,
-                        price = product.price,
-                        imageUrl = product.imageUrl,
-                        onClick = { onProductClick(product.id) },
-                    )
-                }
-                if (rowProducts.size < 2) {
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-            }
-        }
+    NonlazyGrid(
+        columns = 2,
+        itemCount = products.size,
+        horizontalSpacing = 12.dp,
+        verticalSpacing = 16.dp,
+    ) { index ->
+        val product = products[index]
+        ProductCard(
+            name = product.name,
+            price = product.price,
+            imageUrl = product.imageUrl,
+            onClick = { onProductClick(product.id) },
+        )
     }
 }
 
@@ -248,9 +236,9 @@ private val placeholderProducts = listOf(
 
 @Preview(showBackground = true)
 @Composable
-private fun ProductsListScreenPreview() {
+private fun HomeProductListScreenPreview() {
     YVStoreTheme {
-        ProductsListScreen(
+        HomeProductListScreen(
             products = placeholderProducts,
             hasCartItems = false,
             promoTitle = "Clearance Sales",
@@ -266,9 +254,9 @@ private fun ProductsListScreenPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun ProductsListScreenWithCartItemsPreview() {
+private fun HomeProductListScreenWithCartItemsPreview() {
     YVStoreTheme {
-        ProductsListScreen(
+        HomeProductListScreen(
             products = placeholderProducts,
             hasCartItems = true,
             promoTitle = "Clearance Sales",
