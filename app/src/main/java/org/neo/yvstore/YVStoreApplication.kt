@@ -8,6 +8,7 @@ import org.neo.yvstore.core.cache.di.cacheModule
 import org.neo.yvstore.core.data.di.dataModule
 import org.neo.yvstore.di.appModule
 import org.neo.yvstore.features.auth.di.authModule
+import org.neo.yvstore.features.product.di.productModule
 
 class YVStoreApplication : Application() {
 
@@ -15,6 +16,7 @@ class YVStoreApplication : Application() {
         appModule,
         cacheModule,
         authModule,
+        productModule,
         dataModule,
     )
 

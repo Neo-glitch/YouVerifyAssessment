@@ -1,22 +1,16 @@
 package org.neo.yvstore.core.ui.component.navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,7 +55,6 @@ private fun CenteredTopBar(
 ) {
     CenterAlignedTopAppBar(
         title = { TopBarTitle(title = title) },
-        modifier = modifier.padding(horizontal = 36.dp),
         navigationIcon = {
             NavigationIcon(
                 onNavigationClick = onNavigationClick,
@@ -83,10 +76,8 @@ private fun SimpleTopBar(
         title = {
             TopBarTitle(
                 title = title,
-                modifier = Modifier.padding(start = 12.dp),
             )
         },
-        modifier = modifier.padding(horizontal = 20.dp),
         navigationIcon = {
             NavigationIcon(
                 onNavigationClick = onNavigationClick,
@@ -98,20 +89,12 @@ private fun SimpleTopBar(
 
 @Composable
 private fun NavigationIcon(onNavigationClick: () -> Unit, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .clip(CircleShape)
-            .background(
-                color = YVStoreTheme.colors.navigationColors.appbarIconsBackground,
-                shape = CircleShape,
-            )
-            .clickable(onClick = onNavigationClick),
-        contentAlignment = Alignment.Center,
+    IconButton(
+        onClick = onNavigationClick,
+        modifier = modifier,
     ) {
         Icon(
-            modifier = Modifier
-                .padding(16.dp)
-                .size(24.dp),
+            modifier = Modifier.size(24.dp),
             painter = painterResource(R.drawable.ic_back_arrow),
             contentDescription = stringResource(R.string.app_bar_nav_icon_content_desc),
             tint = YVStoreTheme.colors.navigationColors.navigationIcon,

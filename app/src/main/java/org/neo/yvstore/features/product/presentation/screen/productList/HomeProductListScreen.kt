@@ -22,7 +22,7 @@ import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.button.YVStoreTextButton
 import org.neo.yvstore.core.ui.component.grid.NonlazyGrid
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
-import org.neo.yvstore.features.product.presentation.model.ProductUi
+import org.neo.yvstore.features.product.presentation.model.ProductItemUi
 import org.neo.yvstore.features.product.presentation.screen.productList.components.CartIconButton
 import org.neo.yvstore.features.product.presentation.screen.productList.components.ProductCard
 import org.neo.yvstore.features.product.presentation.screen.productList.components.PromoBanner
@@ -51,7 +51,7 @@ fun HomeProductListScreen(
 
 @Composable
 private fun HomeProductListScreen(
-    products: List<ProductUi>,
+    products: List<ProductItemUi>,
     hasCartItems: Boolean,
     promoTitle: String,
     promoDiscountText: String,
@@ -152,7 +152,7 @@ private fun ProductsSectionHeader(
 
 @Composable
 private fun ProductsGrid(
-    products: List<ProductUi>,
+    products: List<ProductItemUi>,
     onProductClick: (String) -> Unit,
 ) {
     NonlazyGrid(
@@ -172,61 +172,61 @@ private fun ProductsGrid(
 }
 
 private val placeholderProducts = listOf(
-    ProductUi(
+    ProductItemUi(
         id = "1",
         name = "Wireless Headphones",
         price = "$89.99",
         imageUrl = "https://picsum.photos/seed/headphones/400/400",
     ),
-    ProductUi(
+    ProductItemUi(
         id = "2",
         name = "Smart Watch",
         price = "$199.99",
         imageUrl = "https://picsum.photos/seed/watch/400/400",
     ),
-    ProductUi(
+    ProductItemUi(
         id = "3",
         name = "Laptop Stand",
         price = "$45.00",
         imageUrl = "https://picsum.photos/seed/stand/400/400",
     ),
-    ProductUi(
+    ProductItemUi(
         id = "4",
         name = "USB-C Hub",
         price = "$29.99",
         imageUrl = "https://picsum.photos/seed/hub/400/400",
     ),
-    ProductUi(
+    ProductItemUi(
         id = "5",
         name = "Mechanical Keyboard",
         price = "$129.99",
         imageUrl = "https://picsum.photos/seed/keyboard/400/400",
     ),
-    ProductUi(
+    ProductItemUi(
         id = "6",
         name = "Wireless Mouse",
         price = "$39.99",
         imageUrl = "https://picsum.photos/seed/mouse/400/400",
     ),
-    ProductUi(
+    ProductItemUi(
         id = "7",
         name = "Phone Case",
         price = "$19.99",
         imageUrl = "https://picsum.photos/seed/case/400/400",
     ),
-    ProductUi(
+    ProductItemUi(
         id = "8",
         name = "Portable Charger",
         price = "$34.99",
         imageUrl = "https://picsum.photos/seed/charger/400/400",
     ),
-    ProductUi(
+    ProductItemUi(
         id = "9",
         name = "Bluetooth Speaker",
         price = "$59.99",
         imageUrl = "https://picsum.photos/seed/speaker/400/400",
     ),
-    ProductUi(
+    ProductItemUi(
         id = "10",
         name = "Webcam HD",
         price = "$79.99",
