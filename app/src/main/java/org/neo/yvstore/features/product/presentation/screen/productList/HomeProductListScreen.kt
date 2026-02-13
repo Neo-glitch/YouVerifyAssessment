@@ -66,10 +66,9 @@ private fun HomeProductListScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
-                .padding(vertical = 16.dp),
+                .padding(horizontal = 16.dp),
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
             HeaderRow(
                 hasCartItems = hasCartItems,
                 onCartClick = onNavigateToCart,
@@ -80,24 +79,32 @@ private fun HomeProductListScreen(
                 onClick = onNavigateToSearch,
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-            PromoBanner(
-                title = promoTitle,
-                discountText = promoDiscountText,
-                imageUrl = promoImageUrl,
-            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
+                PromoBanner(
+                    title = promoTitle,
+                    discountText = promoDiscountText,
+                    imageUrl = promoImageUrl,
+                )
 
-            Spacer(modifier = Modifier.height(24.dp))
-            ProductsSectionHeader(
-                title = "Products",
-                onViewAllClick = onViewAllClick,
-            )
+                Spacer(modifier = Modifier.height(24.dp))
+                ProductsSectionHeader(
+                    title = "Products",
+                    onViewAllClick = onViewAllClick,
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
-            ProductsGrid(
-                products = products,
-                onProductClick = onNavigateToProductDetails,
-            )
+                Spacer(modifier = Modifier.height(16.dp))
+                ProductsGrid(
+                    products = products,
+                    onProductClick = onNavigateToProductDetails,
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
     }
 }

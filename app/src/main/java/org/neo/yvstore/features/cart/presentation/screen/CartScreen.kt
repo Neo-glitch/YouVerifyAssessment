@@ -353,10 +353,6 @@ private fun OrderSummary(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        YVStoreHorizontalDivider()
-
-        Spacer(modifier = Modifier.height(12.dp))
-
         SummaryRow(
             label = "Total:",
             value = total,

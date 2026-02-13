@@ -74,7 +74,7 @@ private fun ProductDetailsScreen(
     YVStoreScaffold(
         topBar = {
             YVStoreTopBar(
-                title = "Product Details",
+                title = "Details",
                 onNavigationClick = onNavigateBack,
                 isCenteredAligned = true,
             )
