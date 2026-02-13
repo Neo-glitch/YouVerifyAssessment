@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ fun YVStoreActionDialog(
     primaryButtonText: String,
     onSecondaryButtonClick: (() -> Unit)? = null,
     secondaryButtonText: String? = null,
+    iconColorFilter: ColorFilter? = null,
     properties: DialogProperties = DialogProperties(
         dismissOnClickOutside = false,
         dismissOnBackPress = false,
@@ -53,6 +55,7 @@ fun YVStoreActionDialog(
                 onSecondaryButtonClick = onSecondaryButtonClick,
                 primaryButtonText = primaryButtonText,
                 secondaryButtonText = secondaryButtonText,
+                iconColorFilter = iconColorFilter,
             )
         }
     }
@@ -68,6 +71,7 @@ private fun DialogContent(
     onSecondaryButtonClick: (() -> Unit)?,
     primaryButtonText: String,
     secondaryButtonText: String?,
+    iconColorFilter: ColorFilter? = null,
 ) {
     Column(
         modifier = Modifier
@@ -75,7 +79,7 @@ private fun DialogContent(
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        DialogIcon(icon = icon)
+        DialogIcon(icon = icon, colorFilter = iconColorFilter)
         Spacer(modifier = Modifier.height(16.dp))
         DialogTitle(title = title)
         Spacer(modifier = Modifier.height(8.dp))

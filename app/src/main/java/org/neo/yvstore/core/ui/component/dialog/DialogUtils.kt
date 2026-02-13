@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -14,11 +15,12 @@ import androidx.compose.ui.unit.sp
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 
 @Composable
-fun DialogIcon(icon: Int, modifier: Modifier = Modifier) {
+fun DialogIcon(icon: Int, modifier: Modifier = Modifier, colorFilter: ColorFilter? = null) {
     Image(
         modifier = modifier.size(80.dp),
         painter = painterResource(icon),
         contentDescription = null,
+        colorFilter = colorFilter,
     )
 }
 

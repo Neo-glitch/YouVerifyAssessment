@@ -61,6 +61,7 @@ private fun CenteredTopBar(
             )
         },
         actions = actions,
+        modifier = modifier,
     )
 }
 
@@ -84,6 +85,7 @@ private fun SimpleTopBar(
             )
         },
         actions = actions,
+        modifier = modifier
     )
 }
 

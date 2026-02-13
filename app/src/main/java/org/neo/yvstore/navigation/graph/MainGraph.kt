@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import org.neo.yvstore.features.cart.presentation.screen.CartScreen
 import org.neo.yvstore.features.product.presentation.screen.productDetails.ProductDetailsScreen
 import org.neo.yvstore.features.product.presentation.screen.productList.HomeProductListScreen
 import org.neo.yvstore.navigation.routes.AppRoute
@@ -47,8 +48,14 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
         }
 
         composable<MainGraphRoute.CartScreen> {
-            // TODO: Implement Cart Screen
-            Spacer(modifier = Modifier.height(100.dp))
+            CartScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onCheckout = {
+                    // TODO: Implement checkout navigation
+                }
+            )
         }
 
         composable<MainGraphRoute.OrdersScreen> {
