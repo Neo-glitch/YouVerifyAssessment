@@ -49,4 +49,17 @@ class ProductRepositoryImpl(
             Resource.Error(ExceptionHandler.getErrorMessage(e))
         }
     }
+
+    override suspend fun getProduct(id: String): Resource<Product> {
+        return try {
+            val entity = productDao.getProductById(id)
+            if (entity != null) {
+                Resource.Success(entity.toProduct())
+            } else {
+                Resource.Error("Product not found")
+            }
+        } catch (e: Exception) {
+            Resource.Error(ExceptionHandler.getErrorMessage(e))
+        }
+    }
 }

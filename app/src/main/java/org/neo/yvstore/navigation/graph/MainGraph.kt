@@ -64,6 +64,7 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
         composable<MainGraphRoute.ProductDetailsScreen> { backStackEntry ->
             val route = backStackEntry.toRoute<MainGraphRoute.ProductDetailsScreen>()
             ProductDetailsScreen(
+                productId = route.productId,
                 onNavigateBack = {
                     navController.popBackStack()
                 }

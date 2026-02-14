@@ -8,4 +8,5 @@ interface ProductRepository {
     fun observeProducts(count: Int? = null): Flow<Resource<List<Product>>>
     suspend fun searchProducts(query: String = ""): Resource<List<Product>>
     suspend fun refreshProducts(): Resource<Unit>
+    suspend fun getProduct(id: String): Resource<Product>
 }

@@ -1,61 +1,140 @@
 package org.neo.yvstore.features.product.presentation.screen.productDetails
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import org.neo.yvstore.core.database.model.CartItemEntity
+import org.neo.yvstore.features.cart.domain.usecase.AddCartItemUseCase
+import org.neo.yvstore.features.cart.domain.usecase.DeleteCartItemUseCase
+import org.neo.yvstore.features.cart.domain.usecase.ObserveCartItemByProductIdUseCase
+import org.neo.yvstore.features.cart.domain.usecase.UpdateCartItemQuantityUseCase
+import org.neo.yvstore.features.product.domain.model.Product
+import org.neo.yvstore.features.product.domain.usecase.GetProductUseCase
 import org.neo.yvstore.features.product.presentation.model.ProductDetailsUi
 
-data class ProductDetailsUiState(
-    val product: ProductDetailsUi? = null,
-    val quantity: Int = 0,
-) {
-    val totalPrice: Double
-        get() = (product?.price ?: 0.0) * quantity
+class ProductDetailsViewModel(
+    private val getProductUseCase: GetProductUseCase,
+    private val observeCartItemByProductIdUseCase: ObserveCartItemByProductIdUseCase,
+    private val addCartItemUseCase: AddCartItemUseCase,
+    private val updateCartItemQuantityUseCase: UpdateCartItemQuantityUseCase,
+    private val deleteCartItemUseCase: DeleteCartItemUseCase,
+) : ViewModel() {
 
-    val formattedTotalPrice: String
-        get() = "$%.2f".format(totalPrice)
-}
+    private var productId: String = ""
+    private var hasInitialized: Boolean = false
 
-class ProductDetailsViewModel : ViewModel() {
-
-    private val _uiState = MutableStateFlow(
-        ProductDetailsUiState(
-            product = placeholderProduct
-        )
-    )
+    private val _uiState = MutableStateFlow(ProductDetailsUiState())
     val uiState: StateFlow<ProductDetailsUiState> = _uiState.asStateFlow()
 
+    private val _uiEvent = Channel<ProductDetailsUiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
+    fun init(productId: String) {
+        if (hasInitialized) return
+        hasInitialized = true
+        this.productId = productId
+        viewModelScope.launch {
+            loadProduct()
+            observeCartItem()
+        }
+    }
+
+    private suspend fun loadProduct() {
+        val result = getProductUseCase(productId)
+        result.onSuccess { product ->
+            _uiState.update {
+                it.copy(
+                    product = product.toProductDetailsUi(),
+                    loadState = ProductDetailsLoadState.Loaded,
+                )
+            }
+        }.onError { message ->
+            _uiState.update {
+                it.copy(loadState = ProductDetailsLoadState.Error(message))
+            }
+        }
+    }
+
+    private fun observeCartItem() {
+        viewModelScope.launch {
+            observeCartItemByProductIdUseCase(productId).collect { resource ->
+                resource.onSuccess { cartItem ->
+                    _uiState.update {
+                        it.copy(
+                            quantity = cartItem?.quantity ?: 0,
+                            cartItemId = cartItem?.id,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     fun onAddToCart() {
-        _uiState.update { currentState ->
-            currentState.copy(quantity = 1)
+        viewModelScope.launch {
+            val currentProduct = _uiState.value.product ?: return@launch
+            val cartItem = CartItemEntity(
+                id = 0,
+                productId = currentProduct.id,
+                productName = currentProduct.name,
+                productImageUrl = currentProduct.imageUrl,
+                unitPrice = currentProduct.price,
+                quantity = 1,
+            )
+            val result = addCartItemUseCase(cartItem)
+            result.onError { message ->
+                _uiEvent.send(ProductDetailsUiEvent.Error(message))
+            }
         }
     }
 
     fun onIncrementQuantity() {
-        _uiState.update { currentState ->
-            currentState.copy(quantity = currentState.quantity + 1)
+        viewModelScope.launch {
+            val currentState = _uiState.value
+            val cartItemId = currentState.cartItemId ?: return@launch
+            val newQuantity = currentState.quantity + 1
+            val result = updateCartItemQuantityUseCase(cartItemId, newQuantity)
+            result.onError { message ->
+                _uiEvent.send(ProductDetailsUiEvent.Error(message))
+            }
         }
     }
 
     fun onDecrementQuantity() {
-        _uiState.update { currentState ->
-            val newQuantity = (currentState.quantity - 1).coerceAtLeast(0)
-            currentState.copy(quantity = newQuantity)
+        viewModelScope.launch {
+            val currentState = _uiState.value
+            val cartItemId = currentState.cartItemId ?: return@launch
+            val currentQuantity = currentState.quantity
+
+            if (currentQuantity > 1) {
+                val newQuantity = currentQuantity - 1
+                val result = updateCartItemQuantityUseCase(cartItemId, newQuantity)
+                result.onError { message ->
+                    _uiEvent.send(ProductDetailsUiEvent.Error(message))
+                }
+            } else if (currentQuantity == 1) {
+                val result = deleteCartItemUseCase(cartItemId)
+                result.onError { message ->
+                    _uiEvent.send(ProductDetailsUiEvent.Error(message))
+                }
+            }
         }
     }
 
-    companion object {
-        private val placeholderProduct = ProductDetailsUi(
-            id = "1",
-            name = "Wireless Headphones",
-            description = "Premium sound quality with active noise cancellation. Experience music like never before with deep bass and crystal clear highs.",
-            price = 89.99,
-            imageUrl = "https://picsum.photos/seed/headphones/400/400",
-            rating = 4.5,
-            reviewCount = 128,
-            details = "These wireless headphones feature Bluetooth 5.0 connectivity, 30-hour battery life, and comfortable over-ear design. Perfect for music lovers, gamers, and professionals who demand high-quality audio. Includes a carrying case and audio cable for wired connection."
-        )
-    }
+    private fun Product.toProductDetailsUi() = ProductDetailsUi(
+        id = id,
+        name = name,
+        description = description,
+        price = price,
+        imageUrl = imageUrl,
+        rating = rating,
+        reviewCount = reviewCount,
+        details = description,
+    )
 }

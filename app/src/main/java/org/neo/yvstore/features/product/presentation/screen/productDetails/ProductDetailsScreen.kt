@@ -1,5 +1,6 @@
 package org.neo.yvstore.features.product.presentation.screen.productDetails
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,10 +25,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,23 +42,39 @@ import org.koin.androidx.compose.koinViewModel
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.button.YVStorePrimaryButton
 import org.neo.yvstore.core.ui.component.card.BottomFrameCard
+import org.neo.yvstore.core.ui.component.dialog.YVStoreErrorDialog
 import org.neo.yvstore.core.ui.component.divider.YVStoreHorizontalDivider
 import org.neo.yvstore.core.ui.component.navigation.YVStoreTopBar
+import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
+import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.features.product.presentation.model.ProductDetailsUi
 import kotlin.math.roundToInt
 
 @Composable
 fun ProductDetailsScreen(
+    productId: String,
     onNavigateBack: () -> Unit,
     viewModel: ProductDetailsViewModel = koinViewModel(),
 ) {
+    viewModel.init(productId)
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    ObserveAsEvents(viewModel.uiEvent) { event ->
+        when (event) {
+            is ProductDetailsUiEvent.Error -> {
+                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     ProductDetailsScreen(
         product = uiState.product,
         quantity = uiState.quantity,
         totalPrice = uiState.formattedTotalPrice,
+        loadState = uiState.loadState,
         onNavigateBack = onNavigateBack,
         onAddToCart = viewModel::onAddToCart,
         onIncrementQuantity = viewModel::onIncrementQuantity,
@@ -66,11 +87,33 @@ private fun ProductDetailsScreen(
     product: ProductDetailsUi?,
     quantity: Int,
     totalPrice: String,
+    loadState: ProductDetailsLoadState,
     onNavigateBack: () -> Unit,
     onAddToCart: () -> Unit,
     onIncrementQuantity: () -> Unit,
     onDecrementQuantity: () -> Unit,
 ) {
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
+    if (loadState is ProductDetailsLoadState.Error) {
+        showErrorDialog = true
+        errorMessage = loadState.message
+    }
+
+    if (showErrorDialog) {
+        YVStoreErrorDialog(
+            title = "Error",
+            description = errorMessage,
+            onDismiss = {
+                showErrorDialog = false
+                onNavigateBack()
+            },
+            onPrimaryButtonClick = { },
+            primaryButtonText = "OK",
+        )
+    }
+
     YVStoreScaffold(
         topBar = {
             YVStoreTopBar(
@@ -80,42 +123,66 @@ private fun ProductDetailsScreen(
             )
         },
         bottomBar = {
-            BottomFrameCard {
-                CartActionBar(
-                    product = product,
-                    quantity = quantity,
-                    totalPrice = totalPrice,
-                    onAddToCart = onAddToCart,
-                    onIncrementQuantity = onIncrementQuantity,
-                    onDecrementQuantity = onDecrementQuantity,
-                )
+            if (loadState is ProductDetailsLoadState.Loaded) {
+                BottomFrameCard {
+                    CartActionBar(
+                        product = product,
+                        quantity = quantity,
+                        totalPrice = totalPrice,
+                        onAddToCart = onAddToCart,
+                        onIncrementQuantity = onIncrementQuantity,
+                        onDecrementQuantity = onDecrementQuantity,
+                    )
+                }
             }
         }
     ) { paddingValues ->
-        if (product != null) {
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                ProductImageSection(imageUrl = product.imageUrl)
-
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp)
+        when (loadState) {
+            is ProductDetailsLoadState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    ProductInfoSection(
-                        name = product.name,
-                        description = product.description,
-                        price = product.formattedPrice,
-                        rating = product.rating,
-                        reviewCount = product.reviewCount,
-                    )
-
-                    ProductDetailsSection(details = product.details)
-
-                    Spacer(modifier = Modifier.height(16.dp))
+                    YVStoreCircleProgressIndicator(size = 48.dp)
                 }
+            }
+            is ProductDetailsLoadState.Loaded -> {
+                if (product != null) {
+                    Column(
+                        modifier = Modifier
+                            .padding(paddingValues)
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        ProductImageSection(imageUrl = product.imageUrl)
+
+                        Column(
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        ) {
+                            ProductInfoSection(
+                                name = product.name,
+                                description = product.description,
+                                price = product.formattedPrice,
+                                rating = product.rating,
+                                reviewCount = product.reviewCount,
+                            )
+
+                            ProductDetailsSection(details = product.details)
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
+                }
+            }
+            is ProductDetailsLoadState.Error -> {
+                // Error dialog is already shown above
+                Box(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                )
             }
         }
     }
@@ -359,6 +426,7 @@ private fun ProductDetailsScreenAddToCartPreview() {
             ),
             quantity = 0,
             totalPrice = "$0.00",
+            loadState = ProductDetailsLoadState.Loaded,
             onNavigateBack = {},
             onAddToCart = {},
             onIncrementQuantity = {},
@@ -384,6 +452,7 @@ private fun ProductDetailsScreenQuantitySelectorPreview() {
             ),
             quantity = 3,
             totalPrice = "$269.97",
+            loadState = ProductDetailsLoadState.Loaded,
             onNavigateBack = {},
             onAddToCart = {},
             onIncrementQuantity = {},

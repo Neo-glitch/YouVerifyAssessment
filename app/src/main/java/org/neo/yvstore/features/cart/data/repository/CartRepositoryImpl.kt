@@ -70,4 +70,14 @@ class CartRepositoryImpl(
             Resource.Error(ExceptionHandler.getErrorMessage(e))
         }
     }
+
+    override fun observeCartItemByProductId(productId: String): Flow<Resource<CartItem?>> {
+        return cartItemDao.observeCartItemByProductId(productId)
+            .map<CartItemEntity?, Resource<CartItem?>> { entity ->
+                Resource.Success(entity?.toCartItem())
+            }
+            .catch { e ->
+                emit(Resource.Error(ExceptionHandler.getErrorMessage(e)))
+            }
+    }
 }

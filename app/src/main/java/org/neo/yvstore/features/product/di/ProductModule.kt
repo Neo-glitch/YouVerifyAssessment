@@ -8,6 +8,7 @@ import org.neo.yvstore.features.product.data.datasource.remote.ProductRemoteData
 import org.neo.yvstore.features.product.data.datasource.remote.ProductRemoteDatasourceImpl
 import org.neo.yvstore.features.product.data.repository.ProductRepositoryImpl
 import org.neo.yvstore.features.product.domain.repository.ProductRepository
+import org.neo.yvstore.features.product.domain.usecase.GetProductUseCase
 import org.neo.yvstore.features.product.domain.usecase.ObserveProductsUseCase
 import org.neo.yvstore.features.product.domain.usecase.RefreshProductsUseCase
 import org.neo.yvstore.features.product.domain.usecase.SearchProductsUseCase
@@ -25,6 +26,7 @@ val productModule = module {
     factoryOf(::ObserveProductsUseCase)
     factoryOf(::RefreshProductsUseCase)
     factoryOf(::SearchProductsUseCase)
+    factoryOf(::GetProductUseCase)
 
     // Presentation layer
     viewModelOf(::AllProductListViewModel)

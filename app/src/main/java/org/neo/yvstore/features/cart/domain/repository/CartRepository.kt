@@ -12,4 +12,5 @@ interface CartRepository {
     suspend fun updateQuantity(id: Long, quantity: Int): Resource<Unit>
     suspend fun deleteItem(id: Long): Resource<Unit>
     suspend fun deleteAllItems(): Resource<Unit>
+    fun observeCartItemByProductId(productId: String): Flow<Resource<CartItem?>>
 }

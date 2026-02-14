@@ -10,6 +10,7 @@ import org.neo.yvstore.features.cart.domain.usecase.AddCartItemUseCase
 import org.neo.yvstore.features.cart.domain.usecase.DeleteAllCartItemsUseCase
 import org.neo.yvstore.features.cart.domain.usecase.DeleteCartItemUseCase
 import org.neo.yvstore.features.cart.domain.usecase.GetCartItemsUseCase
+import org.neo.yvstore.features.cart.domain.usecase.ObserveCartItemByProductIdUseCase
 import org.neo.yvstore.features.cart.domain.usecase.ObserveCartItemCountUseCase
 import org.neo.yvstore.features.cart.domain.usecase.UpdateCartItemQuantityUseCase
 import org.neo.yvstore.features.cart.presentation.screen.CartScreenViewModel
@@ -20,6 +21,7 @@ val cartModule = module {
 
     // Domain layer - Use cases
     factoryOf(::ObserveCartItemCountUseCase)
+    factoryOf(::ObserveCartItemByProductIdUseCase)
     factoryOf(::GetCartItemsUseCase)
     factoryOf(::AddCartItemUseCase)
     factoryOf(::UpdateCartItemQuantityUseCase)
