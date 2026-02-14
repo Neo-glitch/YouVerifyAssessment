@@ -60,7 +60,7 @@ fun HomeProductListScreen(
     HomeProductListScreen(
         products = uiState.products,
         loadState = uiState.loadState,
-        hasCartItems = uiState.hasCartItems,
+        cartItemCount = uiState.cartItemCount,
         promoTitle = "Clearance Sales",
         promoDiscountText = "Up to 50%",
         promoImageUrl = "https://picsum.photos/seed/promo/200/200",
@@ -75,7 +75,7 @@ fun HomeProductListScreen(
 private fun HomeProductListScreen(
     products: List<ProductItemUi>,
     loadState: HomeProductListLoadState,
-    hasCartItems: Boolean,
+    cartItemCount: Int,
     promoTitle: String,
     promoDiscountText: String,
     promoImageUrl: String,
@@ -93,7 +93,7 @@ private fun HomeProductListScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             HeaderRow(
-                hasCartItems = hasCartItems,
+                cartItemCount = cartItemCount,
                 onCartClick = onNavigateToCart,
             )
 
@@ -200,7 +200,7 @@ private fun CenteredContent(
 
 @Composable
 private fun HeaderRow(
-    hasCartItems: Boolean,
+    cartItemCount: Int,
     onCartClick: () -> Unit,
 ) {
     Row(
@@ -216,7 +216,7 @@ private fun HeaderRow(
         )
 
         CartIconButton(
-            hasCartItems = hasCartItems,
+            cartItemCount = cartItemCount,
             onClick = onCartClick,
         )
     }
@@ -289,7 +289,13 @@ private fun HomeProductListScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun HomeProductListScreenWithCartItemsPreview() {
-    PreviewContent(products = placeholderProducts, hasCartItems = true)
+    PreviewContent(products = placeholderProducts, cartItemCount = 3)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeProductListScreenWithManyCartItemsPreview() {
+    PreviewContent(products = placeholderProducts, cartItemCount = 15)
 }
 
 @Preview(showBackground = true)
@@ -311,13 +317,13 @@ private fun HomeProductListScreenErrorPreview() {
 private fun PreviewContent(
     products: List<ProductItemUi> = placeholderProducts,
     loadState: HomeProductListLoadState = HomeProductListLoadState.Loaded,
-    hasCartItems: Boolean = false,
+    cartItemCount: Int = 0,
 ) {
     YVStoreTheme {
         HomeProductListScreen(
             products = products,
             loadState = loadState,
-            hasCartItems = hasCartItems,
+            cartItemCount = cartItemCount,
             promoTitle = "Clearance Sales",
             promoDiscountText = "Up to 50%",
             promoImageUrl = "https://picsum.photos/seed/promo/200/200",

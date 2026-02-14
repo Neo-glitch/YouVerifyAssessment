@@ -35,7 +35,7 @@ fun YVStorePrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     loading: Boolean = false,
-    textStyle: TextStyle = MaterialTheme.typography.bodyLarge.copy(
+    textStyle: TextStyle = MaterialTheme.typography.labelMedium.copy(
         fontSize = 18.sp,
     ),
     shape: Shape = RoundedCornerShape(12.dp),
@@ -87,7 +87,7 @@ fun YVStoreSecondaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     loading: Boolean = false,
-    textStyle: TextStyle = MaterialTheme.typography.bodyLarge.copy(
+    textStyle: TextStyle = MaterialTheme.typography.labelMedium.copy(
         fontSize = 18.sp,
     ),
     shape: Shape = RoundedCornerShape(12.dp),

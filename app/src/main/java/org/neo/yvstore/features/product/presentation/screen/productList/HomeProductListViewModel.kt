@@ -50,7 +50,7 @@ class HomeProductListViewModel(
             observeCartItemCountUseCase().collect { resource ->
                 resource.onSuccess { count ->
                     _uiState.update {
-                        it.copy(hasCartItems = count > 0)
+                        it.copy(cartItemCount = count)
                     }
                 }
             }

@@ -5,7 +5,7 @@ import org.neo.yvstore.features.product.presentation.model.ProductItemUi
 data class HomeProductListUiState(
     val products: List<ProductItemUi> = emptyList(),
     val loadState: HomeProductListLoadState = HomeProductListLoadState.Loading,
-    val hasCartItems: Boolean = false,
+    val cartItemCount: Int = 0,
 )
 
 sealed class HomeProductListLoadState {

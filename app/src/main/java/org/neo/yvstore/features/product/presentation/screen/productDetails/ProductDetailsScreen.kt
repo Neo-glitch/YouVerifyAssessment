@@ -2,8 +2,6 @@ package org.neo.yvstore.features.product.presentation.screen.productDetails
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -31,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +37,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
-import org.neo.yvstore.core.ui.component.button.YVStorePrimaryButton
 import org.neo.yvstore.core.ui.component.card.BottomFrameCard
 import org.neo.yvstore.core.ui.component.dialog.YVStoreErrorDialog
 import org.neo.yvstore.core.ui.component.divider.YVStoreHorizontalDivider
@@ -49,6 +44,7 @@ import org.neo.yvstore.core.ui.component.navigation.YVStoreTopBar
 import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.core.ui.util.ObserveAsEvents
+import org.neo.yvstore.features.product.presentation.screen.productDetails.component.AddToCartButton
 import org.neo.yvstore.features.product.presentation.model.ProductDetailsUi
 import kotlin.math.roundToInt
 
@@ -345,82 +341,12 @@ private fun CartActionBar(
             }
         }
 
-        AnimatedContent(
-            targetState = quantity == 0,
-            label = "cart_action_animation"
-        ) { showAddToCartButton ->
-            if (showAddToCartButton) {
-                YVStorePrimaryButton(
-                    text = "Add to Cart",
-                    onClick = onAddToCart,
-                )
-            } else {
-                QuantitySelector(
-                    quantity = quantity,
-                    onIncrement = onIncrementQuantity,
-                    onDecrement = onDecrementQuantity,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun QuantitySelector(
-    quantity: Int,
-    onIncrement: () -> Unit,
-    onDecrement: () -> Unit,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = CircleShape,
-                )
-                .clickable(onClick = onDecrement),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "−",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                ),
-            )
-        }
-
-        Text(
-            text = quantity.toString(),
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Bold,
-            ),
+        AddToCartButton(
+            quantity = quantity,
+            onAddToCart = onAddToCart,
+            onIncrementQuantity = onIncrementQuantity,
+            onDecrementQuantity = onDecrementQuantity,
         )
-
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape,
-                )
-                .clickable(onClick = onIncrement),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "+",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                ),
-            )
-        }
     }
 }
 

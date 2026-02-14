@@ -42,6 +42,7 @@ import org.neo.yvstore.core.ui.component.dialog.DefaultDialogDescription
 import org.neo.yvstore.core.ui.component.dialog.YVStoreActionDialog
 import org.neo.yvstore.core.ui.component.divider.YVStoreHorizontalDivider
 import org.neo.yvstore.core.ui.component.navigation.YVStoreTopBar
+import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
 import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.features.cart.presentation.model.CartItemUi
@@ -59,7 +60,7 @@ fun CartScreen(
         subtotal = uiState.formattedSubtotal,
         deliveryFee = uiState.formattedDeliveryFee,
         total = uiState.formattedTotal,
-        isEmpty = uiState.isEmpty,
+        loadState = uiState.loadState,
         showClearCartDialog = uiState.showClearCartDialog,
         onNavigateBack = onNavigateBack,
         onCheckout = onCheckout,
@@ -78,13 +79,13 @@ private fun CartScreen(
     subtotal: String,
     deliveryFee: String,
     total: String,
-    isEmpty: Boolean,
+    loadState: CartScreenLoadState,
     showClearCartDialog: Boolean,
     onNavigateBack: () -> Unit,
     onCheckout: () -> Unit,
-    onIncrementQuantity: (String) -> Unit,
-    onDecrementQuantity: (String) -> Unit,
-    onRemoveItem: (String) -> Unit,
+    onIncrementQuantity: (Long) -> Unit,
+    onDecrementQuantity: (Long) -> Unit,
+    onRemoveItem: (Long) -> Unit,
     onShowClearCartDialog: () -> Unit,
     onDismissClearCartDialog: () -> Unit,
     onConfirmClearCart: () -> Unit,
@@ -96,7 +97,7 @@ private fun CartScreen(
                 onNavigationClick = onNavigateBack,
                 isCenteredAligned = true,
                 actions = {
-                    if (!isEmpty) {
+                    if (cartItems.isNotEmpty()) {
                         IconButton(onClick = onShowClearCartDialog) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_delete),
@@ -109,7 +110,7 @@ private fun CartScreen(
             )
         },
         bottomBar = {
-            if (!isEmpty) {
+            if (cartItems.isNotEmpty()) {
                 BottomFrameCard {
                     YVStorePrimaryButton(
                         text = "Checkout",
@@ -122,24 +123,46 @@ private fun CartScreen(
             }
         }
     ) { paddingValues ->
-        if (isEmpty) {
-            YVStoreEmptyErrorStateView(
-                image = R.drawable.ic_empty_cart,
-                title = "Your cart is empty",
-                description = "Add items to your cart to see them here",
-                modifier = Modifier.padding(paddingValues),
-            )
-        } else {
-            CartContentList(
-                cartItems = cartItems,
-                subtotal = subtotal,
-                deliveryFee = deliveryFee,
-                total = total,
-                onIncrementQuantity = onIncrementQuantity,
-                onDecrementQuantity = onDecrementQuantity,
-                onRemoveItem = onRemoveItem,
-                paddingValues = paddingValues,
-            )
+        when (loadState) {
+            is CartScreenLoadState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    YVStoreCircleProgressIndicator(size = 48.dp)
+                }
+            }
+            is CartScreenLoadState.Error -> {
+                YVStoreEmptyErrorStateView(
+                    image = R.drawable.ic_empty_cart,
+                    title = "Error loading cart",
+                    description = loadState.message,
+                    modifier = Modifier.padding(paddingValues),
+                )
+            }
+            is CartScreenLoadState.Loaded -> {
+                if (cartItems.isEmpty()) {
+                    YVStoreEmptyErrorStateView(
+                        image = R.drawable.ic_empty_cart,
+                        title = "Your cart is empty",
+                        description = "Add items to your cart to see them here",
+                        modifier = Modifier.padding(paddingValues),
+                    )
+                } else {
+                    CartContentList(
+                        cartItems = cartItems,
+                        subtotal = subtotal,
+                        deliveryFee = deliveryFee,
+                        total = total,
+                        onIncrementQuantity = onIncrementQuantity,
+                        onDecrementQuantity = onDecrementQuantity,
+                        onRemoveItem = onRemoveItem,
+                        paddingValues = paddingValues,
+                    )
+                }
+            }
         }
     }
 
@@ -156,9 +179,9 @@ private fun CartContentList(
     subtotal: String,
     deliveryFee: String,
     total: String,
-    onIncrementQuantity: (String) -> Unit,
-    onDecrementQuantity: (String) -> Unit,
-    onRemoveItem: (String) -> Unit,
+    onIncrementQuantity: (Long) -> Unit,
+    onDecrementQuantity: (Long) -> Unit,
+    onRemoveItem: (Long) -> Unit,
     paddingValues: androidx.compose.foundation.layout.PaddingValues,
 ) {
     LazyColumn(
@@ -262,14 +285,6 @@ private fun CartItemRow(
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                         ),
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = item.variantLabel,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -431,17 +446,15 @@ private fun CartScreenPopulatedPreview() {
         CartScreen(
             cartItems = listOf(
                 CartItemUi(
-                    id = "1",
+                    id = 1L,
                     name = "Xbox series X",
-                    variantLabel = "1 TB",
                     price = 570.0,
                     imageUrl = "https://picsum.photos/seed/xbox/400/400",
                     quantity = 1,
                 ),
                 CartItemUi(
-                    id = "2",
+                    id = 2L,
                     name = "PlayStation 5",
-                    variantLabel = "Standard Edition",
                     price = 499.99,
                     imageUrl = "https://picsum.photos/seed/ps5/400/400",
                     quantity = 1,
@@ -450,7 +463,7 @@ private fun CartScreenPopulatedPreview() {
             subtotal = "$1,069.99",
             deliveryFee = "$5.00",
             total = "$1,074.99",
-            isEmpty = false,
+            loadState = CartScreenLoadState.Loaded,
             showClearCartDialog = false,
             onNavigateBack = {},
             onCheckout = {},
@@ -473,7 +486,7 @@ private fun CartScreenEmptyPreview() {
             subtotal = "$0.00",
             deliveryFee = "$5.00",
             total = "$5.00",
-            isEmpty = true,
+            loadState = CartScreenLoadState.Loaded,
             showClearCartDialog = false,
             onNavigateBack = {},
             onCheckout = {},
@@ -494,9 +507,8 @@ private fun CartScreenClearDialogPreview() {
         CartScreen(
             cartItems = listOf(
                 CartItemUi(
-                    id = "1",
+                    id = 1L,
                     name = "Xbox series X",
-                    variantLabel = "1 TB",
                     price = 570.0,
                     imageUrl = "https://picsum.photos/seed/xbox/400/400",
                     quantity = 1,
@@ -505,7 +517,7 @@ private fun CartScreenClearDialogPreview() {
             subtotal = "$570.00",
             deliveryFee = "$5.00",
             total = "$575.00",
-            isEmpty = false,
+            loadState = CartScreenLoadState.Loaded,
             showClearCartDialog = true,
             onNavigateBack = {},
             onCheckout = {},
