@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.button.YVStorePrimaryButton
+import org.neo.yvstore.core.ui.component.card.BottomFrameCard
 import org.neo.yvstore.core.ui.component.dialog.YVStoreErrorDialog
 import org.neo.yvstore.core.ui.component.input.YVStoreTextInput
 import org.neo.yvstore.core.ui.component.navigation.YVStoreTopBar
@@ -91,110 +92,166 @@ private fun AddAddressScreen(
                 onNavigationClick = onNavigateBack,
                 isCenteredAligned = true
             )
+        },
+        bottomBar = {
+            BottomFrameCard {
+                YVStorePrimaryButton(
+                    text = "Save Address",
+                    onClick = onSave,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    loading = isSaving,
+                    enabled = uiState.isFormValid && !isSaving,
+                )
+            }
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
+                .padding(16.dp)
                 .imePadding()
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Enter delivery address",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            AddAddressHeader()
 
             Spacer(modifier = Modifier.height(20.dp))
-
-            YVStoreTextInput(
-                value = uiState.streetAddress.value,
+            StreetAddressField(
+                fieldState = uiState.streetAddress,
                 onValueChange = onStreetAddressChange,
-                onFocusChange = { isFocused ->
-                    if (!isFocused) onStreetAddressBlur()
-                },
-                placeholder = "Street address",
-                label = "Street Address",
-                error = uiState.streetAddress.errorMsg,
-                showError = uiState.streetAddress.errorMsg != null,
-                keyboardType = KeyboardType.Text,
-                capitalization = KeyboardCapitalization.Words,
-                imeAction = ImeAction.Next,
-                enabled = !isSaving
+                onBlur = onStreetAddressBlur,
+                enabled = !isSaving,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            YVStoreTextInput(
-                value = uiState.city.value,
+            CityField(
+                fieldState = uiState.city,
                 onValueChange = onCityChange,
-                onFocusChange = { isFocused ->
-                    if (!isFocused) onCityBlur()
-                },
-                placeholder = "City",
-                label = "City",
-                error = uiState.city.errorMsg,
-                showError = uiState.city.errorMsg != null,
-                keyboardType = KeyboardType.Text,
-                capitalization = KeyboardCapitalization.Words,
-                imeAction = ImeAction.Next,
-                enabled = !isSaving
+                onBlur = onCityBlur,
+                enabled = !isSaving,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            YVStoreTextInput(
-                value = uiState.state.value,
+            StateField(
+                fieldState = uiState.state,
                 onValueChange = onStateChange,
-                onFocusChange = { isFocused ->
-                    if (!isFocused) onStateBlur()
-                },
-                placeholder = "State",
-                label = "State",
-                error = uiState.state.errorMsg,
-                showError = uiState.state.errorMsg != null,
-                keyboardType = KeyboardType.Text,
-                capitalization = KeyboardCapitalization.Words,
-                imeAction = ImeAction.Next,
-                enabled = !isSaving
+                onBlur = onStateBlur,
+                enabled = !isSaving,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            YVStoreTextInput(
-                value = uiState.country.value,
+            CountryField(
+                fieldState = uiState.country,
                 onValueChange = onCountryChange,
-                onFocusChange = { isFocused ->
-                    if (!isFocused) onCountryBlur()
-                },
-                placeholder = "Country",
-                label = "Country",
-                error = uiState.country.errorMsg,
-                showError = uiState.country.errorMsg != null,
-                keyboardType = KeyboardType.Text,
-                capitalization = KeyboardCapitalization.Words,
-                imeAction = ImeAction.Done,
-                onDoneClick = { if (uiState.isFormValid && !isSaving) onSave() },
-                enabled = !isSaving
+                onBlur = onCountryBlur,
+                isFormValid = uiState.isFormValid,
+                isSaving = isSaving,
+                onSave = onSave,
             )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            YVStorePrimaryButton(
-                text = "Save Address",
-                onClick = onSave,
-                modifier = Modifier.fillMaxWidth(),
-                loading = isSaving,
-                enabled = uiState.isFormValid && !isSaving,
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
+}
+
+@Composable
+private fun AddAddressHeader() {
+    Text(
+        text = "Enter delivery address",
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
+@Composable
+private fun StreetAddressField(
+    fieldState: TextInputFieldState,
+    onValueChange: (String) -> Unit,
+    onBlur: () -> Unit,
+    enabled: Boolean,
+) {
+    YVStoreTextInput(
+        value = fieldState.value,
+        onValueChange = onValueChange,
+        onFocusChange = { isFocused -> if (!isFocused) onBlur() },
+        placeholder = "Street address",
+        label = "Street Address",
+        error = fieldState.errorMsg,
+        showError = fieldState.errorMsg != null,
+        keyboardType = KeyboardType.Text,
+        capitalization = KeyboardCapitalization.Words,
+        imeAction = ImeAction.Next,
+        enabled = enabled
+    )
+}
+
+@Composable
+private fun CityField(
+    fieldState: TextInputFieldState,
+    onValueChange: (String) -> Unit,
+    onBlur: () -> Unit,
+    enabled: Boolean,
+) {
+    YVStoreTextInput(
+        value = fieldState.value,
+        onValueChange = onValueChange,
+        onFocusChange = { isFocused -> if (!isFocused) onBlur() },
+        placeholder = "City",
+        label = "City",
+        error = fieldState.errorMsg,
+        showError = fieldState.errorMsg != null,
+        keyboardType = KeyboardType.Text,
+        capitalization = KeyboardCapitalization.Words,
+        imeAction = ImeAction.Next,
+        enabled = enabled
+    )
+}
+
+@Composable
+private fun StateField(
+    fieldState: TextInputFieldState,
+    onValueChange: (String) -> Unit,
+    onBlur: () -> Unit,
+    enabled: Boolean,
+) {
+    YVStoreTextInput(
+        value = fieldState.value,
+        onValueChange = onValueChange,
+        onFocusChange = { isFocused -> if (!isFocused) onBlur() },
+        placeholder = "State",
+        label = "State",
+        error = fieldState.errorMsg,
+        showError = fieldState.errorMsg != null,
+        keyboardType = KeyboardType.Text,
+        capitalization = KeyboardCapitalization.Words,
+        imeAction = ImeAction.Next,
+        enabled = enabled
+    )
+}
+
+@Composable
+private fun CountryField(
+    fieldState: TextInputFieldState,
+    onValueChange: (String) -> Unit,
+    onBlur: () -> Unit,
+    isFormValid: Boolean,
+    isSaving: Boolean,
+    onSave: () -> Unit,
+) {
+    YVStoreTextInput(
+        value = fieldState.value,
+        onValueChange = onValueChange,
+        onFocusChange = { isFocused -> if (!isFocused) onBlur() },
+        placeholder = "Country",
+        label = "Country",
+        error = fieldState.errorMsg,
+        showError = fieldState.errorMsg != null,
+        keyboardType = KeyboardType.Text,
+        capitalization = KeyboardCapitalization.Words,
+        imeAction = ImeAction.Done,
+        onDoneClick = { if (isFormValid && !isSaving) onSave() },
+        enabled = !isSaving
+    )
 }
 
 @Preview(showBackground = true)
