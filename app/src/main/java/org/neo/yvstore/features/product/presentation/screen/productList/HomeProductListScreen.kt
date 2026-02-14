@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -104,66 +103,100 @@ private fun HomeProductListScreen(
                 onClick = onNavigateToSearch,
             )
 
-            // Show loading or error state when products list is empty
             if (products.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    when (loadState) {
-                        ProductListLoadState.Loading -> {
-                            YVStoreCircleProgressIndicator(size = 48.dp)
-                        }
-                        is ProductListLoadState.Error -> {
-                            YVStoreEmptyErrorStateView(
-                                image = android.R.drawable.ic_dialog_alert,
-                                title = "Unable to Load Products",
-                                description = loadState.message,
-                            )
-                        }
-                        ProductListLoadState.Loaded -> {
-                            // Empty state with loaded status (no products available)
-                            YVStoreEmptyErrorStateView(
-                                image = android.R.drawable.ic_dialog_info,
-                                title = "No Products Available",
-                                description = "Check back later for new products.",
-                            )
-                        }
-                    }
-                }
+                EmptyStateContent(
+                    loadState = loadState,
+                    modifier = Modifier.weight(1f),
+                )
             } else {
-                // Show content when products are available
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState()),
-                ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    PromoBanner(
-                        title = promoTitle,
-                        discountText = promoDiscountText,
-                        imageUrl = promoImageUrl,
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-                    ProductsSectionHeader(
-                        title = "Products",
-                        onViewAllClick = onViewAllClick,
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                    ProductsGrid(
-                        products = products,
-                        onProductClick = onNavigateToProductDetails,
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+                ProductListContent(
+                    products = products,
+                    promoTitle = promoTitle,
+                    promoDiscountText = promoDiscountText,
+                    promoImageUrl = promoImageUrl,
+                    onNavigateToProductDetails = onNavigateToProductDetails,
+                    onViewAllClick = onViewAllClick,
+                    modifier = Modifier.weight(1f),
+                )
             }
         }
     }
+}
+
+@Composable
+private fun EmptyStateContent(
+    loadState: ProductListLoadState,
+    modifier: Modifier = Modifier,
+) {
+    CenteredContent(modifier = modifier) {
+        when (loadState) {
+            ProductListLoadState.Loading -> {
+                YVStoreCircleProgressIndicator(size = 48.dp)
+            }
+            is ProductListLoadState.Error -> {
+                YVStoreEmptyErrorStateView(
+                    image = android.R.drawable.ic_dialog_alert,
+                    title = "Unable to Load Products",
+                    description = loadState.message,
+                )
+            }
+            ProductListLoadState.Loaded -> {
+                YVStoreEmptyErrorStateView(
+                    image = android.R.drawable.ic_dialog_info,
+                    title = "No Products Available",
+                    description = "Check back later for new products.",
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProductListContent(
+    products: List<ProductItemUi>,
+    promoTitle: String,
+    promoDiscountText: String,
+    promoImageUrl: String,
+    onNavigateToProductDetails: (String) -> Unit,
+    onViewAllClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.verticalScroll(rememberScrollState()),
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        PromoBanner(
+            title = promoTitle,
+            discountText = promoDiscountText,
+            imageUrl = promoImageUrl,
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+        ProductsSectionHeader(
+            title = "Products",
+            onViewAllClick = onViewAllClick,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+        ProductsGrid(
+            products = products,
+            onProductClick = onNavigateToProductDetails,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun CenteredContent(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center,
+        content = { content() },
+    )
 }
 
 @Composable
@@ -236,133 +269,56 @@ private fun ProductsGrid(
 }
 
 private val placeholderProducts = listOf(
-    ProductItemUi(
-        id = "1",
-        name = "Wireless Headphones",
-        price = "$89.99",
-        imageUrl = "https://picsum.photos/seed/headphones/400/400",
-    ),
-    ProductItemUi(
-        id = "2",
-        name = "Smart Watch",
-        price = "$199.99",
-        imageUrl = "https://picsum.photos/seed/watch/400/400",
-    ),
-    ProductItemUi(
-        id = "3",
-        name = "Laptop Stand",
-        price = "$45.00",
-        imageUrl = "https://picsum.photos/seed/stand/400/400",
-    ),
-    ProductItemUi(
-        id = "4",
-        name = "USB-C Hub",
-        price = "$29.99",
-        imageUrl = "https://picsum.photos/seed/hub/400/400",
-    ),
-    ProductItemUi(
-        id = "5",
-        name = "Mechanical Keyboard",
-        price = "$129.99",
-        imageUrl = "https://picsum.photos/seed/keyboard/400/400",
-    ),
-    ProductItemUi(
-        id = "6",
-        name = "Wireless Mouse",
-        price = "$39.99",
-        imageUrl = "https://picsum.photos/seed/mouse/400/400",
-    ),
-    ProductItemUi(
-        id = "7",
-        name = "Phone Case",
-        price = "$19.99",
-        imageUrl = "https://picsum.photos/seed/case/400/400",
-    ),
-    ProductItemUi(
-        id = "8",
-        name = "Portable Charger",
-        price = "$34.99",
-        imageUrl = "https://picsum.photos/seed/charger/400/400",
-    ),
-    ProductItemUi(
-        id = "9",
-        name = "Bluetooth Speaker",
-        price = "$59.99",
-        imageUrl = "https://picsum.photos/seed/speaker/400/400",
-    ),
-    ProductItemUi(
-        id = "10",
-        name = "Webcam HD",
-        price = "$79.99",
-        imageUrl = "https://picsum.photos/seed/webcam/400/400",
-    ),
+    ProductItemUi(id = "1", name = "Wireless Headphones", price = "$89.99", imageUrl = "https://picsum.photos/seed/headphones/400/400"),
+    ProductItemUi(id = "2", name = "Smart Watch", price = "$199.99", imageUrl = "https://picsum.photos/seed/watch/400/400"),
+    ProductItemUi(id = "3", name = "Laptop Stand", price = "$45.00", imageUrl = "https://picsum.photos/seed/stand/400/400"),
+    ProductItemUi(id = "4", name = "USB-C Hub", price = "$29.99", imageUrl = "https://picsum.photos/seed/hub/400/400"),
+    ProductItemUi(id = "5", name = "Mechanical Keyboard", price = "$129.99", imageUrl = "https://picsum.photos/seed/keyboard/400/400"),
+    ProductItemUi(id = "6", name = "Wireless Mouse", price = "$39.99", imageUrl = "https://picsum.photos/seed/mouse/400/400"),
+    ProductItemUi(id = "7", name = "Phone Case", price = "$19.99", imageUrl = "https://picsum.photos/seed/case/400/400"),
+    ProductItemUi(id = "8", name = "Portable Charger", price = "$34.99", imageUrl = "https://picsum.photos/seed/charger/400/400"),
+    ProductItemUi(id = "9", name = "Bluetooth Speaker", price = "$59.99", imageUrl = "https://picsum.photos/seed/speaker/400/400"),
+    ProductItemUi(id = "10", name = "Webcam HD", price = "$79.99", imageUrl = "https://picsum.photos/seed/webcam/400/400"),
 )
 
 @Preview(showBackground = true)
 @Composable
 private fun HomeProductListScreenPreview() {
-    YVStoreTheme {
-        HomeProductListScreen(
-            products = placeholderProducts,
-            loadState = ProductListLoadState.Loaded,
-            hasCartItems = false,
-            promoTitle = "Clearance Sales",
-            promoDiscountText = "Up to 50%",
-            promoImageUrl = "https://picsum.photos/seed/promo/200/200",
-            onNavigateToCart = {},
-            onNavigateToSearch = {},
-            onNavigateToProductDetails = {},
-            onViewAllClick = {},
-        )
-    }
+    PreviewContent(products = placeholderProducts)
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun HomeProductListScreenWithCartItemsPreview() {
-    YVStoreTheme {
-        HomeProductListScreen(
-            products = placeholderProducts,
-            loadState = ProductListLoadState.Loaded,
-            hasCartItems = true,
-            promoTitle = "Clearance Sales",
-            promoDiscountText = "Up to 50%",
-            promoImageUrl = "https://picsum.photos/seed/promo/200/200",
-            onNavigateToCart = {},
-            onNavigateToSearch = {},
-            onNavigateToProductDetails = {},
-            onViewAllClick = {},
-        )
-    }
+    PreviewContent(products = placeholderProducts, hasCartItems = true)
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun HomeProductListScreenLoadingPreview() {
-    YVStoreTheme {
-        HomeProductListScreen(
-            products = emptyList(),
-            loadState = ProductListLoadState.Loading,
-            hasCartItems = false,
-            promoTitle = "Clearance Sales",
-            promoDiscountText = "Up to 50%",
-            promoImageUrl = "https://picsum.photos/seed/promo/200/200",
-            onNavigateToCart = {},
-            onNavigateToSearch = {},
-            onNavigateToProductDetails = {},
-            onViewAllClick = {},
-        )
-    }
+    PreviewContent(products = emptyList(), loadState = ProductListLoadState.Loading)
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun HomeProductListScreenErrorPreview() {
+    PreviewContent(
+        products = emptyList(),
+        loadState = ProductListLoadState.Error("Failed to load products. Please check your internet connection."),
+    )
+}
+
+@Composable
+private fun PreviewContent(
+    products: List<ProductItemUi> = placeholderProducts,
+    loadState: ProductListLoadState = ProductListLoadState.Loaded,
+    hasCartItems: Boolean = false,
+) {
     YVStoreTheme {
         HomeProductListScreen(
-            products = emptyList(),
-            loadState = ProductListLoadState.Error("Failed to load products. Please check your internet connection."),
-            hasCartItems = false,
+            products = products,
+            loadState = loadState,
+            hasCartItems = hasCartItems,
             promoTitle = "Clearance Sales",
             promoDiscountText = "Up to 50%",
             promoImageUrl = "https://picsum.photos/seed/promo/200/200",
