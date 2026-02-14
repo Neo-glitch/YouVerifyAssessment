@@ -11,8 +11,10 @@ val databaseModule = module {
             androidContext(),
             YVStoreDatabase::class.java,
             "yvstore_database"
-        ).build()
+        ).fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     }
 
     single { get<YVStoreDatabase>().productDao() }
+    single { get<YVStoreDatabase>().cartItemDao() }
 }

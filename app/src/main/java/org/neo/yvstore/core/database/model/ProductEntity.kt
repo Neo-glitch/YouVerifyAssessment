@@ -1,4 +1,4 @@
-package org.neo.yvstore.features.product.data.datasource.local
+package org.neo.yvstore.core.database.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
