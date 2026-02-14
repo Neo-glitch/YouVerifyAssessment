@@ -10,6 +10,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import org.neo.yvstore.features.address.presentation.screen.addAddress.AddAddressScreen
+import org.neo.yvstore.features.address.presentation.screen.addressList.AddressListScreen
 import org.neo.yvstore.features.cart.presentation.screen.CartScreen
 import org.neo.yvstore.features.product.presentation.screen.allProductList.AllProductListScreen
 import org.neo.yvstore.features.product.presentation.screen.productDetails.ProductDetailsScreen
@@ -77,7 +79,26 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                     navController.popBackStack()
                 },
                 onCheckout = {
-                    // TODO: Implement checkout navigation
+                    navController.navigate(MainGraphRoute.AddressListScreen)
+                }
+            )
+        }
+
+        composable<MainGraphRoute.AddressListScreen> {
+            AddressListScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onAddAddress = {
+                    navController.navigate(MainGraphRoute.AddAddressScreen)
+                }
+            )
+        }
+
+        composable<MainGraphRoute.AddAddressScreen> {
+            AddAddressScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }

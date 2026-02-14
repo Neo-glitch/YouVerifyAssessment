@@ -17,4 +17,5 @@ val databaseModule = module {
 
     single { get<YVStoreDatabase>().productDao() }
     single { get<YVStoreDatabase>().cartItemDao() }
+    single { get<YVStoreDatabase>().addressDao() }
 }

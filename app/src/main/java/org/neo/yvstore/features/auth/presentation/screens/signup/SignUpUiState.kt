@@ -5,14 +5,10 @@ import org.neo.yvstore.core.domain.validator.NameValidator.isValidName
 import org.neo.yvstore.core.domain.validator.PasswordValidator.isValidPassword
 import org.neo.yvstore.core.ui.model.TextInputFieldState
 
-sealed interface SignUpState {
-    data object Idle : SignUpState
-    data object Loading : SignUpState
-    data class Error(val message: String) : SignUpState
-}
-
-sealed interface SignUpEvent {
-    data class Success(val message: String) : SignUpEvent
+sealed interface SignUpLoadState {
+    data object Idle : SignUpLoadState
+    data object Loading : SignUpLoadState
+    data class Error(val message: String) : SignUpLoadState
 }
 
 data class SignUpUiState(
@@ -23,7 +19,7 @@ data class SignUpUiState(
     val confirmPassword: TextInputFieldState = TextInputFieldState(),
     val isPasswordVisible: Boolean = false,
     val isConfirmPasswordVisible: Boolean = false,
-    val signUpState: SignUpState = SignUpState.Idle,
+    val loadState: SignUpLoadState = SignUpLoadState.Idle,
 ) {
     val areAllInputsValid: Boolean
         get() = email.value.isValidEmail() &&

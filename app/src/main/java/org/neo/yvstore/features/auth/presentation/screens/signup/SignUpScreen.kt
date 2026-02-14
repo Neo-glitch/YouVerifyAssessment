@@ -64,10 +64,10 @@ fun SignUpScreen(
         }
     }
 
-    if (uiState.signUpState is SignUpState.Error) {
+    if (uiState.loadState is SignUpLoadState.Error) {
         YVStoreErrorDialog(
             title = "Sign Up Failed",
-            description = (uiState.signUpState as SignUpState.Error).message,
+            description = (uiState.loadState as SignUpLoadState.Error).message,
             onDismiss = viewModel::dismissError,
             onPrimaryButtonClick = viewModel::dismissError,
             primaryButtonText = "OK",
@@ -140,7 +140,7 @@ private fun SignUpScreen(
                 lastNameError = uiState.lastName.errorMsg,
                 passwordError = uiState.password.errorMsg,
                 confirmPasswordError = uiState.confirmPassword.errorMsg,
-                enabled = uiState.signUpState !is SignUpState.Loading,
+                enabled = uiState.loadState !is SignUpLoadState.Loading,
                 onEmailChange = onEmailChange,
                 onEmailBlur = onEmailBlur,
                 onFirstNameChange = onFirstNameChange,
@@ -157,7 +157,7 @@ private fun SignUpScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
             SignUpButton(
-                isLoading = uiState.signUpState is SignUpState.Loading,
+                isLoading = uiState.loadState is SignUpLoadState.Loading,
                 enabled = uiState.areAllInputsValid,
                 onClick = onSignUpClick,
             )

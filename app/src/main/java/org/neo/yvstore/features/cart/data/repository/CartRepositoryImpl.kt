@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import org.neo.yvstore.core.common.util.ExceptionHandler
-import org.neo.yvstore.core.data.mapper.toCartItem
+import org.neo.yvstore.features.cart.data.mapper.toCartItem
 import org.neo.yvstore.core.database.dao.CartItemDao
 import org.neo.yvstore.core.database.model.CartItemEntity
 import org.neo.yvstore.core.domain.model.CartItem

@@ -23,4 +23,10 @@ sealed interface MainGraphRoute {
 
     @Serializable
     data class ProductDetailsScreen(val productId: String) : MainGraphRoute
+
+    @Serializable
+    data object AddressListScreen : MainGraphRoute
+
+    @Serializable
+    data object AddAddressScreen : MainGraphRoute
 }

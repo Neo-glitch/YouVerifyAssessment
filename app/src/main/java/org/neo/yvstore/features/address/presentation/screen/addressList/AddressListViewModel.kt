@@ -1,0 +1,91 @@
+package org.neo.yvstore.features.address.presentation.screen.addressList
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import org.neo.yvstore.features.address.domain.usecase.DeleteAddressUseCase
+import org.neo.yvstore.features.address.domain.usecase.GetAddressesUseCase
+import org.neo.yvstore.features.address.domain.usecase.RefreshAddressesUseCase
+import org.neo.yvstore.features.address.presentation.model.AddressUi
+import org.neo.yvstore.features.address.presentation.model.toAddressUi
+
+class AddressListViewModel(
+    private val getAddressesUseCase: GetAddressesUseCase,
+    private val deleteAddressUseCase: DeleteAddressUseCase,
+    private val refreshAddressesUseCase: RefreshAddressesUseCase
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(AddressListUiState())
+    val uiState: StateFlow<AddressListUiState> = _uiState.asStateFlow()
+
+    private var pendingDeleteAddress: AddressUi? = null
+
+    init {
+        observeAddresses()
+        refreshAddresses()
+    }
+
+    private fun observeAddresses() {
+        viewModelScope.launch {
+            getAddressesUseCase().collect { resource ->
+                resource.onSuccess { addresses ->
+                    val allAddresses = addresses.map { address -> address.toAddressUi() }
+                    val pending = pendingDeleteAddress
+                    _uiState.update {
+                        it.copy(
+                            addresses = if (pending != null) {
+                                allAddresses.filter { address -> address.id != pending.id }
+                            } else {
+                                allAddresses
+                            },
+                            loadState = AddressListLoadState.Loaded
+                        )
+                    }
+                }.onError { message ->
+                    _uiState.update {
+                        it.copy(loadState = AddressListLoadState.Error(message))
+                    }
+                }
+            }
+        }
+    }
+
+    private fun refreshAddresses() {
+        viewModelScope.launch {
+            refreshAddressesUseCase()
+        }
+    }
+
+    fun onDeleteAddress(address: AddressUi) {
+        pendingDeleteAddress = address
+        _uiState.update {
+            it.copy(
+                addresses = it.addresses.filter { item -> item.id != address.id },
+                deleteError = null
+            )
+        }
+
+        viewModelScope.launch {
+            val result = deleteAddressUseCase(address.id)
+            result.onSuccess {
+                pendingDeleteAddress = null
+            }.onError { message ->
+                pendingDeleteAddress = null
+                _uiState.update {
+                    it.copy(
+                        addresses = (it.addresses + address).sortedBy { item -> item.id },
+                        deleteError = message
+                    )
+                }
+            }
+        }
+    }
+
+    fun onDismissDeleteError() {
+        _uiState.update { it.copy(deleteError = null) }
+    }
+}

@@ -112,13 +112,23 @@ private fun CartScreen(
         bottomBar = {
             if (cartItems.isNotEmpty()) {
                 BottomFrameCard {
-                    YVStorePrimaryButton(
-                        text = "Checkout",
-                        onClick = onCheckout,
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                    )
+                    ) {
+                        OrderSummary(
+                            subtotal = subtotal,
+                            deliveryFee = deliveryFee,
+                            total = total,
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        YVStorePrimaryButton(
+                            text = "Checkout",
+                            onClick = onCheckout,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                 }
             }
         }
@@ -210,11 +220,6 @@ private fun CartContentList(
         }
 
         item {
-            OrderSummary(
-                subtotal = subtotal,
-                deliveryFee = deliveryFee,
-                total = total,
-            )
             Spacer(modifier = Modifier.height(16.dp))
         }
     }

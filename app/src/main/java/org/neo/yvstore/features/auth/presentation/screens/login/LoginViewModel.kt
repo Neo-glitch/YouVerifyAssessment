@@ -86,7 +86,7 @@ class LoginViewModel(
     }
 
     fun dismissError() {
-        _uiState.update { it.copy(loginState = LoginState.Idle) }
+        _uiState.update { it.copy(loadState = LoginLoadState.Idle) }
     }
 
     fun togglePasswordVisibility() {
@@ -97,7 +97,7 @@ class LoginViewModel(
         if (!_uiState.value.areAllInputsValid) return
 
         viewModelScope.launch {
-            _uiState.update { it.copy(loginState = LoginState.Loading) }
+            _uiState.update { it.copy(loadState = LoginLoadState.Loading) }
 
             val result = loginUseCase(
                 email = _uiState.value.email.value,
@@ -110,7 +110,7 @@ class LoginViewModel(
                     userManager.saveUser(result.data)
                 }
                 is Resource.Error -> {
-                    _uiState.update { it.copy(loginState = LoginState.Error(result.message)) }
+                    _uiState.update { it.copy(loadState = LoginLoadState.Error(result.message)) }
                 }
             }
         }

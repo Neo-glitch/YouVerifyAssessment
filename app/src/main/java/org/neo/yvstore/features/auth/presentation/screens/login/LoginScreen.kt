@@ -57,10 +57,10 @@ fun LoginScreen(
         }
     }
 
-    if (uiState.loginState is LoginState.Error) {
+    if (uiState.loadState is LoginLoadState.Error) {
         YVStoreErrorDialog(
             title = "Login Failed",
-            description = (uiState.loginState as LoginState.Error).message,
+            description = (uiState.loadState as LoginLoadState.Error).message,
             onDismiss = viewModel::dismissError,
             onPrimaryButtonClick = viewModel::dismissError,
             primaryButtonText = "OK",
@@ -111,7 +111,7 @@ private fun LoginScreen(
                 isPasswordVisible = uiState.isPasswordVisible,
                 emailError = uiState.email.errorMsg,
                 passwordError = uiState.password.errorMsg,
-                enabled = uiState.loginState !is LoginState.Loading,
+                enabled = uiState.loadState !is LoginLoadState.Loading,
                 onEmailChange = onEmailChange,
                 onEmailBlur = onEmailBlur,
                 onPasswordChange = onPasswordChange,
@@ -121,7 +121,7 @@ private fun LoginScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
             LoginButton(
-                isLoading = uiState.loginState is LoginState.Loading,
+                isLoading = uiState.loadState is LoginLoadState.Loading,
                 enabled = uiState.areAllInputsValid,
                 onClick = onLoginClick,
             )

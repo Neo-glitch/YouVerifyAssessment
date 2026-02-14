@@ -188,7 +188,7 @@ class SignUpViewModel(
     }
 
     fun dismissError() {
-        _uiState.update { it.copy(signUpState = SignUpState.Idle) }
+        _uiState.update { it.copy(loadState = SignUpLoadState.Idle) }
     }
 
     fun togglePasswordVisibility() {
@@ -203,7 +203,7 @@ class SignUpViewModel(
         if (!_uiState.value.areAllInputsValid) return
 
         viewModelScope.launch {
-            _uiState.update { it.copy(signUpState = SignUpState.Loading) }
+            _uiState.update { it.copy(loadState = SignUpLoadState.Loading) }
 
             val result = signUpUseCase(
                 email = _uiState.value.email.value,
@@ -217,7 +217,7 @@ class SignUpViewModel(
                     _uiEvent.send(SignUpEvent.Success("Account created successfully."))
                 }
                 is Resource.Error -> {
-                    _uiState.update { it.copy(signUpState = SignUpState.Error(result.message)) }
+                    _uiState.update { it.copy(loadState = SignUpLoadState.Error(result.message)) }
                 }
             }
         }

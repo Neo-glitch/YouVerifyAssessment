@@ -1,4 +1,4 @@
-package org.neo.yvstore.core.data.mapper
+package org.neo.yvstore.features.cart.data.mapper
 
 import org.neo.yvstore.core.database.model.CartItemEntity
 import org.neo.yvstore.core.domain.model.CartItem
