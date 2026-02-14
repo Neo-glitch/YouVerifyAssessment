@@ -173,23 +173,11 @@ private fun EmptySearchContent(
     modifier: Modifier = Modifier,
 ) {
     CenteredContent(modifier = modifier) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = "No products found",
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "We couldn't find any products matching \"$query\"",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-        }
+        YVStoreEmptyErrorStateView(
+            image = R.drawable.ic_search,
+            title = "No results found",
+            description = "We couldn't find any products matching \"$query\"",
+        )
     }
 }
 

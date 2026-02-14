@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -19,6 +20,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.drop
 import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 
@@ -36,12 +39,30 @@ fun YVStoreSearchInput(
     onFocusChange: ((Boolean) -> Unit)? = null,
 ) {
     val currentOnSearch by rememberUpdatedState(onSearch)
+//    var importsFirstEmission by remember { mutableStateOf(true) }
 
-    LaunchedEffect(value) {
-        if (debounceDelay > 0) {
-            delay(debounceDelay)
-        }
-        currentOnSearch()
+//    LaunchedEffect(value) {
+//        if (isFirstEmission) {
+//            isFirstEmission = false
+//            return@LaunchedEffect
+//        }
+//        if (debounceDelay > 0) {
+//            delay(debounceDelay)
+//        }
+//        currentOnSearch()
+//    }
+
+    val currentValue by rememberUpdatedState(value)
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { currentValue }
+            .drop(1)
+            .collectLatest {
+                if (debounceDelay > 0) {
+                    delay(debounceDelay)
+                }
+                currentOnSearch()
+            }
     }
 
     YVStoreTextInput(

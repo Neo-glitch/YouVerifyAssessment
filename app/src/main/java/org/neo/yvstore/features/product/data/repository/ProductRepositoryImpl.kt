@@ -40,8 +40,10 @@ class ProductRepositoryImpl(
         return try {
             val productDtos = remoteDatasource.getProducts()
             val entities = productDtos.map { it.toEntity() }
-            productDao.clearAllProducts()
-            productDao.insertProducts(entities)
+            if (entities.isNotEmpty()) {
+                productDao.clearAllProducts()
+                productDao.insertProducts(entities)
+            }
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error(ExceptionHandler.getErrorMessage(e))
