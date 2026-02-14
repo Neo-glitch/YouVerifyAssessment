@@ -41,7 +41,7 @@ fun YVStoreEmptyErrorStateView(
         Image(
             painter = painterResource(id = image),
             contentDescription = stringResource(R.string.empty_error_state_image_content_desc),
-            modifier = Modifier.size(200.dp),
+            modifier = Modifier.size(64.dp),
         )
 
         title?.let {

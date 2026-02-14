@@ -34,9 +34,9 @@ import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
 import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
-import org.neo.yvstore.features.product.presentation.model.SearchProductListLoadState
-import org.neo.yvstore.features.product.presentation.model.SearchProductListUiState
 import org.neo.yvstore.features.product.presentation.screen.productList.components.ProductCard
+
+private const val SEARCH_DEBOUNCE_MS = 500L
 
 @Composable
 fun SearchProductListScreen(
@@ -49,6 +49,7 @@ fun SearchProductListScreen(
     SearchProductListScreen(
         uiState = uiState,
         onQueryChanged = viewModel::onQueryChanged,
+        onSearch = viewModel::onSearch,
         onBackClick = onBackClick,
         onProductClick = onProductClick,
     )
@@ -58,6 +59,7 @@ fun SearchProductListScreen(
 private fun SearchProductListScreen(
     uiState: SearchProductListUiState,
     onQueryChanged: (String) -> Unit,
+    onSearch: () -> Unit,
     onBackClick: () -> Unit,
     onProductClick: (String) -> Unit,
 ) {
@@ -93,7 +95,9 @@ private fun SearchProductListScreen(
                     onValueChange = onQueryChanged,
                     placeholder = "Search products...",
                     autoFocus = true,
-                    modifier = Modifier.weight(1f)
+                    debounceDelay = SEARCH_DEBOUNCE_MS,
+                    onSearch = onSearch,
+                    modifier = Modifier.weight(1f),
                 )
             }
 
@@ -250,6 +254,7 @@ private fun SearchProductListScreenIdlePreview() {
         SearchProductListScreen(
             uiState = SearchProductListUiState(),
             onQueryChanged = {},
+            onSearch = {},
             onBackClick = {},
             onProductClick = {},
         )
@@ -266,6 +271,7 @@ private fun SearchProductListScreenLoadingPreview() {
                 loadState = SearchProductListLoadState.Loading,
             ),
             onQueryChanged = {},
+            onSearch = {},
             onBackClick = {},
             onProductClick = {},
         )
@@ -282,6 +288,7 @@ private fun SearchProductListScreenLoadedPreview() {
                 loadState = SearchProductListLoadState.Loaded(placeholderProducts),
             ),
             onQueryChanged = {},
+            onSearch = {},
             onBackClick = {},
             onProductClick = {},
         )
@@ -298,6 +305,7 @@ private fun SearchProductListScreenEmptyPreview() {
                 loadState = SearchProductListLoadState.Empty("xyz"),
             ),
             onQueryChanged = {},
+            onSearch = {},
             onBackClick = {},
             onProductClick = {},
         )
@@ -314,6 +322,7 @@ private fun SearchProductListScreenErrorPreview() {
                 loadState = SearchProductListLoadState.Error("Unable to search products. Please try again."),
             ),
             onQueryChanged = {},
+            onSearch = {},
             onBackClick = {},
             onProductClick = {},
         )

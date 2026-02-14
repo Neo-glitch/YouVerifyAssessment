@@ -20,5 +20,8 @@ data class ProductDto(
     var reviewCount: Int = 0,
     @get:PropertyName("created_at")
     @set:PropertyName("created_at")
-    var createdAt: String = ""
+    var createdAt: String = "",
+    @get:PropertyName("search_name")
+    @set:PropertyName("search_name")
+    var searchName: String = ""
 )

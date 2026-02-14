@@ -11,8 +11,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import org.neo.yvstore.features.cart.presentation.screen.CartScreen
+import org.neo.yvstore.features.product.presentation.screen.allProductList.AllProductListScreen
 import org.neo.yvstore.features.product.presentation.screen.productDetails.ProductDetailsScreen
 import org.neo.yvstore.features.product.presentation.screen.productList.HomeProductListScreen
+import org.neo.yvstore.features.product.presentation.screen.searchProductList.SearchProductListScreen
 import org.neo.yvstore.navigation.routes.AppRoute
 import org.neo.yvstore.navigation.routes.MainGraphRoute
 
@@ -26,13 +28,35 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                     navController.navigate(MainGraphRoute.CartScreen)
                 },
                 onNavigateToSearch = {
-                    // TODO: Implement search navigation
+                    navController.navigate(MainGraphRoute.SearchScreen)
                 },
                 onNavigateToProductDetails = { productId ->
                     navController.navigate(MainGraphRoute.ProductDetailsScreen(productId))
                 },
                 onViewAllClick = {
-                    // TODO: Implement view all navigation
+                    navController.navigate(MainGraphRoute.AllProductsScreen)
+                },
+            )
+        }
+
+        composable<MainGraphRoute.SearchScreen> {
+            SearchProductListScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onProductClick = { productId ->
+                    navController.navigate(MainGraphRoute.ProductDetailsScreen(productId))
+                },
+            )
+        }
+
+        composable<MainGraphRoute.AllProductsScreen> {
+            AllProductListScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onProductClick = { productId ->
+                    navController.navigate(MainGraphRoute.ProductDetailsScreen(productId))
                 },
             )
         }

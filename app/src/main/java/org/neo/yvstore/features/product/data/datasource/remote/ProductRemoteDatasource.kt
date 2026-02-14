@@ -17,10 +17,10 @@ interface ProductRemoteDatasource {
 
     /**
      * Searches products from the Firestore "products" collection.
-     * Fetches all products and filters client-side by name contains query (case-insensitive).
-     * If query is empty, returns all products.
+     * Uses Firestore range queries to find products whose name starts with the query.
+     * If query is blank, returns all products.
      *
-     * @param query Search query to filter products by name (empty for all products)
+     * @param query Search query to prefix-match against product name
      * @return List of ProductDto objects matching the query
      * @throws Exception on failure (network error, Firestore error)
      */

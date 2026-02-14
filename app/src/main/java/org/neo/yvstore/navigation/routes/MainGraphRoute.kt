@@ -7,6 +7,9 @@ sealed interface MainGraphRoute {
     data object HomeScreen : MainGraphRoute
 
     @Serializable
+    data object AllProductsScreen : MainGraphRoute
+
+    @Serializable
     data object CartScreen : MainGraphRoute
 
     @Serializable
@@ -14,6 +17,9 @@ sealed interface MainGraphRoute {
 
     @Serializable
     data object ProfileScreen : MainGraphRoute
+
+    @Serializable
+    data object SearchScreen : MainGraphRoute
 
     @Serializable
     data class ProductDetailsScreen(val productId: String) : MainGraphRoute

@@ -32,8 +32,6 @@ import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
-import org.neo.yvstore.features.product.presentation.model.ProductListLoadState
-import org.neo.yvstore.features.product.presentation.model.ProductListUiEvent
 import org.neo.yvstore.features.product.presentation.screen.productList.components.CartIconButton
 import org.neo.yvstore.features.product.presentation.screen.productList.components.ProductCard
 import org.neo.yvstore.features.product.presentation.screen.productList.components.PromoBanner
@@ -52,7 +50,7 @@ fun HomeProductListScreen(
 
     ObserveAsEvents(viewModel.uiEvent) { event ->
         when (event) {
-            is ProductListUiEvent.ShowToast -> {
+            is HomeProductListUiEvent.ShowToast -> {
                 Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             }
         }
@@ -75,7 +73,7 @@ fun HomeProductListScreen(
 @Composable
 private fun HomeProductListScreen(
     products: List<ProductItemUi>,
-    loadState: ProductListLoadState,
+    loadState: HomeProductListLoadState,
     hasCartItems: Boolean,
     promoTitle: String,
     promoDiscountText: String,
@@ -125,22 +123,22 @@ private fun HomeProductListScreen(
 
 @Composable
 private fun EmptyStateContent(
-    loadState: ProductListLoadState,
+    loadState: HomeProductListLoadState,
     modifier: Modifier = Modifier,
 ) {
     CenteredContent(modifier = modifier) {
         when (loadState) {
-            ProductListLoadState.Loading -> {
+            HomeProductListLoadState.Loading -> {
                 YVStoreCircleProgressIndicator(size = 48.dp)
             }
-            is ProductListLoadState.Error -> {
+            is HomeProductListLoadState.Error -> {
                 YVStoreEmptyErrorStateView(
                     image = android.R.drawable.ic_dialog_alert,
                     title = "Unable to Load Products",
                     description = loadState.message,
                 )
             }
-            ProductListLoadState.Loaded -> {
+            HomeProductListLoadState.Loaded -> {
                 YVStoreEmptyErrorStateView(
                     image = android.R.drawable.ic_dialog_info,
                     title = "No Products Available",
@@ -296,7 +294,7 @@ private fun HomeProductListScreenWithCartItemsPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun HomeProductListScreenLoadingPreview() {
-    PreviewContent(products = emptyList(), loadState = ProductListLoadState.Loading)
+    PreviewContent(products = emptyList(), loadState = HomeProductListLoadState.Loading)
 }
 
 @Preview(showBackground = true)
@@ -304,14 +302,14 @@ private fun HomeProductListScreenLoadingPreview() {
 private fun HomeProductListScreenErrorPreview() {
     PreviewContent(
         products = emptyList(),
-        loadState = ProductListLoadState.Error("Failed to load products. Please check your internet connection."),
+        loadState = HomeProductListLoadState.Error("Failed to load products. Please check your internet connection."),
     )
 }
 
 @Composable
 private fun PreviewContent(
     products: List<ProductItemUi> = placeholderProducts,
-    loadState: ProductListLoadState = ProductListLoadState.Loaded,
+    loadState: HomeProductListLoadState = HomeProductListLoadState.Loaded,
     hasCartItems: Boolean = false,
 ) {
     YVStoreTheme {

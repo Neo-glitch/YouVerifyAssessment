@@ -11,6 +11,7 @@ import org.neo.yvstore.features.product.domain.repository.ProductRepository
 import org.neo.yvstore.features.product.domain.usecase.ObserveProductsUseCase
 import org.neo.yvstore.features.product.domain.usecase.RefreshProductsUseCase
 import org.neo.yvstore.features.product.domain.usecase.SearchProductsUseCase
+import org.neo.yvstore.features.product.presentation.screen.allProductList.AllProductListViewModel
 import org.neo.yvstore.features.product.presentation.screen.productDetails.ProductDetailsViewModel
 import org.neo.yvstore.features.product.presentation.screen.productList.HomeProductListViewModel
 import org.neo.yvstore.features.product.presentation.screen.searchProductList.SearchProductListViewModel
@@ -26,6 +27,7 @@ val productModule = module {
     factoryOf(::SearchProductsUseCase)
 
     // Presentation layer
+    viewModelOf(::AllProductListViewModel)
     viewModelOf(::ProductDetailsViewModel)
     viewModelOf(::HomeProductListViewModel)
     viewModelOf(::SearchProductListViewModel)
