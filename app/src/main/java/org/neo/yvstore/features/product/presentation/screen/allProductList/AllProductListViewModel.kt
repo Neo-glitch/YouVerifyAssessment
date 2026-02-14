@@ -33,11 +33,7 @@ class AllProductListViewModel(
     private val _uiEvent = Channel<AllProductListUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    private var hasInitialized = false
-
-    fun initialize() {
-        if (hasInitialized) return
-        hasInitialized = true
+    init {
         viewModelScope.launch {
             loadCachedProducts()
             observeProducts()

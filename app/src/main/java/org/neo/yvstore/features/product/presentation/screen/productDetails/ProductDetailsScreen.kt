@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.card.BottomFrameCard
 import org.neo.yvstore.core.ui.component.dialog.YVStoreErrorDialog
@@ -52,10 +54,8 @@ import kotlin.math.roundToInt
 fun ProductDetailsScreen(
     productId: String,
     onNavigateBack: () -> Unit,
-    viewModel: ProductDetailsViewModel = koinViewModel(),
+    viewModel: ProductDetailsViewModel = koinViewModel { parametersOf(productId) },
 ) {
-    viewModel.init(productId)
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 

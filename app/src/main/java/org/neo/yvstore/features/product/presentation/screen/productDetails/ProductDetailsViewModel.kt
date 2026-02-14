@@ -24,9 +24,10 @@ class ProductDetailsViewModel(
     private val addCartItemUseCase: AddCartItemUseCase,
     private val updateCartItemQuantityUseCase: UpdateCartItemQuantityUseCase,
     private val deleteCartItemUseCase: DeleteCartItemUseCase,
+    private val productId: String,
 ) : ViewModel() {
 
-    private var productId: String = ""
+//    private var productId: String = ""
     private var hasInitialized: Boolean = false
 
     private val _uiState = MutableStateFlow(ProductDetailsUiState())
@@ -35,15 +36,19 @@ class ProductDetailsViewModel(
     private val _uiEvent = Channel<ProductDetailsUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    fun init(productId: String) {
-        if (hasInitialized) return
-        hasInitialized = true
-        this.productId = productId
+    init {
         viewModelScope.launch {
             loadProduct()
             observeCartItem()
         }
     }
+
+//    fun init(productId: String) {
+//        if (hasInitialized) return
+//        hasInitialized = true
+//        this.productId = productId
+//
+//    }
 
     private suspend fun loadProduct() {
         val result = getProductUseCase(productId)

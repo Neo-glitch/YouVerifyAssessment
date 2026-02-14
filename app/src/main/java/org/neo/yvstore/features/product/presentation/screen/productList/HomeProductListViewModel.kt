@@ -28,15 +28,11 @@ class HomeProductListViewModel(
     private val _uiEvent = Channel<HomeProductListUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    private var hasInitialized = false
-
     companion object {
         private const val PRODUCT_COUNT = 10
     }
 
-    fun initialize() {
-        if (hasInitialized) return
-        hasInitialized = true
+    init {
         viewModelScope.launch {
             loadCachedProducts()
             observeProducts()

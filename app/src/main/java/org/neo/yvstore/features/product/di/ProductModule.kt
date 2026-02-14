@@ -2,7 +2,9 @@ package org.neo.yvstore.features.product.di
 
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.parameter.parameterSetOf
 import org.koin.dsl.module
 import org.neo.yvstore.features.product.data.datasource.remote.ProductRemoteDatasource
 import org.neo.yvstore.features.product.data.datasource.remote.ProductRemoteDatasourceImpl
@@ -30,7 +32,16 @@ val productModule = module {
 
     // Presentation layer
     viewModelOf(::AllProductListViewModel)
-    viewModelOf(::ProductDetailsViewModel)
+    viewModel { params ->
+        ProductDetailsViewModel(
+            getProductUseCase = get(),
+            observeCartItemByProductIdUseCase = get(),
+            addCartItemUseCase = get(),
+            updateCartItemQuantityUseCase = get(),
+            deleteCartItemUseCase = get(),
+            productId = params.get()
+        )
+    }
     viewModelOf(::HomeProductListViewModel)
     viewModelOf(::SearchProductListViewModel)
 }

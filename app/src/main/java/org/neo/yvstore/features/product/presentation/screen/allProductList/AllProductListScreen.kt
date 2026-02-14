@@ -33,7 +33,6 @@ fun AllProductListScreen(
     onProductClick: (String) -> Unit,
     viewModel: AllProductListViewModel = koinViewModel(),
 ) {
-    viewModel.initialize()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
