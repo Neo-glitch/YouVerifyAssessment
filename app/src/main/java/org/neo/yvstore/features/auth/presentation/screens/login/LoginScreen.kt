@@ -148,7 +148,7 @@ private fun LoginHeader() {
 
         Text(
             text = stringResource(R.string.app_name),
-            style = MaterialTheme.typography.headlineMedium.copy(
+            style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
             ),

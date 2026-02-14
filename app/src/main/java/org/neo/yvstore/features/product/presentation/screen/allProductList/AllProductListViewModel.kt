@@ -41,10 +41,6 @@ class AllProductListViewModel(
         }
     }
 
-    /**
-     * Step 1: Loads all cached products immediately on init.
-     * If products exist, updates UI state to Loaded. Otherwise, stays in Loading state.
-     */
     private suspend fun loadCachedProducts() {
         val initialResult = observeProductsUseCase(count = null).first()
         initialResult.onSuccess { products ->
@@ -63,10 +59,6 @@ class AllProductListViewModel(
         }
     }
 
-    /**
-     * Step 2: Observes all products from Room for live updates.
-     * Updates UI state whenever the database changes (e.g., after remote refresh).
-     */
     private fun observeProducts() {
         viewModelScope.launch {
             observeProductsUseCase(count = null).collect { resource ->
@@ -81,10 +73,6 @@ class AllProductListViewModel(
         }
     }
 
-    /**
-     * Step 3: Refreshes products from remote datasource.
-     * On error: sets loadState to Error if cache is empty, or sends a toast if cache exists.
-     */
     private suspend fun refreshProducts() {
         val result = refreshProductsUseCase()
         result.onError { message ->

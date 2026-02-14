@@ -282,7 +282,7 @@ private fun CartItemRow(
                 ) {
                     Text(
                         text = item.name,
-                        style = MaterialTheme.typography.titleMedium.copy(
+                        style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                         ),
                     )
@@ -291,7 +291,7 @@ private fun CartItemRow(
 
                     Text(
                         text = item.formattedPrice,
-                        style = MaterialTheme.typography.titleMedium.copy(
+                        style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
                         ),
@@ -354,7 +354,7 @@ private fun QuantitySelector(
 
         Text(
             text = quantity.toString(),
-            style = MaterialTheme.typography.titleSmall.copy(
+            style = MaterialTheme.typography.bodyMedium.copy(
                 fontWeight = FontWeight.Bold,
             ),
         )
@@ -431,7 +431,7 @@ private fun SummaryRow(
 
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyLarge.copy(
+            style = MaterialTheme.typography.bodyMedium.copy(
                 fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal,
                 color = if (isBold) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
             ),

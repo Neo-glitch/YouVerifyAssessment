@@ -22,7 +22,7 @@ import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.card.YVStoreElevatedCard
 
 @Composable
-fun ProductCard(
+fun ProductItemCard(
     name: String,
     price: String,
     imageUrl: String,
@@ -37,47 +37,64 @@ fun ProductCard(
         shape = RoundedCornerShape(16.dp),
     ) {
         Column {
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = name,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
-                contentScale = ContentScale.Fit,
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-            ) {
-                Text(
-                    text = name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = price,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                    ),
-                )
-            }
+            ProductItemImage(imageUrl = imageUrl, name = name)
+            ProductItemInfo(name = name, price = price)
         }
+    }
+}
+
+@Composable
+private fun ProductItemImage(
+    imageUrl: String,
+    name: String,
+    modifier: Modifier = Modifier,
+) {
+    AsyncImage(
+        model = imageUrl,
+        contentDescription = name,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(120.dp)
+            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+        contentScale = ContentScale.Fit,
+    )
+}
+
+@Composable
+private fun ProductItemInfo(
+    name: String,
+    price: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+    ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            text = price,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            ),
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun ProductCardPreview() {
+private fun ProductItemCardPreview() {
     YVStoreTheme {
-        ProductCard(
+        ProductItemCard(
             name = "Wireless Headphones",
             price = "$89.99",
             imageUrl = "https://picsum.photos/seed/headphones/400/400",
@@ -89,9 +106,9 @@ private fun ProductCardPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun ProductCardLongNamePreview() {
+private fun ProductItemCardLongNamePreview() {
     YVStoreTheme {
-        ProductCard(
+        ProductItemCard(
             name = "Super Long Product Name That Will Be Truncated With Ellipsis",
             price = "$199.99",
             imageUrl = "https://picsum.photos/seed/product/400/400",

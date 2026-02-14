@@ -34,7 +34,7 @@ import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
 import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
-import org.neo.yvstore.features.product.presentation.screen.productList.components.ProductCard
+import org.neo.yvstore.features.product.presentation.screen.productList.components.ProductItemCard
 
 private const val SEARCH_DEBOUNCE_MS = 500L
 
@@ -219,7 +219,7 @@ private fun ProductListContent(
             verticalSpacing = 16.dp,
         ) { index ->
             val product = products[index]
-            ProductCard(
+            ProductItemCard(
                 name = product.name,
                 price = product.price,
                 imageUrl = product.imageUrl,

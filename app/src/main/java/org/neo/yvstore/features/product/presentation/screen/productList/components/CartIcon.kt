@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -22,7 +21,7 @@ import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 
 @Composable
-fun CartIconButton(
+fun CartIcon(
     cartItemCount: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -66,9 +65,9 @@ fun CartIconButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun CartIconButtonEmptyPreview() {
+private fun CartIconEmptyPreview() {
     YVStoreTheme {
-        CartIconButton(
+        CartIcon(
             cartItemCount = 0,
             onClick = {},
         )
@@ -77,9 +76,9 @@ private fun CartIconButtonEmptyPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun CartIconButtonWithItemsPreview() {
+private fun CartIconWithItemsPreview() {
     YVStoreTheme {
-        CartIconButton(
+        CartIcon(
             cartItemCount = 3,
             onClick = {},
         )
@@ -88,9 +87,9 @@ private fun CartIconButtonWithItemsPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun CartIconButtonWithManyItemsPreview() {
+private fun CartIconWithManyItemsPreview() {
     YVStoreTheme {
-        CartIconButton(
+        CartIcon(
             cartItemCount = 15,
             onClick = {},
         )

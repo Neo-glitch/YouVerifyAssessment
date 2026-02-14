@@ -111,7 +111,7 @@ private fun TopBarTitle(title: String, modifier: Modifier = Modifier) {
         text = title,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        style = MaterialTheme.typography.headlineMedium.copy(
+        style = MaterialTheme.typography.titleLarge.copy(
             fontSize = 24.sp,
             color = YVStoreTheme.colors.textColors.textToolbarTitle,
         ),

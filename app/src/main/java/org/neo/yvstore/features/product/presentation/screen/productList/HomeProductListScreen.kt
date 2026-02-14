@@ -1,6 +1,9 @@
 package org.neo.yvstore.features.product.presentation.screen.productList
 
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,20 +13,30 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
+import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.button.YVStoreTextButton
 import org.neo.yvstore.core.ui.component.grid.NonlazyGrid
@@ -32,9 +45,8 @@ import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
-import org.neo.yvstore.features.product.presentation.screen.productList.components.CartIconButton
-import org.neo.yvstore.features.product.presentation.screen.productList.components.ProductCard
-import org.neo.yvstore.features.product.presentation.screen.productList.components.PromoBanner
+import org.neo.yvstore.features.product.presentation.screen.productList.components.CartIcon
+import org.neo.yvstore.features.product.presentation.screen.productList.components.ProductItemCard
 import org.neo.yvstore.features.product.presentation.screen.productList.components.SearchBarPlaceholder
 
 @Composable
@@ -91,7 +103,7 @@ private fun HomeProductListScreen(
                 .padding(horizontal = 16.dp),
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            HeaderRow(
+            HeaderSection(
                 cartItemCount = cartItemCount,
                 onCartClick = onNavigateToCart,
             )
@@ -198,7 +210,7 @@ private fun CenteredContent(
 }
 
 @Composable
-private fun HeaderRow(
+private fun HeaderSection(
     cartItemCount: Int,
     onCartClick: () -> Unit,
 ) {
@@ -209,15 +221,71 @@ private fun HeaderRow(
     ) {
         Text(
             text = "Discover",
-            style = MaterialTheme.typography.headlineMedium.copy(
+            style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.SemiBold,
             ),
         )
 
-        CartIconButton(
+        CartIcon(
             cartItemCount = cartItemCount,
             onClick = onCartClick,
         )
+    }
+}
+
+@Composable
+fun PromoBanner(
+    title: String,
+    discountText: String,
+    imageUrl: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                MaterialTheme.colorScheme.primary,
+                RoundedCornerShape(16.dp)
+            )
+            .height(160.dp)
+            .clip(RoundedCornerShape(16.dp)),
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = 24.sp,
+                    ),
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = discountText,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    ),
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = "Promotional product",
+                modifier = Modifier.size(120.dp),
+                contentScale = ContentScale.Fit,
+            )
+        }
     }
 }
 
@@ -233,7 +301,7 @@ private fun ProductsSectionHeader(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge.copy(
+            style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold,
             ),
         )
@@ -257,7 +325,7 @@ private fun ProductsGrid(
         verticalSpacing = 16.dp,
     ) { index ->
         val product = products[index]
-        ProductCard(
+        ProductItemCard(
             name = product.name,
             price = product.price,
             imageUrl = product.imageUrl,

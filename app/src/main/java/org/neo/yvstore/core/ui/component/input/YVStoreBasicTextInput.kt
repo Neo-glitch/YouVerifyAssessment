@@ -109,7 +109,7 @@ fun YVStoreInputLabel(text: String, modifier: Modifier = Modifier) {
         Text(
             text = text,
             modifier = Modifier.testTag(INPUT_LABEL_TAG),
-            style = MaterialTheme.typography.bodySmall.copy(
+            style = MaterialTheme.typography.   bodySmall.copy(
                 fontSize = 14.sp,
                 color = YVStoreTheme.colors.textColors.textPrimary,
                 fontWeight = FontWeight.Medium,

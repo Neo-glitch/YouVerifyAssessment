@@ -222,7 +222,7 @@ private fun ProductInfoSection(
 
         Text(
             text = name,
-            style = MaterialTheme.typography.headlineSmall.copy(
+            style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.SemiBold,
             ),
         )
@@ -334,7 +334,7 @@ private fun CartActionBar(
             ) { price ->
                 Text(
                     text = price,
-                    style = MaterialTheme.typography.titleLarge.copy(
+                    style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                     ),
                 )

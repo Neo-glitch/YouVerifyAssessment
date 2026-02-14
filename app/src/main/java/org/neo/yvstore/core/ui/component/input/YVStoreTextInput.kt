@@ -44,7 +44,7 @@ fun YVStoreTextInput(
     showError: Boolean = false,
     textFieldColors: TextFieldColors = YVStoreOutlinedTextInputColors,
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium.copy(
-        fontSize = 16.sp,
+        fontSize = 14.sp,
         color = YVStoreTheme.colors.textColors.textPrimary,
     ),
     singleLine: Boolean = true,

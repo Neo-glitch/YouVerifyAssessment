@@ -25,7 +25,7 @@ import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
-import org.neo.yvstore.features.product.presentation.screen.productList.components.ProductCard
+import org.neo.yvstore.features.product.presentation.screen.productList.components.ProductItemCard
 
 @Composable
 fun AllProductListScreen(
@@ -138,7 +138,7 @@ private fun ProductsGrid(
             items = products,
             key = { it.id }
         ) { product ->
-            ProductCard(
+            ProductItemCard(
                 name = product.name,
                 price = product.price,
                 imageUrl = product.imageUrl,

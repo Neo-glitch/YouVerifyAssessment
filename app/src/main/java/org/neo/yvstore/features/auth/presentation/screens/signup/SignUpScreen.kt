@@ -197,7 +197,7 @@ private fun SignUpHeader() {
     Column {
         Text(
             text = stringResource(R.string.signup_title),
-            style = MaterialTheme.typography.headlineMedium.copy(
+            style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold,
             ),
         )

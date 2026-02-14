@@ -42,45 +42,63 @@ fun PromoBanner(
             .height(160.dp)
             .clip(RoundedCornerShape(16.dp)),
     ) {
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(
+            PromoBannerText(
+                title = title,
+                discountText = discountText,
                 modifier = Modifier.weight(1f),
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        fontSize = 24.sp,
-                    ),
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = discountText,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    ),
-                )
-            }
+            )
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = "Promotional product",
-                modifier = Modifier.size(120.dp),
-                contentScale = ContentScale.Fit,
-            )
+            PromoBannerImage(imageUrl = imageUrl)
         }
     }
+}
+
+@Composable
+private fun PromoBannerText(
+    title: String,
+    discountText: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontSize = 24.sp,
+            ),
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = discountText,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onPrimary,
+            ),
+        )
+    }
+}
+
+@Composable
+private fun PromoBannerImage(
+    imageUrl: String,
+    modifier: Modifier = Modifier,
+) {
+    AsyncImage(
+        model = imageUrl,
+        contentDescription = "Promotional product",
+        modifier = modifier.size(120.dp),
+        contentScale = ContentScale.Fit,
+    )
 }
 
 @Preview(showBackground = true)

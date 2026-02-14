@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.neo.yvstore.core.ui.component.button.YVStorePrimaryButton
@@ -54,51 +55,54 @@ private fun QuantitySelector(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = CircleShape,
-                )
-                .clickable(onClick = onDecrement),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "−",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                ),
-            )
-        }
+        QuantityButton(
+            symbol = "−",
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.primary,
+            onClick = onDecrement,
+        )
 
         Text(
             text = quantity.toString(),
-            style = MaterialTheme.typography.titleMedium.copy(
+            style = MaterialTheme.typography.bodyMedium.copy(
                 fontWeight = FontWeight.Bold,
             ),
         )
 
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape,
-                )
-                .clickable(onClick = onIncrement),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "+",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                ),
+        QuantityButton(
+            symbol = "+",
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            onClick = onIncrement,
+        )
+    }
+}
+
+@Composable
+private fun QuantityButton(
+    symbol: String,
+    containerColor: Color,
+    contentColor: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .background(
+                color = containerColor,
+                shape = CircleShape,
             )
-        }
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = symbol,
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.Bold,
+                color = contentColor,
+            ),
+        )
     }
 }
