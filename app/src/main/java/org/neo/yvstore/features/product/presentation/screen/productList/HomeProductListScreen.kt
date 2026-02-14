@@ -61,7 +61,7 @@ fun HomeProductListScreen(
     HomeProductListScreen(
         products = uiState.products,
         loadState = uiState.loadState,
-        hasCartItems = false, // TODO: Connect to cart state later
+        hasCartItems = uiState.hasCartItems,
         promoTitle = "Clearance Sales",
         promoDiscountText = "Up to 50%",
         promoImageUrl = "https://picsum.photos/seed/promo/200/200",

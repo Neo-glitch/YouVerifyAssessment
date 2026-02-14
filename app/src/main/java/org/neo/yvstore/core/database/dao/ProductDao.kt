@@ -14,8 +14,12 @@ interface ProductDao {
     @Query("SELECT * FROM products ORDER BY created_at DESC")
     fun getAllProducts(): Flow<List<ProductEntity>>
 
-    @Query("SELECT * FROM products ORDER BY created_at DESC LIMIT :count")
-    fun getProducts(count: Int): Flow<List<ProductEntity>>
+    @Query("""
+        SELECT * FROM products
+        ORDER BY created_at DESC
+        LIMIT CASE WHEN :count IS NULL THEN -1 ELSE :count END
+    """)
+    fun observeProducts(count: Int?): Flow<List<ProductEntity>>
 
     @Query("SELECT * FROM products ORDER BY created_at DESC")
     fun getProductsPaged(): PagingSource<Int, ProductEntity>

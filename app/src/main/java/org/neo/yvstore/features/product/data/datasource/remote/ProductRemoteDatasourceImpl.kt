@@ -22,4 +22,19 @@ class ProductRemoteDatasourceImpl(
 
         return querySnapshot.toObjects(ProductDto::class.java)
     }
+
+    override suspend fun searchProducts(query: String): List<ProductDto> {
+        val querySnapshot = firestore.collection("products")
+            .orderBy("created_at", Query.Direction.DESCENDING)
+            .get()
+            .await()
+
+        val allProducts = querySnapshot.toObjects(ProductDto::class.java)
+
+        return if (query.isEmpty()) {
+            allProducts
+        } else {
+            allProducts.filter { it.name.contains(query, ignoreCase = true) }
+        }
+    }
 }

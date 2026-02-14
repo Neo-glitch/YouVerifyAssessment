@@ -207,7 +207,7 @@ private fun CartItemRow(
                 .size(80.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.surfaceVariant),
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Fit,
         )
 
         Column(

@@ -11,15 +11,16 @@ import org.neo.yvstore.features.product.domain.repository.ProductRepository
  *
  * @property repository The product repository for accessing product data
  */
-class GetProductsUseCase(
+class ObserveProductsUseCase(
     private val repository: ProductRepository
 ) {
     /**
      * Returns a Flow of products wrapped in Resource, limited to the specified count.
      * Emits Resource.Success with product lists or Resource.Error on failure.
      *
-     * @param count Maximum number of products to retrieve
+     * @param count Maximum number of products to retrieve (null for unlimited)
      * @return Flow of Resource-wrapped product lists
      */
-    operator fun invoke(count: Int): Flow<Resource<List<Product>>> = repository.getProducts(count)
+    operator fun invoke(count: Int? = null): Flow<Resource<List<Product>>> =
+        repository.observeProducts(count)
 }

@@ -17,14 +17,23 @@ class ProductRepositoryImpl(
     private val productDao: ProductDao
 ) : ProductRepository {
 
-    override fun getProducts(count: Int): Flow<Resource<List<Product>>> {
-        return productDao.getProducts(count)
+    override fun observeProducts(count: Int?): Flow<Resource<List<Product>>> {
+        return productDao.observeProducts(count)
             .map { entities ->
                 Resource.Success(entities.map { it.toProduct() }) as Resource<List<Product>>
             }
             .catch { e ->
                 emit(Resource.Error(ExceptionHandler.getErrorMessage(e)))
             }
+    }
+
+    override suspend fun searchProducts(query: String): Resource<List<Product>> {
+        return try {
+            val productDtos = remoteDatasource.searchProducts(query)
+            Resource.Success(productDtos.map { it.toProduct() })
+        } catch (e: Exception) {
+            Resource.Error(ExceptionHandler.getErrorMessage(e))
+        }
     }
 
     override suspend fun refreshProducts(): Resource<Unit> {

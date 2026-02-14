@@ -25,6 +25,16 @@ class CartRepositoryImpl(
             }
     }
 
+    override fun observeCartItemCount(): Flow<Resource<Int>> {
+        return cartItemDao.observeCartItemCount()
+            .map<Int, Resource<Int>> { count ->
+                Resource.Success(count)
+            }
+            .catch { e ->
+                emit(Resource.Error(ExceptionHandler.getErrorMessage(e)))
+            }
+    }
+
     override suspend fun addItem(cartItem: CartItemEntity): Resource<Unit> {
         return try {
             cartItemDao.insertCartItem(cartItem)

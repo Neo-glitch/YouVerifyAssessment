@@ -77,7 +77,7 @@ fun PromoBanner(
                 model = imageUrl,
                 contentDescription = "Promotional product",
                 modifier = Modifier.size(120.dp),
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
             )
         }
     }

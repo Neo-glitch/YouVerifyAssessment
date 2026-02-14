@@ -13,6 +13,9 @@ interface CartItemDao {
     @Query("SELECT * FROM cart_items ORDER BY id ASC")
     fun getAllCartItems(): Flow<List<CartItemEntity>>
 
+    @Query("SELECT COUNT(*) FROM cart_items")
+    fun observeCartItemCount(): Flow<Int>
+
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertCartItem(cartItem: CartItemEntity)
 

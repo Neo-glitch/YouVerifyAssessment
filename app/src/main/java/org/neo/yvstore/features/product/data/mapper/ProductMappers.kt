@@ -29,3 +29,16 @@ fun ProductEntity.toProduct(): Product {
         createdAt = this.createdAt
     )
 }
+
+fun ProductDto.toProduct(): Product {
+    return Product(
+        id = this.id,
+        name = this.name,
+        description = this.description,
+        price = this.price,
+        imageUrl = this.imageUrl,
+        rating = this.rating,
+        reviewCount = this.reviewCount,
+        createdAt = this.createdAt
+    )
+}

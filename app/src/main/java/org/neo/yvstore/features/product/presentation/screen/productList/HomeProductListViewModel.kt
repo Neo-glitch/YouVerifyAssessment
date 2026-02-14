@@ -10,8 +10,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.neo.yvstore.features.cart.domain.usecase.ObserveCartItemCountUseCase
 import org.neo.yvstore.features.product.domain.model.Product
-import org.neo.yvstore.features.product.domain.usecase.GetProductsUseCase
+import org.neo.yvstore.features.product.domain.usecase.ObserveProductsUseCase
 import org.neo.yvstore.features.product.domain.usecase.RefreshProductsUseCase
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
 import org.neo.yvstore.features.product.presentation.model.ProductListLoadState
@@ -19,8 +20,9 @@ import org.neo.yvstore.features.product.presentation.model.ProductListUiEvent
 import org.neo.yvstore.features.product.presentation.model.ProductListUiState
 
 class HomeProductListViewModel(
-    private val getProductsUseCase: GetProductsUseCase,
+    private val observeProductsUseCase: ObserveProductsUseCase,
     private val refreshProductsUseCase: RefreshProductsUseCase,
+    private val observeCartItemCountUseCase: ObserveCartItemCountUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProductListUiState())
@@ -37,12 +39,25 @@ class HomeProductListViewModel(
         viewModelScope.launch {
             loadCachedProducts()
             observeProducts()
+            observeCartItemCount()
             refreshProducts()
         }
     }
 
+    private fun observeCartItemCount() {
+        viewModelScope.launch {
+            observeCartItemCountUseCase().collect { resource ->
+                resource.onSuccess { count ->
+                    _uiState.update {
+                        it.copy(hasCartItems = count > 0)
+                    }
+                }
+            }
+        }
+    }
+
     private suspend fun loadCachedProducts() {
-        val initialResult = getProductsUseCase(PRODUCT_COUNT).first()
+        val initialResult = observeProductsUseCase(PRODUCT_COUNT).first()
         initialResult.onSuccess { products ->
             if (products.isNotEmpty()) {
                 _uiState.update {
@@ -61,12 +76,12 @@ class HomeProductListViewModel(
 
     private fun observeProducts() {
         viewModelScope.launch {
-            getProductsUseCase(PRODUCT_COUNT).collect { resource ->
+            observeProductsUseCase(count = PRODUCT_COUNT).collect { resource ->
                 resource.onSuccess { products ->
                     _uiState.update {
                         it.copy(
                             products = products.map { product -> product.toProductItemUi() },
-                            loadState = ProductListLoadState.Loaded,
+//                            loadState = ProductListLoadState.Loaded,
                         )
                     }
                 }
