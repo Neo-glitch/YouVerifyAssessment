@@ -27,16 +27,13 @@ import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
 import org.neo.yvstore.features.product.presentation.screen.productList.components.ProductCard
 
-/**
- * All Products List screen with ViewModel integration.
- * Displays all available products in a grid layout.
- */
 @Composable
 fun AllProductListScreen(
     onBackClick: () -> Unit,
     onProductClick: (String) -> Unit,
     viewModel: AllProductListViewModel = koinViewModel(),
 ) {
+    viewModel.initialize()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
@@ -120,9 +117,6 @@ private fun EmptyStateContent(
     }
 }
 
-/**
- * Displays products in a 2-column lazy vertical grid.
- */
 @Composable
 private fun ProductsGrid(
     products: List<ProductItemUi>,
@@ -155,7 +149,6 @@ private fun ProductsGrid(
     }
 }
 
-// Preview data
 private val placeholderProducts = listOf(
     ProductItemUi(id = "1", name = "Wireless Headphones", price = "$89.99", imageUrl = "https://picsum.photos/seed/headphones/400/400"),
     ProductItemUi(id = "2", name = "Smart Watch", price = "$199.99", imageUrl = "https://picsum.photos/seed/watch/400/400"),

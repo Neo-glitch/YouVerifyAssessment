@@ -135,30 +135,34 @@ private fun LoginScreen(
 
 @Composable
 private fun LoginHeader() {
-    Image(
-        painter = painterResource(R.drawable.ic_yv_store_logo),
-        contentDescription = stringResource(R.string.login_logo_content_desc),
-        modifier = Modifier.size(100.dp),
-    )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_yv_store_logo),
+            contentDescription = stringResource(R.string.login_logo_content_desc),
+            modifier = Modifier.size(100.dp),
+        )
 
-    Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-    Text(
-        text = stringResource(R.string.app_name),
-        style = MaterialTheme.typography.headlineMedium.copy(
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-        ),
-    )
+        Text(
+            text = stringResource(R.string.app_name),
+            style = MaterialTheme.typography.headlineMedium.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            ),
+        )
 
-    Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
-    Text(
-        text = stringResource(R.string.login_motto),
-        style = MaterialTheme.typography.bodyMedium.copy(
-            color = YVStoreTheme.colors.textColors.textSecondary,
-        ),
-    )
+        Text(
+            text = stringResource(R.string.login_motto),
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = YVStoreTheme.colors.textColors.textSecondary,
+            ),
+        )
+    }
 }
 
 @Composable
@@ -175,50 +179,52 @@ private fun LoginForm(
     onPasswordBlur: () -> Unit,
     onTogglePasswordVisibility: () -> Unit,
 ) {
-    YVStoreTextInput(
-        value = email,
-        onValueChange = onEmailChange,
-        onFocusChange = { isFocused ->
-            if (!isFocused) onEmailBlur()
-        },
-        label = stringResource(R.string.login_email_label),
-        placeholder = stringResource(R.string.login_email_placeholder),
-        keyboardType = KeyboardType.Email,
-        imeAction = ImeAction.Next,
-        enabled = enabled,
-        error = emailError,
-        showError = emailError != null
-    )
+    Column {
+        YVStoreTextInput(
+            value = email,
+            onValueChange = onEmailChange,
+            onFocusChange = { isFocused ->
+                if (!isFocused) onEmailBlur()
+            },
+            label = stringResource(R.string.login_email_label),
+            placeholder = stringResource(R.string.login_email_placeholder),
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next,
+            enabled = enabled,
+            error = emailError,
+            showError = emailError != null
+        )
 
-    Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-    YVStoreTextInput(
-        value = password,
-        onValueChange = onPasswordChange,
-        onFocusChange = { isFocused ->
-            if (!isFocused) onPasswordBlur()
-        },
-        label = stringResource(R.string.login_password_label),
-        placeholder = stringResource(R.string.login_password_placeholder),
-        keyboardType = KeyboardType.Password,
-        enabled = enabled,
-        visualTransformation = if (isPasswordVisible) {
-            VisualTransformation.None
-        } else {
-            PasswordVisualTransformation(
-                mask = '*'
-            )
-        },
-        trailingIcon = {
-            YVStoreInputSensitiveIcon(
-                onClick = onTogglePasswordVisibility,
-                showSensitiveInfo = isPasswordVisible,
-            )
-        },
-        imeAction = ImeAction.Done,
-        error = passwordError,
-        showError = passwordError != null
-    )
+        YVStoreTextInput(
+            value = password,
+            onValueChange = onPasswordChange,
+            onFocusChange = { isFocused ->
+                if (!isFocused) onPasswordBlur()
+            },
+            label = stringResource(R.string.login_password_label),
+            placeholder = stringResource(R.string.login_password_placeholder),
+            keyboardType = KeyboardType.Password,
+            enabled = enabled,
+            visualTransformation = if (isPasswordVisible) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation(
+                    mask = '*'
+                )
+            },
+            trailingIcon = {
+                YVStoreInputSensitiveIcon(
+                    onClick = onTogglePasswordVisibility,
+                    showSensitiveInfo = isPasswordVisible,
+                )
+            },
+            imeAction = ImeAction.Done,
+            error = passwordError,
+            showError = passwordError != null
+        )
+    }
 }
 
 @Composable

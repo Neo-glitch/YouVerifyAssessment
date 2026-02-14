@@ -35,7 +35,5 @@ class YVStoreApplication : Application() {
                 appComponent
             )
         }
-
-//        ProductSeeder.seed(FirebaseFirestore.getInstance())
     }
 }

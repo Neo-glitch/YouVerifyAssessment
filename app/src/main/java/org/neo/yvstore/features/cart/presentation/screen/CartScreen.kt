@@ -130,44 +130,80 @@ private fun CartScreen(
                 modifier = Modifier.padding(paddingValues),
             )
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-            ) {
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                items(
-                    items = cartItems,
-                    key = { it.id }
-                ) { item ->
-                    CartItemRow(
-                        item = item,
-                        onIncrementQuantity = { onIncrementQuantity(item.id) },
-                        onDecrementQuantity = { onDecrementQuantity(item.id) },
-                        onRemoveItem = { onRemoveItem(item.id) },
-                    )
-                    YVStoreHorizontalDivider(
-                        modifier = Modifier.padding(vertical = 12.dp),
-                    )
-                }
-
-                item {
-                    OrderSummary(
-                        subtotal = subtotal,
-                        deliveryFee = deliveryFee,
-                        total = total,
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-            }
+            CartContentList(
+                cartItems = cartItems,
+                subtotal = subtotal,
+                deliveryFee = deliveryFee,
+                total = total,
+                onIncrementQuantity = onIncrementQuantity,
+                onDecrementQuantity = onDecrementQuantity,
+                onRemoveItem = onRemoveItem,
+                paddingValues = paddingValues,
+            )
         }
     }
 
-    if (showClearCartDialog) {
+    ClearCartDialog(
+        showDialog = showClearCartDialog,
+        onDismiss = onDismissClearCartDialog,
+        onConfirm = onConfirmClearCart,
+    )
+}
+
+@Composable
+private fun CartContentList(
+    cartItems: List<CartItemUi>,
+    subtotal: String,
+    deliveryFee: String,
+    total: String,
+    onIncrementQuantity: (String) -> Unit,
+    onDecrementQuantity: (String) -> Unit,
+    onRemoveItem: (String) -> Unit,
+    paddingValues: androidx.compose.foundation.layout.PaddingValues,
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(horizontal = 16.dp),
+    ) {
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        items(
+            items = cartItems,
+            key = { it.id }
+        ) { item ->
+            CartItemRow(
+                item = item,
+                onIncrementQuantity = { onIncrementQuantity(item.id) },
+                onDecrementQuantity = { onDecrementQuantity(item.id) },
+                onRemoveItem = { onRemoveItem(item.id) },
+            )
+            YVStoreHorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp),
+            )
+        }
+
+        item {
+            OrderSummary(
+                subtotal = subtotal,
+                deliveryFee = deliveryFee,
+                total = total,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+private fun ClearCartDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (showDialog) {
         YVStoreActionDialog(
             icon = R.drawable.ic_delete,
             title = "Clear Cart",
@@ -176,13 +212,13 @@ private fun CartScreen(
                     description = "Are you sure you want to remove all items from your cart?"
                 )
             },
-            onDismiss = onDismissClearCartDialog,
+            onDismiss = onDismiss,
             onPrimaryButtonClick = {
-                onConfirmClearCart()
-                onDismissClearCartDialog()
+                onConfirm()
+                onDismiss()
             },
             primaryButtonText = "Clear Cart",
-            onSecondaryButtonClick = onDismissClearCartDialog,
+            onSecondaryButtonClick = onDismiss,
             secondaryButtonText = "Cancel",
             iconColorFilter = ColorFilter.tint(MaterialTheme.colorScheme.error),
         )
@@ -387,8 +423,6 @@ private fun SummaryRow(
         )
     }
 }
-
-// Previews
 
 @Preview(showBackground = true)
 @Composable

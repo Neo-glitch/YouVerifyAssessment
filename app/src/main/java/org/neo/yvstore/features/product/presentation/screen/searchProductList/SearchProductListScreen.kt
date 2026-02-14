@@ -72,34 +72,12 @@ private fun SearchProductListScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Custom top bar with back button and search input on same row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(
-                    onClick = onBackClick,
-                ) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(R.drawable.ic_back_arrow),
-                        contentDescription = "Back",
-                        tint = YVStoreTheme.colors.navigationColors.navigationIcon,
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                YVStoreSearchInput(
-                    value = uiState.query,
-                    onValueChange = onQueryChanged,
-                    placeholder = "Search products...",
-                    autoFocus = true,
-                    debounceDelay = SEARCH_DEBOUNCE_MS,
-                    onSearch = onSearch,
-                    modifier = Modifier.weight(1f),
-                )
-            }
+            SearchHeader(
+                query = uiState.query,
+                onQueryChanged = onQueryChanged,
+                onSearch = onSearch,
+                onBackClick = onBackClick,
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -131,6 +109,42 @@ private fun SearchProductListScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SearchHeader(
+    query: String,
+    onQueryChanged: (String) -> Unit,
+    onSearch: () -> Unit,
+    onBackClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconButton(
+            onClick = onBackClick,
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(R.drawable.ic_back_arrow),
+                contentDescription = "Back",
+                tint = YVStoreTheme.colors.navigationColors.navigationIcon,
+            )
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        YVStoreSearchInput(
+            value = query,
+            onValueChange = onQueryChanged,
+            placeholder = "Search products...",
+            autoFocus = true,
+            debounceDelay = SEARCH_DEBOUNCE_MS,
+            onSearch = onSearch,
+            modifier = Modifier.weight(1f),
+        )
     }
 }
 

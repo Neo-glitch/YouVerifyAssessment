@@ -118,7 +118,6 @@ private fun SignUpScreen(
                 .padding(paddingValues)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-//                .padding(paddingValues)
                 .padding(horizontal = 24.dp),
         ) {
             Spacer(modifier = Modifier.height(24.dp))
@@ -195,21 +194,23 @@ private fun SignUpBackButton(onClick: () -> Unit) {
 
 @Composable
 private fun SignUpHeader() {
-    Text(
-        text = stringResource(R.string.signup_title),
-        style = MaterialTheme.typography.headlineMedium.copy(
-            fontWeight = FontWeight.Bold,
-        ),
-    )
+    Column {
+        Text(
+            text = stringResource(R.string.signup_title),
+            style = MaterialTheme.typography.headlineMedium.copy(
+                fontWeight = FontWeight.Bold,
+            ),
+        )
 
-    Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
-    Text(
-        text = stringResource(R.string.signup_subtitle),
-        style = MaterialTheme.typography.bodyMedium.copy(
-            color = YVStoreTheme.colors.textColors.textSecondary,
-        ),
-    )
+        Text(
+            text = stringResource(R.string.signup_subtitle),
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = YVStoreTheme.colors.textColors.textSecondary,
+            ),
+        )
+    }
 }
 
 @Composable
@@ -240,116 +241,118 @@ private fun SignUpForm(
     onTogglePasswordVisibility: () -> Unit,
     onToggleConfirmPasswordVisibility: () -> Unit,
 ) {
-    YVStoreTextInput(
-        value = email,
-        onValueChange = onEmailChange,
-        onFocusChange = { isFocused ->
-            if (!isFocused) onEmailBlur()
-        },
-        label = stringResource(R.string.signup_email_label),
-        placeholder = stringResource(R.string.signup_email_placeholder),
-        keyboardType = KeyboardType.Email,
-        imeAction = ImeAction.Next,
-        enabled = enabled,
-        error = emailError,
-        showError = emailError != null
-    )
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Column {
         YVStoreTextInput(
-            value = firstName,
-            onValueChange = onFirstNameChange,
+            value = email,
+            onValueChange = onEmailChange,
             onFocusChange = { isFocused ->
-                if (!isFocused) onFirstNameBlur()
+                if (!isFocused) onEmailBlur()
             },
-            label = stringResource(R.string.signup_first_name_label),
-            placeholder = stringResource(R.string.signup_first_name_placeholder),
-            modifier = Modifier.weight(1f),
+            label = stringResource(R.string.signup_email_label),
+            placeholder = stringResource(R.string.signup_email_placeholder),
+            keyboardType = KeyboardType.Email,
             imeAction = ImeAction.Next,
             enabled = enabled,
-            error = firstNameError,
-            showError = firstNameError != null
+            error = emailError,
+            showError = emailError != null
         )
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            YVStoreTextInput(
+                value = firstName,
+                onValueChange = onFirstNameChange,
+                onFocusChange = { isFocused ->
+                    if (!isFocused) onFirstNameBlur()
+                },
+                label = stringResource(R.string.signup_first_name_label),
+                placeholder = stringResource(R.string.signup_first_name_placeholder),
+                modifier = Modifier.weight(1f),
+                imeAction = ImeAction.Next,
+                enabled = enabled,
+                error = firstNameError,
+                showError = firstNameError != null
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            YVStoreTextInput(
+                value = lastName,
+                onValueChange = onLastNameChange,
+                onFocusChange = { isFocused ->
+                    if (!isFocused) onLastNameBlur()
+                },
+                label = stringResource(R.string.signup_last_name_label),
+                placeholder = stringResource(R.string.signup_last_name_placeholder),
+                modifier = Modifier.weight(1f),
+                imeAction = ImeAction.Next,
+                enabled = enabled,
+                error = lastNameError,
+                showError = lastNameError != null
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         YVStoreTextInput(
-            value = lastName,
-            onValueChange = onLastNameChange,
+            value = password,
+            onValueChange = onPasswordChange,
             onFocusChange = { isFocused ->
-                if (!isFocused) onLastNameBlur()
+                if (!isFocused) onPasswordBlur()
             },
-            label = stringResource(R.string.signup_last_name_label),
-            placeholder = stringResource(R.string.signup_last_name_placeholder),
-            modifier = Modifier.weight(1f),
-            imeAction = ImeAction.Next,
+            label = stringResource(R.string.signup_password_label),
+            placeholder = stringResource(R.string.signup_password_placeholder),
+            keyboardType = KeyboardType.Password,
             enabled = enabled,
-            error = lastNameError,
-            showError = lastNameError != null
+            visualTransformation = if (isPasswordVisible) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation(
+                    mask = '*'
+                )
+            },
+            trailingIcon = {
+                YVStoreInputSensitiveIcon(
+                    onClick = onTogglePasswordVisibility,
+                    showSensitiveInfo = isPasswordVisible,
+                )
+            },
+            imeAction = ImeAction.Next,
+            error = passwordError,
+            showError = passwordError != null
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        YVStoreTextInput(
+            value = confirmPassword,
+            onValueChange = onConfirmPasswordChange,
+            onFocusChange = { isFocused ->
+                if (!isFocused) onConfirmPasswordBlur()
+            },
+            label = stringResource(R.string.signup_confirm_password_label),
+            placeholder = stringResource(R.string.signup_confirm_password_placeholder),
+            keyboardType = KeyboardType.Password,
+            enabled = enabled,
+            visualTransformation = if (isConfirmPasswordVisible) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation(
+                    mask = '*'
+                )
+            },
+            trailingIcon = {
+                YVStoreInputSensitiveIcon(
+                    onClick = onToggleConfirmPasswordVisibility,
+                    showSensitiveInfo = isConfirmPasswordVisible,
+                )
+            },
+            imeAction = ImeAction.Done,
+            error = confirmPasswordError,
+            showError = confirmPasswordError != null
         )
     }
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    YVStoreTextInput(
-        value = password,
-        onValueChange = onPasswordChange,
-        onFocusChange = { isFocused ->
-            if (!isFocused) onPasswordBlur()
-        },
-        label = stringResource(R.string.signup_password_label),
-        placeholder = stringResource(R.string.signup_password_placeholder),
-        keyboardType = KeyboardType.Password,
-        enabled = enabled,
-        visualTransformation = if (isPasswordVisible) {
-            VisualTransformation.None
-        } else {
-            PasswordVisualTransformation(
-                mask = '*'
-            )
-        },
-        trailingIcon = {
-            YVStoreInputSensitiveIcon(
-                onClick = onTogglePasswordVisibility,
-                showSensitiveInfo = isPasswordVisible,
-            )
-        },
-        imeAction = ImeAction.Next,
-        error = passwordError,
-        showError = passwordError != null
-    )
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    YVStoreTextInput(
-        value = confirmPassword,
-        onValueChange = onConfirmPasswordChange,
-        onFocusChange = { isFocused ->
-            if (!isFocused) onConfirmPasswordBlur()
-        },
-        label = stringResource(R.string.signup_confirm_password_label),
-        placeholder = stringResource(R.string.signup_confirm_password_placeholder),
-        keyboardType = KeyboardType.Password,
-        enabled = enabled,
-        visualTransformation = if (isConfirmPasswordVisible) {
-            VisualTransformation.None
-        } else {
-            PasswordVisualTransformation(
-                mask = '*'
-            )
-        },
-        trailingIcon = {
-            YVStoreInputSensitiveIcon(
-                onClick = onToggleConfirmPasswordVisibility,
-                showSensitiveInfo = isConfirmPasswordVisible,
-            )
-        },
-        imeAction = ImeAction.Done,
-        error = confirmPasswordError,
-        showError = confirmPasswordError != null
-    )
 }
 
 @Composable

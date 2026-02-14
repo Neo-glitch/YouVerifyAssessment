@@ -14,7 +14,6 @@ import org.neo.yvstore.features.auth.presentation.screens.login.LoginViewModel
 
 val appModule = module {
     single<FirebaseAuth> { Firebase.auth }
-//    single<FirebaseFirestore> { Firebase.firestore }
 
     single {
         FirebaseFirestore.getInstance().apply {

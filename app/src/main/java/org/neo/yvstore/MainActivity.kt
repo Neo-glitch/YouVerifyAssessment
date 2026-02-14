@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.initialize()
         val splashScreen = installSplashScreen()
 
         var uiState: AppAuthState by mutableStateOf(AppAuthState.LOADING)

@@ -279,7 +279,6 @@ fun YVStoreWarningButton(
     }
 }
 
-// Previews
 @Preview(showBackground = true)
 @Composable
 private fun YVStorePrimaryButtonEnabledPreview() {

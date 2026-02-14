@@ -33,7 +33,6 @@ fun YVStoreMultiStyleText(
                     end = endIndex,
                 )
 
-                // find next occurrence (if any)
                 startIndex = fullText.indexOf(part.value, startIndex + 1)
             }
         }
@@ -49,8 +48,6 @@ fun YVStoreMultiStyleText(
 }
 
 data class StyledPart(
-    // substring inside the full text
     val value: String,
-    // style to apply
     val style: SpanStyle,
 )

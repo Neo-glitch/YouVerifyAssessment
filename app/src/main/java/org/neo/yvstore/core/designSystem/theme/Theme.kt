@@ -52,9 +52,6 @@ import org.neo.yvstore.core.designSystem.color.md_theme_light_surface
 import org.neo.yvstore.core.designSystem.color.md_theme_light_surfaceVariant
 import org.neo.yvstore.core.designSystem.typography.Typography
 
-// =============================================================================
-// Color Schemes
-// =============================================================================
 val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
@@ -124,16 +121,10 @@ val DarkColorScheme = darkColorScheme(
 @Composable
 fun YVStoreTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-//        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-//            val context = LocalContext.current
-//            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-//        }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

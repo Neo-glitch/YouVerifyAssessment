@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -137,53 +138,65 @@ private fun ProductDetailsScreen(
             }
         }
     ) { paddingValues ->
-        when (loadState) {
-            is ProductDetailsLoadState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    YVStoreCircleProgressIndicator(size = 48.dp)
-                }
+        ProductDetailsContent(
+            loadState = loadState,
+            product = product,
+            paddingValues = paddingValues,
+        )
+    }
+}
+
+@Composable
+private fun ProductDetailsContent(
+    loadState: ProductDetailsLoadState,
+    product: ProductDetailsUi?,
+    paddingValues: PaddingValues,
+) {
+    when (loadState) {
+        is ProductDetailsLoadState.Loading -> {
+            Box(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                YVStoreCircleProgressIndicator(size = 48.dp)
             }
-            is ProductDetailsLoadState.Loaded -> {
-                if (product != null) {
-                    Column(
-                        modifier = Modifier
-                            .padding(paddingValues)
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        ProductImageSection(imageUrl = product.imageUrl)
-
-                        Column(
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        ) {
-                            ProductInfoSection(
-                                name = product.name,
-                                description = product.description,
-                                price = product.formattedPrice,
-                                rating = product.rating,
-                                reviewCount = product.reviewCount,
-                            )
-
-                            ProductDetailsSection(details = product.details)
-
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-                    }
-                }
-            }
-            is ProductDetailsLoadState.Error -> {
-                // Error dialog is already shown above
-                Box(
+        }
+        is ProductDetailsLoadState.Loaded -> {
+            if (product != null) {
+                Column(
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize()
-                )
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    ProductImageSection(imageUrl = product.imageUrl)
+
+                    Column(
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        ProductInfoSection(
+                            name = product.name,
+                            description = product.description,
+                            price = product.formattedPrice,
+                            rating = product.rating,
+                            reviewCount = product.reviewCount,
+                        )
+
+                        ProductDetailsSection(details = product.details)
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
             }
+        }
+        is ProductDetailsLoadState.Error -> {
+            Box(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            )
         }
     }
 }
@@ -208,31 +221,33 @@ private fun ProductInfoSection(
     rating: Double,
     reviewCount: Int,
 ) {
-    Spacer(modifier = Modifier.height(16.dp))
+    Column {
+        Spacer(modifier = Modifier.height(16.dp))
 
-    Text(
-        text = name,
-        style = MaterialTheme.typography.headlineSmall.copy(
-            fontWeight = FontWeight.SemiBold,
-        ),
-    )
+        Text(
+            text = name,
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontWeight = FontWeight.SemiBold,
+            ),
+        )
 
-    Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
-    Text(
-        text = price,
-        style = MaterialTheme.typography.titleLarge.copy(
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-        ),
-    )
+        Text(
+            text = price,
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            ),
+        )
 
-    Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-    ReviewRow(
-        rating = rating,
-        reviewCount = reviewCount,
-    )
+        ReviewRow(
+            rating = rating,
+            reviewCount = reviewCount,
+        )
+    }
 }
 
 @Composable
@@ -267,29 +282,31 @@ private fun ReviewRow(rating: Double, reviewCount: Int) {
 
 @Composable
 private fun ProductDetailsSection(details: String) {
-    Spacer(modifier = Modifier.height(16.dp))
+    Column {
+        Spacer(modifier = Modifier.height(16.dp))
 
-    YVStoreHorizontalDivider()
+        YVStoreHorizontalDivider()
 
-    Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-    Text(
-        text = "Product Details",
-        style = MaterialTheme.typography.titleMedium.copy(
-            fontWeight = FontWeight.SemiBold,
-        ),
-    )
+        Text(
+            text = "Product Details",
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+            ),
+        )
 
-    Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-    YVStoreHorizontalDivider()
+        YVStoreHorizontalDivider()
 
-    Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
-    Text(
-        text = details,
-        style = MaterialTheme.typography.bodyMedium,
-    )
+        Text(
+            text = details,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
 }
 
 @Composable
@@ -406,8 +423,6 @@ private fun QuantitySelector(
         }
     }
 }
-
-// Previews
 
 @Preview(showBackground = true)
 @Composable

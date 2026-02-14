@@ -39,19 +39,6 @@ fun YVStoreSearchInput(
     onFocusChange: ((Boolean) -> Unit)? = null,
 ) {
     val currentOnSearch by rememberUpdatedState(onSearch)
-//    var importsFirstEmission by remember { mutableStateOf(true) }
-
-//    LaunchedEffect(value) {
-//        if (isFirstEmission) {
-//            isFirstEmission = false
-//            return@LaunchedEffect
-//        }
-//        if (debounceDelay > 0) {
-//            delay(debounceDelay)
-//        }
-//        currentOnSearch()
-//    }
-
     val currentValue by rememberUpdatedState(value)
 
     LaunchedEffect(Unit) {

@@ -2,6 +2,7 @@ package org.neo.yvstore
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,16 +18,20 @@ class MainViewModel (
     private val _authState = MutableStateFlow(AppAuthState.LOADING)
     val authState: StateFlow<AppAuthState> = _authState.asStateFlow()
 
-    init {
+    private var hasInitialized = false
+
+    fun initialize() {
+        if (hasInitialized) return
+        hasInitialized = true
         checkLoginStatus()
     }
 
     private fun checkLoginStatus() {
         viewModelScope.launch {
             userManager.observeUser()
-                .map { it != null }
-                .collectLatest { isLoggedIn ->
-                    _authState.value = if (isLoggedIn) {
+                .collectLatest { currentUser ->
+                    delay(200)
+                    _authState.value = if (currentUser != null) {
                         AppAuthState.AUTHENTICATED
                     } else {
                         AppAuthState.UNAUTHENTICATED
