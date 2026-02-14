@@ -34,7 +34,6 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 onViewAllClick = {
                     // TODO: Implement view all navigation
                 },
-                hasCartItems = false,
             )
         }
 

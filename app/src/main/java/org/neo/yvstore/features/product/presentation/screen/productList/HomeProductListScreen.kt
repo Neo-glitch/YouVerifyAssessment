@@ -1,6 +1,8 @@
 package org.neo.yvstore.features.product.presentation.screen.productList
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,16 +15,26 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.androidx.compose.koinViewModel
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.button.YVStoreTextButton
 import org.neo.yvstore.core.ui.component.grid.NonlazyGrid
+import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
+import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
+import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
+import org.neo.yvstore.features.product.presentation.model.ProductListLoadState
+import org.neo.yvstore.features.product.presentation.model.ProductListUiEvent
 import org.neo.yvstore.features.product.presentation.screen.productList.components.CartIconButton
 import org.neo.yvstore.features.product.presentation.screen.productList.components.ProductCard
 import org.neo.yvstore.features.product.presentation.screen.productList.components.PromoBanner
@@ -34,11 +46,23 @@ fun HomeProductListScreen(
     onNavigateToSearch: () -> Unit,
     onNavigateToProductDetails: (String) -> Unit,
     onViewAllClick: () -> Unit,
-    hasCartItems: Boolean = false,
+    viewModel: HomeProductListViewModel = koinViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    ObserveAsEvents(viewModel.uiEvent) { event ->
+        when (event) {
+            is ProductListUiEvent.ShowToast -> {
+                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     HomeProductListScreen(
-        products = placeholderProducts,
-        hasCartItems = hasCartItems,
+        products = uiState.products,
+        loadState = uiState.loadState,
+        hasCartItems = false, // TODO: Connect to cart state later
         promoTitle = "Clearance Sales",
         promoDiscountText = "Up to 50%",
         promoImageUrl = "https://picsum.photos/seed/promo/200/200",
@@ -52,6 +76,7 @@ fun HomeProductListScreen(
 @Composable
 private fun HomeProductListScreen(
     products: List<ProductItemUi>,
+    loadState: ProductListLoadState,
     hasCartItems: Boolean,
     promoTitle: String,
     promoDiscountText: String,
@@ -79,31 +104,63 @@ private fun HomeProductListScreen(
                 onClick = onNavigateToSearch,
             )
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState()),
-            ) {
-                Spacer(modifier = Modifier.height(16.dp))
-                PromoBanner(
-                    title = promoTitle,
-                    discountText = promoDiscountText,
-                    imageUrl = promoImageUrl,
-                )
+            // Show loading or error state when products list is empty
+            if (products.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    when (loadState) {
+                        ProductListLoadState.Loading -> {
+                            YVStoreCircleProgressIndicator(size = 48.dp)
+                        }
+                        is ProductListLoadState.Error -> {
+                            YVStoreEmptyErrorStateView(
+                                image = android.R.drawable.ic_dialog_alert,
+                                title = "Unable to Load Products",
+                                description = loadState.message,
+                            )
+                        }
+                        ProductListLoadState.Loaded -> {
+                            // Empty state with loaded status (no products available)
+                            YVStoreEmptyErrorStateView(
+                                image = android.R.drawable.ic_dialog_info,
+                                title = "No Products Available",
+                                description = "Check back later for new products.",
+                            )
+                        }
+                    }
+                }
+            } else {
+                // Show content when products are available
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    PromoBanner(
+                        title = promoTitle,
+                        discountText = promoDiscountText,
+                        imageUrl = promoImageUrl,
+                    )
 
-                Spacer(modifier = Modifier.height(24.dp))
-                ProductsSectionHeader(
-                    title = "Products",
-                    onViewAllClick = onViewAllClick,
-                )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    ProductsSectionHeader(
+                        title = "Products",
+                        onViewAllClick = onViewAllClick,
+                    )
 
-                Spacer(modifier = Modifier.height(16.dp))
-                ProductsGrid(
-                    products = products,
-                    onProductClick = onNavigateToProductDetails,
-                )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    ProductsGrid(
+                        products = products,
+                        onProductClick = onNavigateToProductDetails,
+                    )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
     }
@@ -247,6 +304,7 @@ private fun HomeProductListScreenPreview() {
     YVStoreTheme {
         HomeProductListScreen(
             products = placeholderProducts,
+            loadState = ProductListLoadState.Loaded,
             hasCartItems = false,
             promoTitle = "Clearance Sales",
             promoDiscountText = "Up to 50%",
@@ -265,7 +323,46 @@ private fun HomeProductListScreenWithCartItemsPreview() {
     YVStoreTheme {
         HomeProductListScreen(
             products = placeholderProducts,
+            loadState = ProductListLoadState.Loaded,
             hasCartItems = true,
+            promoTitle = "Clearance Sales",
+            promoDiscountText = "Up to 50%",
+            promoImageUrl = "https://picsum.photos/seed/promo/200/200",
+            onNavigateToCart = {},
+            onNavigateToSearch = {},
+            onNavigateToProductDetails = {},
+            onViewAllClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeProductListScreenLoadingPreview() {
+    YVStoreTheme {
+        HomeProductListScreen(
+            products = emptyList(),
+            loadState = ProductListLoadState.Loading,
+            hasCartItems = false,
+            promoTitle = "Clearance Sales",
+            promoDiscountText = "Up to 50%",
+            promoImageUrl = "https://picsum.photos/seed/promo/200/200",
+            onNavigateToCart = {},
+            onNavigateToSearch = {},
+            onNavigateToProductDetails = {},
+            onViewAllClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeProductListScreenErrorPreview() {
+    YVStoreTheme {
+        HomeProductListScreen(
+            products = emptyList(),
+            loadState = ProductListLoadState.Error("Failed to load products. Please check your internet connection."),
+            hasCartItems = false,
             promoTitle = "Clearance Sales",
             promoDiscountText = "Up to 50%",
             promoImageUrl = "https://picsum.photos/seed/promo/200/200",

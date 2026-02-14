@@ -29,7 +29,7 @@ class HomeProductListViewModel(
     private val _uiEvent = Channel<ProductListUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    companion object Companion {
+    companion object {
         private const val PRODUCT_COUNT = 20
     }
 
