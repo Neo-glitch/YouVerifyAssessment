@@ -100,8 +100,8 @@ class LoginViewModel(
             _uiState.update { it.copy(loadState = LoginLoadState.Loading) }
 
             val result = loginUseCase(
-                email = _uiState.value.email.value,
-                password = _uiState.value.password.value,
+                email = _uiState.value.email.value.trim(),
+                password = _uiState.value.password.value.trim(),
             )
 
             when (result) {

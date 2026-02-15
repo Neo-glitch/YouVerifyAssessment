@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.neo.yvstore.core.common.util.capitalizeFirst
 import org.neo.yvstore.core.domain.model.Resource
 import org.neo.yvstore.core.domain.model.ValidationResult
 import org.neo.yvstore.core.domain.validator.EmailValidator
@@ -206,10 +207,10 @@ class SignUpViewModel(
             _uiState.update { it.copy(loadState = SignUpLoadState.Loading) }
 
             val result = signUpUseCase(
-                email = _uiState.value.email.value,
-                password = _uiState.value.password.value,
-                firstName = _uiState.value.firstName.value,
-                lastName = _uiState.value.lastName.value,
+                email = _uiState.value.email.value.trim(),
+                password = _uiState.value.password.value.trim(),
+                firstName = _uiState.value.firstName.value.trim().capitalizeFirst(),
+                lastName = _uiState.value.lastName.value.trim().capitalizeFirst(),
             )
 
             when (result) {

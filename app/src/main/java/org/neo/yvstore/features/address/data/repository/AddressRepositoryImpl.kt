@@ -23,7 +23,7 @@ class AddressRepositoryImpl(
 ) : AddressRepository {
 
     override fun getAddresses(): Flow<Resource<List<Address>>> {
-        return addressDao.getAll()
+        return addressDao.observeAllAddresses()
             .map<List<AddressEntity>, Resource<List<Address>>> { entities ->
                 Resource.Success(entities.map { it.toAddress() })
             }
@@ -34,7 +34,7 @@ class AddressRepositoryImpl(
 
     override suspend fun getAddressById(id: String): Resource<Address> {
         return try {
-            val entity = addressDao.getById(id)
+            val entity = addressDao.getAddressById(id)
                 ?: return Resource.Error("Address not found")
             Resource.Success(entity.toAddress())
         } catch (e: Exception) {
@@ -56,7 +56,7 @@ class AddressRepositoryImpl(
             val documentId = remoteDatasource.addAddress(userId, addressDto)
 
             val addressWithId = address.copy(id = documentId, userId = userId)
-            addressDao.insert(addressWithId.toEntity())
+            addressDao.insertAddress(addressWithId.toEntity())
 
             Resource.Success(Unit)
         } catch (e: Exception) {
@@ -67,7 +67,7 @@ class AddressRepositoryImpl(
     override suspend fun deleteAddress(addressId: String): Resource<Unit> {
         return try {
             remoteDatasource.deleteAddress(addressId)
-            addressDao.deleteById(addressId)
+            addressDao.deleteAddressById(addressId)
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error(ExceptionHandler.getErrorMessage(e))
@@ -81,8 +81,8 @@ class AddressRepositoryImpl(
 
             val addresses = remoteDatasource.getAddresses(userId)
 
-            addressDao.deleteAll()
-            addressDao.insertAll(addresses.map { it.toEntity() })
+            addressDao.deleteAllAddresses()
+            addressDao.insertAddresses(addresses.map { it.toEntity() })
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error(ExceptionHandler.getErrorMessage(e))

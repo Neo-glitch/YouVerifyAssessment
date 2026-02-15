@@ -16,7 +16,7 @@ class CartRepositoryImpl(
 ) : CartRepository {
 
     override fun observeCartItems(): Flow<Resource<List<CartItem>>> {
-        return cartItemDao.getAllCartItems()
+        return cartItemDao.observeAllCartItems()
             .map<List<CartItemEntity>, Resource<List<CartItem>>> { entities ->
                 Resource.Success(entities.map { it.toCartItem() })
             }
@@ -44,7 +44,7 @@ class CartRepositoryImpl(
             }
     }
 
-    override suspend fun addItem(cartItem: CartItemEntity): Resource<Unit> {
+    override suspend fun addCartItem(cartItem: CartItemEntity): Resource<Unit> {
         return try {
             cartItemDao.insertCartItem(cartItem)
             Resource.Success(Unit)
@@ -62,7 +62,7 @@ class CartRepositoryImpl(
         }
     }
 
-    override suspend fun deleteItem(id: Long): Resource<Unit> {
+    override suspend fun deleteCartItem(id: Long): Resource<Unit> {
         return try {
             cartItemDao.deleteCartItem(id)
             Resource.Success(Unit)
@@ -71,7 +71,7 @@ class CartRepositoryImpl(
         }
     }
 
-    override suspend fun deleteAllItems(): Resource<Unit> {
+    override suspend fun deleteAllCartItems(): Resource<Unit> {
         return try {
             cartItemDao.deleteAllCartItems()
             Resource.Success(Unit)

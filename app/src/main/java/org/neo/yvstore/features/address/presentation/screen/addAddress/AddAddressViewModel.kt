@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.neo.yvstore.core.common.util.capitalizeFirst
 import org.neo.yvstore.core.domain.model.Address
 import org.neo.yvstore.features.address.domain.usecase.AddAddressUseCase
 
@@ -157,10 +158,10 @@ class AddAddressViewModel(
             val address = Address(
                 id = "",
                 userId = "",
-                streetAddress = state.streetAddress.value,
-                city = state.city.value,
-                state = state.state.value,
-                country = state.country.value
+                streetAddress = state.streetAddress.value.trim(),
+                city = state.city.value.trim().capitalizeFirst(),
+                state = state.state.value.trim().capitalizeFirst(),
+                country = state.country.value.trim().capitalizeFirst()
             )
 
             val result = addAddressUseCase(address)

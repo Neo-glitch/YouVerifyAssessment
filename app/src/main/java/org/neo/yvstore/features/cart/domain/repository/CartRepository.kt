@@ -9,9 +9,9 @@ interface CartRepository {
     fun observeCartItems(): Flow<Resource<List<CartItem>>>
     suspend fun getCartItems(): Resource<List<CartItem>>
     fun observeCartItemCount(): Flow<Resource<Int>>
-    suspend fun addItem(cartItem: CartItemEntity): Resource<Unit>
+    suspend fun addCartItem(cartItem: CartItemEntity): Resource<Unit>
     suspend fun updateQuantity(id: Long, quantity: Int): Resource<Unit>
-    suspend fun deleteItem(id: Long): Resource<Unit>
-    suspend fun deleteAllItems(): Resource<Unit>
+    suspend fun deleteCartItem(id: Long): Resource<Unit>
+    suspend fun deleteAllCartItems(): Resource<Unit>
     fun observeCartItemByProductId(productId: String): Flow<Resource<CartItem?>>
 }

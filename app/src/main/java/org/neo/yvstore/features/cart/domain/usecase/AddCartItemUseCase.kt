@@ -19,5 +19,5 @@ class AddCartItemUseCase(
      * @return Resource indicating success or failure
      */
     suspend operator fun invoke(cartItem: CartItemEntity): Resource<Unit> =
-        repository.addItem(cartItem)
+        repository.addCartItem(cartItem)
 }

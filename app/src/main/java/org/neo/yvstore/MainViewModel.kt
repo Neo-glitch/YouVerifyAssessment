@@ -18,11 +18,7 @@ class MainViewModel (
     private val _authState = MutableStateFlow(AppAuthState.LOADING)
     val authState: StateFlow<AppAuthState> = _authState.asStateFlow()
 
-    private var hasInitialized = false
-
-    fun initialize() {
-        if (hasInitialized) return
-        hasInitialized = true
+    init {
         checkLoginStatus()
     }
 

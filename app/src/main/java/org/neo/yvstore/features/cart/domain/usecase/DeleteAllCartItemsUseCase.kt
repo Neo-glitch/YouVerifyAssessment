@@ -17,5 +17,5 @@ class DeleteAllCartItemsUseCase(
      * @return Resource indicating success or failure
      */
     suspend operator fun invoke(): Resource<Unit> =
-        repository.deleteAllItems()
+        repository.deleteAllCartItems()
 }

@@ -10,27 +10,21 @@ import org.neo.yvstore.core.database.model.AddressEntity
 @Dao
 interface AddressDao {
 
-    @Query("SELECT * FROM addresses WHERE user_id = :userId ORDER BY id ASC")
-    fun getByUserId(userId: String): Flow<List<AddressEntity>>
-
     @Query("SELECT * FROM addresses ORDER BY id ASC")
-    fun getAll(): Flow<List<AddressEntity>>
+    fun observeAllAddresses(): Flow<List<AddressEntity>>
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insert(address: AddressEntity)
+    suspend fun insertAddress(address: AddressEntity)
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insertAll(addresses: List<AddressEntity>)
+    suspend fun insertAddresses(addresses: List<AddressEntity>)
 
     @Query("DELETE FROM addresses WHERE id = :addressId")
-    suspend fun deleteById(addressId: String)
-
-    @Query("DELETE FROM addresses WHERE user_id = :userId")
-    suspend fun deleteAllByUserId(userId: String)
+    suspend fun deleteAddressById(addressId: String)
 
     @Query("SELECT * FROM addresses WHERE id = :id")
-    suspend fun getById(id: String): AddressEntity?
+    suspend fun getAddressById(id: String): AddressEntity?
 
     @Query("DELETE FROM addresses")
-    suspend fun deleteAll()
+    suspend fun deleteAllAddresses()
 }

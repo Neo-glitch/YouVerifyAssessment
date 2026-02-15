@@ -11,7 +11,7 @@ import org.neo.yvstore.core.database.model.CartItemEntity
 interface CartItemDao {
 
     @Query("SELECT * FROM cart_items ORDER BY id ASC")
-    fun getAllCartItems(): Flow<List<CartItemEntity>>
+    fun observeAllCartItems(): Flow<List<CartItemEntity>>
 
     @Query("SELECT * FROM cart_items ORDER BY id ASC")
     suspend fun getCartItems(): List<CartItemEntity>
