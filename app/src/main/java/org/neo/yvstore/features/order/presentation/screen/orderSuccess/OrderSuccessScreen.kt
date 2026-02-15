@@ -56,13 +56,11 @@ fun OrderSuccessScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            val primaryColor = MaterialTheme.colorScheme.primary
-
-            SuccessIcon(primaryColor)
+            SuccessIcon()
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            SuccessTitle(primaryColor)
+            SuccessTitle()
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -80,13 +78,13 @@ fun OrderSuccessScreen(
 }
 
 @Composable
-private fun SuccessIcon(color: Color) {
+private fun SuccessIcon() {
     Box(
         modifier = Modifier
             .size(140.dp)
             .border(
                 width = 3.dp,
-                color = color,
+                color = YVStoreTheme.colors.popUpColors.success,
                 shape = CircleShape,
             ),
         contentAlignment = Alignment.Center,
@@ -95,18 +93,17 @@ private fun SuccessIcon(color: Color) {
             imageVector = Icons.Rounded.Check,
             contentDescription = "Order successful",
             modifier = Modifier.size(60.dp),
-            tint = color,
+            tint = YVStoreTheme.colors.popUpColors.success,
         )
     }
 }
 
 @Composable
-private fun SuccessTitle(color: Color) {
+private fun SuccessTitle() {
     Text(
         text = "Purchase Completed",
         style = MaterialTheme.typography.headlineSmall.copy(
             fontWeight = FontWeight.SemiBold,
-            color = color,
         ),
     )
 }
