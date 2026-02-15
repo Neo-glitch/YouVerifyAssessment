@@ -1,5 +1,6 @@
 package org.neo.yvstore.features.order.presentation.screen.orderSuccess
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,8 +36,9 @@ import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 @Composable
 fun OrderSuccessScreen(
     onNavigateBack: () -> Unit,
-    onContinueShopping: () -> Unit,
 ) {
+    BackHandler(onBack = onNavigateBack)
+
     YVStoreScaffold(
         topBar = {
             YVStoreTopBar(
@@ -70,7 +72,7 @@ fun OrderSuccessScreen(
 
             YVStorePrimaryButton(
                 text = "Continue Shopping",
-                onClick = onContinueShopping,
+                onClick = onNavigateBack,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -126,7 +128,6 @@ private fun OrderSuccessScreenPreview() {
     YVStoreTheme {
         OrderSuccessScreen(
             onNavigateBack = {},
-            onContinueShopping = {},
         )
     }
 }

@@ -125,24 +125,9 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
         composable<MainGraphRoute.OrderSuccessScreen> {
             OrderSuccessScreen(
                 onNavigateBack = {
-                    navController.popBackStack()
+                    navController.popBackStack<MainGraphRoute.HomeScreen>(inclusive = false)
                 },
-                onContinueShopping = {
-                    navController.navigate(MainGraphRoute.HomeScreen) {
-                        popUpTo(MainGraphRoute.HomeScreen) { inclusive = true }
-                    }
-                }
             )
-        }
-
-        composable<MainGraphRoute.OrdersScreen> {
-            // TODO: Implement Orders Screen
-            Spacer(modifier = Modifier.height(100.dp))
-        }
-
-        composable<MainGraphRoute.ProfileScreen> {
-            // TODO: Implement Profile Screen
-            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }
