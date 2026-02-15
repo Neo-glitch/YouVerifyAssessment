@@ -341,6 +341,7 @@ private fun CheckoutScreenPreview() {
             cartItems = listOf(
                 CartItemUi(
                     id = 1L,
+                    productId = "xbox-series-x",
                     name = "Xbox Series X",
                     price = 570.0,
                     imageUrl = "",
@@ -348,6 +349,7 @@ private fun CheckoutScreenPreview() {
                 ),
                 CartItemUi(
                     id = 2L,
+                    productId = "ps5",
                     name = "PlayStation 5",
                     price = 499.99,
                     imageUrl = "",

@@ -4,6 +4,7 @@ import org.neo.yvstore.core.domain.model.CartItem
 
 data class CartItemUi(
     val id: Long,
+    val productId: String,
     val name: String,
     val price: Double,
     val imageUrl: String,
@@ -22,6 +23,7 @@ data class CartItemUi(
 fun CartItem.toCartItemUi(): CartItemUi {
     return CartItemUi(
         id = id,
+        productId = productId,
         name = productName,
         price = unitPrice,
         imageUrl = productImageUrl,

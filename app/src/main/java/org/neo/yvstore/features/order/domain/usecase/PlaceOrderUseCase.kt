@@ -1,6 +1,7 @@
 package org.neo.yvstore.features.order.domain.usecase
 
 import org.neo.yvstore.core.domain.model.Resource
+import org.neo.yvstore.features.order.domain.model.OrderLineItem
 import org.neo.yvstore.features.order.domain.repository.OrderRepository
 
 class PlaceOrderUseCase(
@@ -9,6 +10,6 @@ class PlaceOrderUseCase(
     suspend operator fun invoke(
         totalAmount: Double,
         shippingAddress: String,
-        cartItemIds: List<String>
-    ): Resource<String> = repository.placeOrder(totalAmount, shippingAddress, cartItemIds)
+        items: List<OrderLineItem>
+    ): Resource<String> = repository.placeOrder(totalAmount, shippingAddress, items)
 }

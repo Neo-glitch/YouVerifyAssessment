@@ -340,6 +340,7 @@ private fun CartScreenPopulatedPreview() {
             cartItems = listOf(
                 CartItemUi(
                     id = 1L,
+                    productId = "xbox-series-x",
                     name = "Xbox series X",
                     price = 570.0,
                     imageUrl = "https://picsum.photos/seed/xbox/400/400",
@@ -347,6 +348,7 @@ private fun CartScreenPopulatedPreview() {
                 ),
                 CartItemUi(
                     id = 2L,
+                    productId = "ps5",
                     name = "PlayStation 5",
                     price = 499.99,
                     imageUrl = "https://picsum.photos/seed/ps5/400/400",
@@ -401,6 +403,7 @@ private fun CartScreenClearDialogPreview() {
             cartItems = listOf(
                 CartItemUi(
                     id = 1L,
+                    productId = "xbox-series-x",
                     name = "Xbox series X",
                     price = 570.0,
                     imageUrl = "https://picsum.photos/seed/xbox/400/400",

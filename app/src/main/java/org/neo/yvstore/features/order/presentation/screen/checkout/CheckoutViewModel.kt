@@ -14,6 +14,7 @@ import org.neo.yvstore.features.address.presentation.model.toAddressUi
 import org.neo.yvstore.features.cart.domain.usecase.DeleteAllCartItemsUseCase
 import org.neo.yvstore.features.cart.domain.usecase.GetCartItemsUseCase
 import org.neo.yvstore.features.cart.presentation.model.toCartItemUi
+import org.neo.yvstore.features.order.domain.model.OrderLineItem
 import org.neo.yvstore.features.order.domain.usecase.PlaceOrderUseCase
 
 class CheckoutViewModel(
@@ -81,7 +82,14 @@ class CheckoutViewModel(
             val result = placeOrderUseCase(
                 totalAmount = state.total,
                 shippingAddress = address.formattedAddress,
-                cartItemIds = state.cartItems.map { it.id.toString() }
+                items = state.cartItems.map { cartItem ->
+                    OrderLineItem(
+                        productId = cartItem.productId,
+                        productName = cartItem.name,
+                        unitPrice = cartItem.price,
+                        quantity = cartItem.quantity
+                    )
+                }
             )
 
             result.onSuccess {

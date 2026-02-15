@@ -183,6 +183,7 @@ private fun CartItemPreview() {
         CartItem(
             item = CartItemUi(
                 id = 1L,
+                productId = "xbox-series-x",
                 name = "Xbox Series X",
                 price = 570.0,
                 imageUrl = "",

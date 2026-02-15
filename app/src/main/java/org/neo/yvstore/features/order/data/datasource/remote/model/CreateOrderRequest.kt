@@ -16,6 +16,5 @@ data class CreateOrderRequest(
     val createdAt: Timestamp = Timestamp.now(),
     @get:PropertyName("updated_at")
     val updatedAt: Timestamp = Timestamp.now(),
-    @get:PropertyName("cart_item_id")
-    val cartItemId: List<String> = emptyList()
+    val items: List<OrderItemRequest> = emptyList()
 )

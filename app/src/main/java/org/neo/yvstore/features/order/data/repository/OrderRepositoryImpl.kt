@@ -6,6 +6,8 @@ import org.neo.yvstore.core.domain.manager.UserManager
 import org.neo.yvstore.core.domain.model.Resource
 import org.neo.yvstore.features.order.data.datasource.remote.OrderRemoteDatasource
 import org.neo.yvstore.features.order.data.datasource.remote.model.CreateOrderRequest
+import org.neo.yvstore.features.order.data.datasource.remote.model.OrderItemRequest
+import org.neo.yvstore.features.order.domain.model.OrderLineItem
 import org.neo.yvstore.features.order.domain.repository.OrderRepository
 
 class OrderRepositoryImpl(
@@ -16,7 +18,7 @@ class OrderRepositoryImpl(
     override suspend fun placeOrder(
         totalAmount: Double,
         shippingAddress: String,
-        cartItemIds: List<String>
+        items: List<OrderLineItem>
     ): Resource<String> {
         return try {
             val user = userManager.getUser()
@@ -30,7 +32,14 @@ class OrderRepositoryImpl(
                 status = "confirmed",
                 createdAt = now,
                 updatedAt = now,
-                cartItemId = cartItemIds
+                items = items.map { item ->
+                    OrderItemRequest(
+                        productId = item.productId,
+                        productName = item.productName,
+                        unitPrice = item.unitPrice,
+                        quantity = item.quantity
+                    )
+                }
             )
 
             val orderId = remoteDatasource.createOrder(request)
