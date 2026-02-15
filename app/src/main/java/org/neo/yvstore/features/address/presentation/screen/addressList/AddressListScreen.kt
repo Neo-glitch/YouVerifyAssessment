@@ -1,5 +1,6 @@
 package org.neo.yvstore.features.address.presentation.screen.addressList
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,6 +34,7 @@ import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
 import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
+import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.features.address.presentation.model.AddressUi
 import org.neo.yvstore.features.address.presentation.screen.addressList.components.AddressItem
 
@@ -43,6 +46,15 @@ fun AddressListScreen(
     viewModel: AddressListViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    ObserveAsEvents(viewModel.uiEvent) { event ->
+        when (event) {
+            is AddressListUiEvent.ShowToast -> {
+                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     AddressListScreen(
         addresses = uiState.addresses,
@@ -86,19 +98,25 @@ private fun AddressListScreen(
             },
             floatingActionButton = {
                 AddAddressFab(
-                    visible = loadState is AddressListLoadState.Loaded && addresses.isNotEmpty(),
+                    visible = addresses.isNotEmpty(),
                     onClick = onAddAddress
                 )
             }
         ) { paddingValues ->
-            AddressListContent(
-                addresses = addresses,
-                loadState = loadState,
-                onAddAddress = onAddAddress,
-                onAddressSelected = onAddressSelected,
-                onDeleteAddress = onDeleteAddress,
-                paddingValues = paddingValues
-            )
+            if (addresses.isEmpty()) {
+                EmptyStateContent(
+                    loadState = loadState,
+                    onAddAddress = onAddAddress,
+                    paddingValues = paddingValues
+                )
+            } else {
+                AddressListLoadedContent(
+                    addresses = addresses,
+                    onAddressSelected = onAddressSelected,
+                    onDeleteAddress = onDeleteAddress,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
         }
 
         SnackbarHost(
@@ -144,80 +162,41 @@ private fun AddAddressFab(
 }
 
 @Composable
-private fun AddressListContent(
-    addresses: List<AddressUi>,
+private fun EmptyStateContent(
     loadState: AddressListLoadState,
     onAddAddress: () -> Unit,
-    onAddressSelected: (String) -> Unit,
-    onDeleteAddress: (AddressUi) -> Unit,
     paddingValues: PaddingValues
 ) {
-    when (loadState) {
-        is AddressListLoadState.Loading -> {
-            AddressListLoadingContent(modifier = Modifier.padding(paddingValues))
-        }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+        contentAlignment = Alignment.Center
+    ) {
+        when (loadState) {
+            is AddressListLoadState.Loading -> {
+                YVStoreCircleProgressIndicator(size = 48.dp)
+            }
 
-        is AddressListLoadState.Error -> {
-            AddressListErrorContent(
-                message = loadState.message,
-                modifier = Modifier.padding(paddingValues)
-            )
-        }
-
-        is AddressListLoadState.Loaded -> {
-            if (addresses.isEmpty()) {
-                AddressListEmptyContent(
-                    onAddAddress = onAddAddress,
-                    modifier = Modifier.padding(paddingValues)
+            is AddressListLoadState.Error -> {
+                YVStoreEmptyErrorStateView(
+                    image = R.drawable.ic_error,
+                    title = "Error loading addresses",
+                    description = loadState.message,
                 )
-            } else {
-                AddressListLoadedContent(
-                    addresses = addresses,
-                    onAddressSelected = onAddressSelected,
-                    onDeleteAddress = onDeleteAddress,
-                    modifier = Modifier.padding(paddingValues)
+            }
+
+            is AddressListLoadState.Loaded -> {
+                YVStoreEmptyErrorStateView(
+                    image = R.drawable.ic_empty_address,
+                    title = "No addresses yet",
+                    description = "Add a delivery address to continue",
+                    actionButtonText = "Add Address",
+                    onActionButtonClick = onAddAddress,
                 )
             }
         }
     }
-}
-
-@Composable
-private fun AddressListLoadingContent(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        YVStoreCircleProgressIndicator(size = 48.dp)
-    }
-}
-
-@Composable
-private fun AddressListErrorContent(
-    message: String,
-    modifier: Modifier = Modifier
-) {
-    YVStoreEmptyErrorStateView(
-        image = R.drawable.ic_error,
-        title = "Error loading addresses",
-        description = message,
-        modifier = modifier
-    )
-}
-
-@Composable
-private fun AddressListEmptyContent(
-    onAddAddress: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    YVStoreEmptyErrorStateView(
-        image = R.drawable.ic_empty_address,
-        title = "No addresses yet",
-        description = "Add a delivery address to continue",
-        actionButtonText = "Add Address",
-        onActionButtonClick = onAddAddress,
-        modifier = modifier
-    )
 }
 
 @Composable

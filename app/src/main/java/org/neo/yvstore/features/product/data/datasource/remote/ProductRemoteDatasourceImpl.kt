@@ -2,7 +2,9 @@ package org.neo.yvstore.features.product.data.datasource.remote
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import kotlinx.coroutines.tasks.await
+import com.google.firebase.firestore.Source
+import org.neo.yvstore.core.common.dispatcher.DispatcherProvider
+import org.neo.yvstore.core.network.utils.awaitWithTimeout
 import org.neo.yvstore.features.product.data.datasource.remote.model.ProductDto
 
 /**
@@ -11,14 +13,15 @@ import org.neo.yvstore.features.product.data.datasource.remote.model.ProductDto
  * @property firestore FirebaseFirestore instance for product data retrieval
  */
 class ProductRemoteDatasourceImpl(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val dispatcherProvider: DispatcherProvider
 ) : ProductRemoteDatasource {
 
     override suspend fun getProducts(): List<ProductDto> {
         val querySnapshot = firestore.collection("products")
             .orderBy("created_at", Query.Direction.DESCENDING)
-            .get()
-            .await()
+            .get(Source.SERVER)
+            .awaitWithTimeout(dispatcher = dispatcherProvider.io)
 
         return querySnapshot.toObjects(ProductDto::class.java)
     }
@@ -34,9 +37,10 @@ class ProductRemoteDatasourceImpl(
             .orderBy("search_name")
             .whereGreaterThanOrEqualTo("search_name", trimmed)
             .whereLessThan("search_name", trimmed + '\uf8ff')
-            .get()
-            .await()
+            .get(Source.SERVER)
+            .awaitWithTimeout(dispatcher = dispatcherProvider.io)
 
         return querySnapshot.toObjects(ProductDto::class.java)
     }
+
 }

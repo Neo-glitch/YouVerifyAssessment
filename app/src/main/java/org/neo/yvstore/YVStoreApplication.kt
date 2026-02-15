@@ -8,8 +8,10 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.neo.yvstore.core.cache.di.cacheModule
+import org.neo.yvstore.core.common.di.commonModule
 import org.neo.yvstore.core.data.di.dataModule
 import org.neo.yvstore.core.database.di.databaseModule
+import org.neo.yvstore.core.network.di.networkModule
 import org.neo.yvstore.di.appModule
 import org.neo.yvstore.features.address.di.addressModule
 import org.neo.yvstore.features.auth.di.authModule
@@ -24,12 +26,14 @@ class YVStoreApplication : Application(), ImageLoaderFactory {
         appModule,
         cacheModule,
         databaseModule,
+        networkModule,
         authModule,
         cartModule,
         productModule,
         addressModule,
         orderModule,
         dataModule,
+        commonModule
     )
 
     /**

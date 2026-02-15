@@ -80,6 +80,7 @@ class AddressRepositoryImpl(
             val userId = user?.uid ?: return Resource.Error("User not found")
 
             val addresses = remoteDatasource.getAddresses(userId)
+
             addressDao.deleteAll()
             addressDao.insertAll(addresses.map { it.toEntity() })
             Resource.Success(Unit)

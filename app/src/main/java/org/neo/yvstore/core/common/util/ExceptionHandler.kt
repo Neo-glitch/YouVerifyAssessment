@@ -15,6 +15,8 @@ import java.io.IOException
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeoutException
 import kotlin.coroutines.cancellation.CancellationException
 
 object ExceptionHandler {
@@ -34,6 +36,7 @@ object ExceptionHandler {
     private const val NETWORK_ERROR_MSG = "A network error occurred. Please try again"
     private const val DATABASE_ERROR_MSG = "A local storage error occurred"
     private const val CACHE_ERROR_MSG = "Failed to access cached data"
+    private const val REQUEST_TIMEOUT_MSG = "Request timed out. Please try again"
     private const val UNKNOWN_ERROR_MSG = "An unexpected error occurred"
 
     fun getErrorMessage(throwable: Throwable): String {
@@ -60,13 +63,23 @@ object ExceptionHandler {
             is SQLiteConstraintException -> DATABASE_ERROR_MSG
             is SQLiteException -> DATABASE_ERROR_MSG
 
+            // ── Timeout ──
+            is TimeoutException -> REQUEST_TIMEOUT_MSG
+
             // ── Network IO (before generic IOException) ──
             is UnknownHostException -> NO_INTERNET_MSG
             is SocketException -> NETWORK_ERROR_MSG
-            is SocketTimeoutException -> NETWORK_ERROR_MSG
+            is SocketTimeoutException -> REQUEST_TIMEOUT_MSG
 
             // ── DataStore / General IO ──
             is IOException -> CACHE_ERROR_MSG
+            is ExecutionException -> {
+                if (throwable.cause is FirebaseFirestoreException) {
+                    getFirestoreErrorMessage(throwable.cause as FirebaseFirestoreException)
+                } else {
+                    UNKNOWN_ERROR_MSG
+                }
+            }
 
             else -> UNKNOWN_ERROR_MSG
         }

@@ -2,9 +2,12 @@ package org.neo.yvstore.features.address.presentation.screen.addressList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.neo.yvstore.features.address.domain.usecase.DeleteAddressUseCase
@@ -22,11 +25,35 @@ class AddressListViewModel(
     private val _uiState = MutableStateFlow(AddressListUiState())
     val uiState: StateFlow<AddressListUiState> = _uiState.asStateFlow()
 
+    private val _uiEvent = Channel<AddressListUiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
     private var pendingDeleteAddress: AddressUi? = null
 
     init {
-        observeAddresses()
-        refreshAddresses()
+        viewModelScope.launch {
+            loadCachedAddresses()
+            observeAddresses()
+            refreshAddresses()
+        }
+    }
+
+    private suspend fun loadCachedAddresses() {
+        val initialResult = getAddressesUseCase().first()
+        initialResult.onSuccess { addresses ->
+            if (addresses.isNotEmpty()) {
+                _uiState.update {
+                    it.copy(
+                        addresses = addresses.map { address -> address.toAddressUi() },
+                        loadState = AddressListLoadState.Loaded,
+                    )
+                }
+            }
+        }.onError { error ->
+            _uiState.update {
+                it.copy(loadState = AddressListLoadState.Error(error))
+            }
+        }
     }
 
     private fun observeAddresses() {
@@ -42,21 +69,28 @@ class AddressListViewModel(
                             } else {
                                 allAddresses
                             },
-                            loadState = AddressListLoadState.Loaded
                         )
-                    }
-                }.onError { message ->
-                    _uiState.update {
-                        it.copy(loadState = AddressListLoadState.Error(message))
                     }
                 }
             }
         }
     }
 
-    private fun refreshAddresses() {
-        viewModelScope.launch {
-            refreshAddressesUseCase()
+    private suspend fun refreshAddresses() {
+        val result = refreshAddressesUseCase()
+        result.onSuccess {
+            _uiState.update {
+                it.copy(loadState = AddressListLoadState.Loaded)
+            }
+        }.onError { message ->
+            val currentState = _uiState.value
+            if (currentState.addresses.isEmpty() && currentState.loadState !is AddressListLoadState.Error) {
+                _uiState.update {
+                    it.copy(loadState = AddressListLoadState.Error(message))
+                }
+            } else if (currentState.addresses.isNotEmpty()) {
+                _uiEvent.send(AddressListUiEvent.ShowToast(message))
+            }
         }
     }
 
