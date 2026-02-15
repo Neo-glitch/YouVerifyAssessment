@@ -16,7 +16,8 @@ val appModule = module {
     single<FirebaseAuth> { Firebase.auth }
 
     single {
-        FirebaseFirestore.getInstance().apply {
+        FirebaseFirestore.getInstance()
+            .apply {
             firestoreSettings = FirebaseFirestoreSettings.Builder()
                 .setLocalCacheSettings(MemoryCacheSettings.newBuilder().build())
                 .build()

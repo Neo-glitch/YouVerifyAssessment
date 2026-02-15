@@ -3,7 +3,7 @@ package org.neo.yvstore.features.auth.data.datasource.remote
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import org.neo.yvstore.features.auth.data.datasource.remote.model.AuthUser
+import org.neo.yvstore.features.auth.data.datasource.remote.model.UserDto
 import org.neo.yvstore.features.auth.data.datasource.remote.model.UserSignUpRequest
 
 /**
@@ -43,7 +43,7 @@ class AuthRemoteDatasourceImpl(
         auth.signOut()
     }
 
-    override suspend fun signIn(email: String, password: String): AuthUser {
+    override suspend fun signIn(email: String, password: String): UserDto {
         // Authenticate with Firebase Auth
         val authResult = auth.signInWithEmailAndPassword(email, password).await()
         val uid = authResult.user?.uid
@@ -59,7 +59,7 @@ class AuthRemoteDatasourceImpl(
             throw IllegalStateException("User profile not found in Firestore for UID: $uid")
         }
 
-        return documentSnapshot.toObject(AuthUser::class.java)
+        return documentSnapshot.toObject(UserDto::class.java)
             ?: throw IllegalStateException("Failed to deserialize user profile for UID: $uid")
     }
 }

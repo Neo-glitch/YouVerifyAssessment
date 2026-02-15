@@ -1,6 +1,6 @@
 package org.neo.yvstore.features.auth.data.datasource.remote
 
-import org.neo.yvstore.features.auth.data.datasource.remote.model.AuthUser
+import org.neo.yvstore.features.auth.data.datasource.remote.model.UserDto
 
 /**
  * Remote datasource interface for authentication operations using Firebase.
@@ -32,5 +32,5 @@ interface AuthRemoteDatasource {
      * @return AuthUser with profile data
      * @throws Exception on failure (auth error, network error, Firestore error)
      */
-    suspend fun signIn(email: String, password: String): AuthUser
+    suspend fun signIn(email: String, password: String): UserDto
 }

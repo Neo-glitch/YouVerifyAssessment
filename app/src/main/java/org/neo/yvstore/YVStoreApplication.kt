@@ -2,6 +2,8 @@ package org.neo.yvstore
 
 import android.app.Application
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -37,5 +39,7 @@ class YVStoreApplication : Application() {
                 appComponent
             )
         }
+
+//        ProductSeeder.seed(Firebase.firestore)
     }
 }
