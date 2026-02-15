@@ -80,7 +80,7 @@ class AddressListViewModelIntegrationTest {
     }
 
     @Test
-    fun `init with cached addresses and refresh failure should send toast event`() = runTest {
+    fun `init with cached addresses and refresh failure should emit Error event`() = runTest {
         // Arrange - emit addresses but set refresh to fail
         val testAddressRepository = TestAddressRepository()
         testAddressRepository.refreshResult = Resource.Error("Failed to refresh")
@@ -130,7 +130,7 @@ class AddressListViewModelIntegrationTest {
     }
 
     @Test
-    fun `onDeleteAddress should restore address on failure and emit ShowToast`() = runTest {
+    fun `onDeleteAddress should restore address on failure and emit Error event`() = runTest {
         // Arrange
         val testAddressRepository = TestAddressRepository()
         testAddressRepository.refreshResult = Resource.Success(Unit)

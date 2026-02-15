@@ -78,7 +78,7 @@ class AddressListViewModelUnitTest {
     }
 
     @Test
-    fun `onDeleteAddress should roll back and emit ShowToast on error`() = runTest {
+    fun `onDeleteAddress should roll back and emit Error event on failure`() = runTest {
         every { getAddressesUseCase() } returns flowOf(Resource.Success(listOf(address)))
         coEvery { refreshAddressesUseCase() } returns Resource.Success(Unit)
         coEvery { deleteAddressUseCase("a1") } returns Resource.Error("Network error")
