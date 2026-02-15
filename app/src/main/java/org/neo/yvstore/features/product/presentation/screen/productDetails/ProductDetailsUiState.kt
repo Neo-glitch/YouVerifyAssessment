@@ -1,5 +1,6 @@
 package org.neo.yvstore.features.product.presentation.screen.productDetails
 
+import org.neo.yvstore.core.common.util.formatAsPrice
 import org.neo.yvstore.features.product.presentation.model.ProductDetailsUi
 
 data class ProductDetailsUiState(
@@ -12,7 +13,7 @@ data class ProductDetailsUiState(
         get() = (product?.price ?: 0.0) * quantity
 
     val formattedTotalPrice: String
-        get() = "$%.2f".format(totalPrice)
+        get() = totalPrice.formatAsPrice()
 }
 
 sealed class ProductDetailsLoadState {

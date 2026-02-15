@@ -1,5 +1,6 @@
 package org.neo.yvstore.features.cart.presentation.screen.cartList
 
+import org.neo.yvstore.core.common.util.formatAsPrice
 import org.neo.yvstore.features.cart.presentation.model.CartItemUi
 
 data class CartScreenUiState(
@@ -15,13 +16,13 @@ data class CartScreenUiState(
         get() = subtotal + deliveryFee
 
     val formattedSubtotal: String
-        get() = "$%.2f".format(subtotal)
+        get() = subtotal.formatAsPrice()
 
     val formattedDeliveryFee: String
-        get() = "$%.2f".format(deliveryFee)
+        get() = deliveryFee.formatAsPrice()
 
     val formattedTotal: String
-        get() = "$%.2f".format(total)
+        get() = total.formatAsPrice()
 }
 
 sealed class CartScreenLoadState {

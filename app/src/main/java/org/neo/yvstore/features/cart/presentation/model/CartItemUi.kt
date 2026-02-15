@@ -1,5 +1,6 @@
 package org.neo.yvstore.features.cart.presentation.model
 
+import org.neo.yvstore.core.common.util.formatAsPrice
 import org.neo.yvstore.core.domain.model.CartItem
 
 data class CartItemUi(
@@ -11,13 +12,13 @@ data class CartItemUi(
     val quantity: Int,
 ) {
     val formattedPrice: String
-        get() = "$%.2f".format(price)
+        get() = price.formatAsPrice()
 
     val itemTotal: Double
         get() = price * quantity
 
     val formattedItemTotal: String
-        get() = "$%.2f".format(itemTotal)
+        get() = itemTotal.formatAsPrice()
 }
 
 fun CartItem.toCartItemUi(): CartItemUi {

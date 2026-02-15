@@ -1,5 +1,6 @@
 package org.neo.yvstore.features.order.presentation.screen.checkout
 
+import org.neo.yvstore.core.common.util.formatAsPrice
 import org.neo.yvstore.features.address.presentation.model.AddressUi
 import org.neo.yvstore.features.cart.presentation.model.CartItemUi
 
@@ -17,13 +18,13 @@ data class CheckoutUiState(
         get() = subtotal + deliveryFee
 
     val formattedSubtotal: String
-        get() = "$%.2f".format(subtotal)
+        get() = subtotal.formatAsPrice()
 
     val formattedDeliveryFee: String
-        get() = "$%.2f".format(deliveryFee)
+        get() = deliveryFee.formatAsPrice()
 
     val formattedTotal: String
-        get() = "$%.2f".format(total)
+        get() = total.formatAsPrice()
 }
 
 sealed class CheckoutLoadState {

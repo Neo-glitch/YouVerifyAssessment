@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.neo.yvstore.core.common.util.formatAsPrice
 import org.neo.yvstore.features.product.domain.model.Product
 import org.neo.yvstore.features.product.domain.usecase.SearchProductsUseCase
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
@@ -63,7 +64,7 @@ class SearchProductListViewModel(
     private fun Product.toProductItemUi() = ProductItemUi(
         id = id,
         name = name,
-        price = "$%.2f".format(price),
+        price = price.formatAsPrice(),
         imageUrl = imageUrl,
     )
 }

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.neo.yvstore.core.common.util.formatAsPrice
 import org.neo.yvstore.features.product.domain.model.Product
 import org.neo.yvstore.features.product.domain.usecase.ObserveProductsUseCase
 import org.neo.yvstore.features.product.domain.usecase.RefreshProductsUseCase
@@ -90,7 +91,7 @@ class AllProductListViewModel(
     private fun Product.toProductItemUi() = ProductItemUi(
         id = id,
         name = name,
-        price = "$%.2f".format(price),
+        price = price.formatAsPrice(),
         imageUrl = imageUrl,
     )
 }

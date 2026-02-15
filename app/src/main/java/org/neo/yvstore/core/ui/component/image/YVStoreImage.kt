@@ -23,6 +23,7 @@ fun YVStoreImage(
     imageUrl: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
+    clipToBounds: Boolean = true,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     if (imageUrl.isNullOrEmpty()) {
@@ -34,6 +35,7 @@ fun YVStoreImage(
         model = imageUrl,
         contentDescription = contentDescription,
         modifier = modifier,
+        clipToBounds = clipToBounds,
         contentScale = contentScale,
     ) {
         when (painter.state) {

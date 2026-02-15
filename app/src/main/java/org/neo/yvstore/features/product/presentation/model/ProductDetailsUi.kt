@@ -1,5 +1,7 @@
 package org.neo.yvstore.features.product.presentation.model
 
+import org.neo.yvstore.core.common.util.formatAsPrice
+
 data class ProductDetailsUi(
     val id: String,
     val name: String,
@@ -11,5 +13,5 @@ data class ProductDetailsUi(
     val details: String,
 ) {
     val formattedPrice: String
-        get() = "$%.2f".format(price)
+        get() = price.formatAsPrice()
 }
