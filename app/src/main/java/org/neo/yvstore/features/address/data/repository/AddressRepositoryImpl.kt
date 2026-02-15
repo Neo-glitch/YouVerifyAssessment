@@ -10,9 +10,10 @@ import org.neo.yvstore.core.domain.manager.UserManager
 import org.neo.yvstore.core.domain.model.Resource
 import org.neo.yvstore.features.address.data.datasource.remote.AddressRemoteDatasource
 import org.neo.yvstore.features.address.data.datasource.remote.model.AddressDto
+import org.neo.yvstore.features.address.data.datasource.remote.model.CreateAddressRequest
 import org.neo.yvstore.features.address.data.mapper.toAddress
 import org.neo.yvstore.features.address.data.mapper.toEntity
-import org.neo.yvstore.features.address.domain.model.Address
+import org.neo.yvstore.core.domain.model.Address
 import org.neo.yvstore.features.address.domain.repository.AddressRepository
 
 class AddressRepositoryImpl(
@@ -31,12 +32,22 @@ class AddressRepositoryImpl(
             }
     }
 
+    override suspend fun getAddressById(id: String): Resource<Address> {
+        return try {
+            val entity = addressDao.getById(id)
+                ?: return Resource.Error("Address not found")
+            Resource.Success(entity.toAddress())
+        } catch (e: Exception) {
+            Resource.Error(ExceptionHandler.getErrorMessage(e))
+        }
+    }
+
     override suspend fun addAddress(address: Address): Resource<Unit> {
         return try {
             val user = userManager.getUser()
             val userId = user?.uid ?: return Resource.Error("User not found")
 
-            val addressDto = AddressDto(
+            val addressDto = CreateAddressRequest(
                 streetAddress = address.streetAddress,
                 city = address.city,
                 state = address.state,

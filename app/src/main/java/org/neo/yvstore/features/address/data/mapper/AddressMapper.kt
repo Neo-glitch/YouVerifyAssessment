@@ -2,7 +2,7 @@ package org.neo.yvstore.features.address.data.mapper
 
 import org.neo.yvstore.core.database.model.AddressEntity
 import org.neo.yvstore.features.address.data.datasource.remote.model.AddressDto
-import org.neo.yvstore.features.address.domain.model.Address
+import org.neo.yvstore.core.domain.model.Address
 
 fun AddressDto.toEntity(): AddressEntity {
     return AddressEntity(

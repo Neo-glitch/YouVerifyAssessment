@@ -28,6 +28,9 @@ interface AddressDao {
     @Query("DELETE FROM addresses WHERE user_id = :userId")
     suspend fun deleteAllByUserId(userId: String)
 
+    @Query("SELECT * FROM addresses WHERE id = :id")
+    suspend fun getById(id: String): AddressEntity?
+
     @Query("DELETE FROM addresses")
     suspend fun deleteAll()
 }

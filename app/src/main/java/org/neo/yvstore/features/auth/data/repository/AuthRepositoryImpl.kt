@@ -1,10 +1,8 @@
 package org.neo.yvstore.features.auth.data.repository
 
 import org.neo.yvstore.core.common.util.ExceptionHandler
-import org.neo.yvstore.core.domain.manager.UserManager
 import org.neo.yvstore.core.domain.model.Resource
 import org.neo.yvstore.core.domain.model.User
-import org.neo.yvstore.features.auth.data.datasource.local.AuthLocalDatasource
 import org.neo.yvstore.features.auth.data.datasource.remote.AuthRemoteDatasource
 import org.neo.yvstore.features.auth.data.mapper.toUser
 import org.neo.yvstore.features.auth.domain.repository.AuthRepository

@@ -38,6 +38,7 @@ class DataStoreCache(private val context: Context) : AppCache {
 
             jsonString?.let { json.decodeFromString(serializer, it) }
         } catch (e: SerializationException) {
+            e.printStackTrace()
             null
         }
     }
@@ -48,6 +49,7 @@ class DataStoreCache(private val context: Context) : AppCache {
                 val jsonString = preferences[stringPreferencesKey(key)]
                 jsonString?.let { json.decodeFromString(serializer, it) }
             } catch (e: SerializationException) {
+                e.printStackTrace()
                 null
             }
         }

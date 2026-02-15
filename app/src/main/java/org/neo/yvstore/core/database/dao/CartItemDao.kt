@@ -13,6 +13,9 @@ interface CartItemDao {
     @Query("SELECT * FROM cart_items ORDER BY id ASC")
     fun getAllCartItems(): Flow<List<CartItemEntity>>
 
+    @Query("SELECT * FROM cart_items ORDER BY id ASC")
+    suspend fun getCartItems(): List<CartItemEntity>
+
     @Query("SELECT COUNT(*) FROM cart_items")
     fun observeCartItemCount(): Flow<Int>
 

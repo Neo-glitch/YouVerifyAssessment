@@ -15,6 +15,7 @@ import org.neo.yvstore.di.appModule
 import org.neo.yvstore.features.address.di.addressModule
 import org.neo.yvstore.features.auth.di.authModule
 import org.neo.yvstore.features.cart.di.cartModule
+import org.neo.yvstore.features.order.di.orderModule
 import org.neo.yvstore.features.product.di.productModule
 
 class YVStoreApplication : Application() {
@@ -27,6 +28,7 @@ class YVStoreApplication : Application() {
         cartModule,
         productModule,
         addressModule,
+        orderModule,
         dataModule,
     )
 

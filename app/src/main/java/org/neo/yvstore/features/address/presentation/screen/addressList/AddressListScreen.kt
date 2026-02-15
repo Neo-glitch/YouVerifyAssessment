@@ -2,10 +2,9 @@ package org.neo.yvstore.features.address.presentation.screen.addressList
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,12 +33,13 @@ import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.features.address.presentation.model.AddressUi
-import org.neo.yvstore.features.address.presentation.screen.addressList.components.AddressItemCard
+import org.neo.yvstore.features.address.presentation.screen.addressList.components.AddressItem
 
 @Composable
 fun AddressListScreen(
     onNavigateBack: () -> Unit,
     onAddAddress: () -> Unit,
+    onAddressSelected: (String) -> Unit = {},
     viewModel: AddressListViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -49,6 +50,7 @@ fun AddressListScreen(
         deleteError = uiState.deleteError,
         onNavigateBack = onNavigateBack,
         onAddAddress = onAddAddress,
+        onAddressSelected = onAddressSelected,
         onDeleteAddress = viewModel::onDeleteAddress,
         onDismissDeleteError = viewModel::onDismissDeleteError
     )
@@ -61,6 +63,7 @@ private fun AddressListScreen(
     deleteError: String?,
     onNavigateBack: () -> Unit,
     onAddAddress: () -> Unit,
+    onAddressSelected: (String) -> Unit,
     onDeleteAddress: (AddressUi) -> Unit,
     onDismissDeleteError: () -> Unit
 ) {
@@ -92,6 +95,7 @@ private fun AddressListScreen(
                 addresses = addresses,
                 loadState = loadState,
                 onAddAddress = onAddAddress,
+                onAddressSelected = onAddressSelected,
                 onDeleteAddress = onDeleteAddress,
                 paddingValues = paddingValues
             )
@@ -144,6 +148,7 @@ private fun AddressListContent(
     addresses: List<AddressUi>,
     loadState: AddressListLoadState,
     onAddAddress: () -> Unit,
+    onAddressSelected: (String) -> Unit,
     onDeleteAddress: (AddressUi) -> Unit,
     paddingValues: PaddingValues
 ) {
@@ -166,8 +171,9 @@ private fun AddressListContent(
                     modifier = Modifier.padding(paddingValues)
                 )
             } else {
-                AddressListPopulatedContent(
+                AddressListLoadedContent(
                     addresses = addresses,
+                    onAddressSelected = onAddressSelected,
                     onDeleteAddress = onDeleteAddress,
                     modifier = Modifier.padding(paddingValues)
                 )
@@ -215,27 +221,38 @@ private fun AddressListEmptyContent(
 }
 
 @Composable
-private fun AddressListPopulatedContent(
+private fun AddressListLoadedContent(
     addresses: List<AddressUi>,
+    onAddressSelected: (String) -> Unit,
     onDeleteAddress: (AddressUi) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 80.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(
-            items = addresses,
-            key = { it.id }
-        ) { address ->
-            AddressItemCard(
-                address = address,
-                onDelete = { onDeleteAddress(address) }
-            )
-            Spacer(modifier = Modifier.height(12.dp))
+    Column(modifier = modifier.fillMaxSize()) {
+        Text(
+            text = "Select delivery address",
+            style = MaterialTheme.typography.titleMedium,
+            color = YVStoreTheme.colors.textColors.textPrimary,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+        )
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    start = 16.dp, end = 16.dp, bottom = 16.dp
+                ),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(
+                items = addresses,
+                key = { it.id }
+            ) { address ->
+                AddressItem(
+                    address = address,
+                    onClick = { onAddressSelected(address.id) },
+                    onDelete = { onDeleteAddress(address) }
+                )
+            }
         }
     }
 }
@@ -279,6 +296,7 @@ private fun AddressListScreenPopulatedPreview() {
             deleteError = null,
             onNavigateBack = {},
             onAddAddress = {},
+            onAddressSelected = {},
             onDeleteAddress = {},
             onDismissDeleteError = {},
         )
@@ -295,6 +313,7 @@ private fun AddressListScreenEmptyPreview() {
             deleteError = null,
             onNavigateBack = {},
             onAddAddress = {},
+            onAddressSelected = {},
             onDeleteAddress = {},
             onDismissDeleteError = {},
         )
@@ -311,6 +330,7 @@ private fun AddressListScreenLoadingPreview() {
             deleteError = null,
             onNavigateBack = {},
             onAddAddress = {},
+            onAddressSelected = {},
             onDeleteAddress = {},
             onDismissDeleteError = {},
         )
@@ -327,6 +347,7 @@ private fun AddressListScreenErrorPreview() {
             deleteError = null,
             onNavigateBack = {},
             onAddAddress = {},
+            onAddressSelected = {},
             onDeleteAddress = {},
             onDismissDeleteError = {},
         )

@@ -6,7 +6,8 @@ import org.neo.yvstore.core.domain.model.CartItem
 import org.neo.yvstore.core.domain.model.Resource
 
 interface CartRepository {
-    fun getCartItems(): Flow<Resource<List<CartItem>>>
+    fun observeCartItems(): Flow<Resource<List<CartItem>>>
+    suspend fun getCartItems(): Resource<List<CartItem>>
     fun observeCartItemCount(): Flow<Resource<Int>>
     suspend fun addItem(cartItem: CartItemEntity): Resource<Unit>
     suspend fun updateQuantity(id: Long, quantity: Int): Resource<Unit>

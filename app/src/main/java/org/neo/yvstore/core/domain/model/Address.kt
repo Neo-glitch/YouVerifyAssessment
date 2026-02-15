@@ -1,4 +1,4 @@
-package org.neo.yvstore.features.address.domain.model
+package org.neo.yvstore.core.domain.model
 
 data class Address(
     val id: String,

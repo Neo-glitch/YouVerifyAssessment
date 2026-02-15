@@ -15,7 +15,7 @@ class CartRepositoryImpl(
     private val cartItemDao: CartItemDao
 ) : CartRepository {
 
-    override fun getCartItems(): Flow<Resource<List<CartItem>>> {
+    override fun observeCartItems(): Flow<Resource<List<CartItem>>> {
         return cartItemDao.getAllCartItems()
             .map<List<CartItemEntity>, Resource<List<CartItem>>> { entities ->
                 Resource.Success(entities.map { it.toCartItem() })
@@ -23,6 +23,15 @@ class CartRepositoryImpl(
             .catch { e ->
                 emit(Resource.Error(ExceptionHandler.getErrorMessage(e)))
             }
+    }
+
+    override suspend fun getCartItems(): Resource<List<CartItem>> {
+        return try {
+            val entities = cartItemDao.getCartItems()
+            Resource.Success(entities.map { it.toCartItem() })
+        } catch (e: Exception) {
+            Resource.Error(ExceptionHandler.getErrorMessage(e))
+        }
     }
 
     override fun observeCartItemCount(): Flow<Resource<Int>> {

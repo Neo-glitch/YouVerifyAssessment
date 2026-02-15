@@ -3,6 +3,7 @@ package org.neo.yvstore.features.address.data.datasource.remote
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import org.neo.yvstore.features.address.data.datasource.remote.model.AddressDto
+import org.neo.yvstore.features.address.data.datasource.remote.model.CreateAddressRequest
 
 class AddressRemoteDatasourceImpl(
     private val firestore: FirebaseFirestore
@@ -17,9 +18,9 @@ class AddressRemoteDatasourceImpl(
         return querySnapshot.toObjects(AddressDto::class.java)
     }
 
-    override suspend fun addAddress(userId: String, address: AddressDto): String {
+    override suspend fun addAddress(userId: String, createAddressRequest: CreateAddressRequest): String {
         val documentRef = firestore.collection("addresses").document()
-        val addressWithId = address.copy(id = documentRef.id, userId = userId)
+        val addressWithId = createAddressRequest.copy(id = documentRef.id, userId = userId)
         documentRef.set(addressWithId).await()
         return documentRef.id
     }

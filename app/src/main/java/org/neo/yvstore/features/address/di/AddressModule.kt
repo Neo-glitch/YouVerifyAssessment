@@ -10,6 +10,7 @@ import org.neo.yvstore.features.address.data.repository.AddressRepositoryImpl
 import org.neo.yvstore.features.address.domain.repository.AddressRepository
 import org.neo.yvstore.features.address.domain.usecase.AddAddressUseCase
 import org.neo.yvstore.features.address.domain.usecase.DeleteAddressUseCase
+import org.neo.yvstore.features.address.domain.usecase.GetAddressByIdUseCase
 import org.neo.yvstore.features.address.domain.usecase.GetAddressesUseCase
 import org.neo.yvstore.features.address.domain.usecase.RefreshAddressesUseCase
 import org.neo.yvstore.features.address.presentation.screen.addAddress.AddAddressViewModel
@@ -20,6 +21,7 @@ val addressModule = module {
     factoryOf(::AddressRepositoryImpl) { bind<AddressRepository>() }
 
     factoryOf(::GetAddressesUseCase)
+    factoryOf(::GetAddressByIdUseCase)
     factoryOf(::AddAddressUseCase)
     factoryOf(::DeleteAddressUseCase)
     factoryOf(::RefreshAddressesUseCase)

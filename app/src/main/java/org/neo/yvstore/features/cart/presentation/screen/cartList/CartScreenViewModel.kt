@@ -1,4 +1,4 @@
-package org.neo.yvstore.features.cart.presentation.screen
+package org.neo.yvstore.features.cart.presentation.screen.cartList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,13 +9,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.neo.yvstore.features.cart.domain.usecase.DeleteAllCartItemsUseCase
 import org.neo.yvstore.features.cart.domain.usecase.DeleteCartItemUseCase
-import org.neo.yvstore.features.cart.domain.usecase.GetCartItemsUseCase
+import org.neo.yvstore.features.cart.domain.usecase.ObserveCartItemsUseCase
 import org.neo.yvstore.features.cart.domain.usecase.UpdateCartItemQuantityUseCase
-import org.neo.yvstore.features.cart.presentation.model.CartItemUi
 import org.neo.yvstore.features.cart.presentation.model.toCartItemUi
 
 class CartScreenViewModel(
-    private val getCartItemsUseCase: GetCartItemsUseCase,
+    private val observeCartItemsUseCase: ObserveCartItemsUseCase,
     private val updateCartItemQuantityUseCase: UpdateCartItemQuantityUseCase,
     private val deleteCartItemUseCase: DeleteCartItemUseCase,
     private val deleteAllCartItemsUseCase: DeleteAllCartItemsUseCase,
@@ -30,7 +29,7 @@ class CartScreenViewModel(
 
     private fun observeCartItems() {
         viewModelScope.launch {
-            getCartItemsUseCase().collect { resource ->
+            observeCartItemsUseCase().collect { resource ->
                 resource.onSuccess { cartItems ->
                     _uiState.update {
                         it.copy(

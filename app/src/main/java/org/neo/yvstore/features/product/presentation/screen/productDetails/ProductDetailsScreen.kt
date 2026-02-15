@@ -22,11 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -90,20 +86,11 @@ private fun ProductDetailsScreen(
     onIncrementQuantity: () -> Unit,
     onDecrementQuantity: () -> Unit,
 ) {
-    var showErrorDialog by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
-
     if (loadState is ProductDetailsLoadState.Error) {
-        showErrorDialog = true
-        errorMessage = loadState.message
-    }
-
-    if (showErrorDialog) {
         YVStoreErrorDialog(
             title = "Error",
-            description = errorMessage,
+            description = loadState.message,
             onDismiss = {
-                showErrorDialog = false
                 onNavigateBack()
             },
             onPrimaryButtonClick = { },
@@ -120,17 +107,16 @@ private fun ProductDetailsScreen(
             )
         },
         bottomBar = {
-            if (loadState is ProductDetailsLoadState.Loaded) {
-                BottomFrameCard {
-                    CartActionBar(
-                        product = product,
-                        quantity = quantity,
-                        totalPrice = totalPrice,
-                        onAddToCart = onAddToCart,
-                        onIncrementQuantity = onIncrementQuantity,
-                        onDecrementQuantity = onDecrementQuantity,
-                    )
-                }
+            val displayBottomBar = loadState is ProductDetailsLoadState.Loaded
+            if (displayBottomBar) {
+                ProductDetailsBottomBar(
+                    product = product,
+                    quantity = quantity,
+                    totalPrice = totalPrice,
+                    onAddToCart = onAddToCart,
+                    onIncrementQuantity = onIncrementQuantity,
+                    onDecrementQuantity = onDecrementQuantity,
+                )
             }
         }
     ) { paddingValues ->
@@ -138,6 +124,27 @@ private fun ProductDetailsScreen(
             loadState = loadState,
             product = product,
             paddingValues = paddingValues,
+        )
+    }
+}
+
+@Composable
+private fun ProductDetailsBottomBar(
+    product: ProductDetailsUi?,
+    quantity: Int,
+    totalPrice: String,
+    onAddToCart: () -> Unit,
+    onIncrementQuantity: () -> Unit,
+    onDecrementQuantity: () -> Unit,
+) {
+    BottomFrameCard {
+        CartActionSection(
+            product = product,
+            quantity = quantity,
+            totalPrice = totalPrice,
+            onAddToCart = onAddToCart,
+            onIncrementQuantity = onIncrementQuantity,
+            onDecrementQuantity = onDecrementQuantity,
         )
     }
 }
@@ -239,7 +246,7 @@ private fun ProductInfoSection(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        ReviewRow(
+        ReviewSection(
             rating = rating,
             reviewCount = reviewCount,
         )
@@ -247,7 +254,7 @@ private fun ProductInfoSection(
 }
 
 @Composable
-private fun ReviewRow(rating: Double, reviewCount: Int) {
+private fun ReviewSection(rating: Double, reviewCount: Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -306,7 +313,7 @@ private fun ProductDetailsSection(details: String) {
 }
 
 @Composable
-private fun CartActionBar(
+private fun CartActionSection(
     product: ProductDetailsUi?,
     quantity: Int,
     totalPrice: String,

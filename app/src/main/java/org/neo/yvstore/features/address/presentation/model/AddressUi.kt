@@ -1,6 +1,6 @@
 package org.neo.yvstore.features.address.presentation.model
 
-import org.neo.yvstore.features.address.domain.model.Address
+import org.neo.yvstore.core.domain.model.Address
 
 data class AddressUi(
     val id: String,

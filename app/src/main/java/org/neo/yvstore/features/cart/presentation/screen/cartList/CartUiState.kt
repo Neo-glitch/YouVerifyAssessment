@@ -1,4 +1,4 @@
-package org.neo.yvstore.features.cart.presentation.screen
+package org.neo.yvstore.features.cart.presentation.screen.cartList
 
 import org.neo.yvstore.features.cart.presentation.model.CartItemUi
 

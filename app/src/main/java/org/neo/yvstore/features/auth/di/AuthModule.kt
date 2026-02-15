@@ -4,8 +4,6 @@ import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
-import org.neo.yvstore.features.auth.data.datasource.local.AuthLocalDatasource
-import org.neo.yvstore.features.auth.data.datasource.local.AuthLocalDatasourceImpl
 import org.neo.yvstore.features.auth.data.datasource.remote.AuthRemoteDatasource
 import org.neo.yvstore.features.auth.data.datasource.remote.AuthRemoteDatasourceImpl
 import org.neo.yvstore.features.auth.data.repository.AuthRepositoryImpl
@@ -16,16 +14,12 @@ import org.neo.yvstore.features.auth.presentation.screens.login.LoginViewModel
 import org.neo.yvstore.features.auth.presentation.screens.signup.SignUpViewModel
 
 val authModule = module {
-    // Data layer
     factoryOf(::AuthRemoteDatasourceImpl) { bind<AuthRemoteDatasource>() }
-    factoryOf(::AuthLocalDatasourceImpl) { bind<AuthLocalDatasource>() }
     factoryOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
 
-    // Domain layer - Use cases
     factoryOf(::SignUpUseCase)
     factoryOf(::LoginUseCase)
 
-    // Presentation layer
     viewModelOf(::LoginViewModel)
     viewModelOf(::SignUpViewModel)
 }

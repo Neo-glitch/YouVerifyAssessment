@@ -11,7 +11,6 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.FirebaseFirestoreException.Code
-import org.neo.yvstore.core.common.exception.EmailNotVerifiedException
 import java.io.IOException
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -53,7 +52,6 @@ object ExceptionHandler {
             is FirebaseAuthRecentLoginRequiredException -> RE_AUTH_REQUIRED_MSG
             is FirebaseTooManyRequestsException -> TOO_MANY_REQUESTS_MSG
             is FirebaseNetworkException -> NO_INTERNET_MSG
-            is EmailNotVerifiedException -> EMAIL_NOT_VERIFIED_MSG
 
             // ── Firestore ──
             is FirebaseFirestoreException -> getFirestoreErrorMessage(throwable)

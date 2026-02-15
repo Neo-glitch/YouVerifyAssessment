@@ -1,8 +1,7 @@
-package org.neo.yvstore.features.cart.presentation.screen
+package org.neo.yvstore.features.cart.presentation.screen.cartList
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,11 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,15 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
@@ -46,6 +39,7 @@ import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
 import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.features.cart.presentation.model.CartItemUi
+import org.neo.yvstore.features.cart.presentation.screen.cartList.components.CartItem
 
 @Composable
 fun CartScreen(
@@ -111,69 +105,23 @@ private fun CartScreen(
         },
         bottomBar = {
             if (cartItems.isNotEmpty()) {
-                BottomFrameCard {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                    ) {
-                        OrderSummary(
-                            subtotal = subtotal,
-                            deliveryFee = deliveryFee,
-                            total = total,
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        YVStorePrimaryButton(
-                            text = "Checkout",
-                            onClick = onCheckout,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                }
+                CartBottomBar(
+                    subtotal = subtotal,
+                    deliveryFee = deliveryFee,
+                    total = total,
+                    onCheckout = onCheckout,
+                )
             }
         }
     ) { paddingValues ->
-        when (loadState) {
-            is CartScreenLoadState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    YVStoreCircleProgressIndicator(size = 48.dp)
-                }
-            }
-            is CartScreenLoadState.Error -> {
-                YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_empty_cart,
-                    title = "Error loading cart",
-                    description = loadState.message,
-                    modifier = Modifier.padding(paddingValues),
-                )
-            }
-            is CartScreenLoadState.Loaded -> {
-                if (cartItems.isEmpty()) {
-                    YVStoreEmptyErrorStateView(
-                        image = R.drawable.ic_empty_cart,
-                        title = "Your cart is empty",
-                        description = "Add items to your cart to see them here",
-                        modifier = Modifier.padding(paddingValues),
-                    )
-                } else {
-                    CartContentList(
-                        cartItems = cartItems,
-                        subtotal = subtotal,
-                        deliveryFee = deliveryFee,
-                        total = total,
-                        onIncrementQuantity = onIncrementQuantity,
-                        onDecrementQuantity = onDecrementQuantity,
-                        onRemoveItem = onRemoveItem,
-                        paddingValues = paddingValues,
-                    )
-                }
-            }
-        }
+        CartScreenContent(
+            cartItems = cartItems,
+            loadState = loadState,
+            onIncrementQuantity = onIncrementQuantity,
+            onDecrementQuantity = onDecrementQuantity,
+            onRemoveItem = onRemoveItem,
+            paddingValues = paddingValues,
+        )
     }
 
     ClearCartDialog(
@@ -184,43 +132,116 @@ private fun CartScreen(
 }
 
 @Composable
-private fun CartContentList(
+private fun CartScreenContent(
     cartItems: List<CartItemUi>,
-    subtotal: String,
-    deliveryFee: String,
-    total: String,
+    loadState: CartScreenLoadState,
     onIncrementQuantity: (Long) -> Unit,
     onDecrementQuantity: (Long) -> Unit,
     onRemoveItem: (Long) -> Unit,
-    paddingValues: androidx.compose.foundation.layout.PaddingValues,
+    paddingValues: PaddingValues,
+) {
+    when (loadState) {
+        is CartScreenLoadState.Loading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center,
+            ) {
+                YVStoreCircleProgressIndicator(size = 48.dp)
+            }
+        }
+        is CartScreenLoadState.Error -> {
+            YVStoreEmptyErrorStateView(
+                image = R.drawable.ic_empty_cart,
+                title = "Error loading cart",
+                description = loadState.message,
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
+        is CartScreenLoadState.Loaded -> {
+            if (cartItems.isEmpty()) {
+                YVStoreEmptyErrorStateView(
+                    image = R.drawable.ic_empty_cart,
+                    title = "Your cart is empty",
+                    description = "Add items to your cart to see them here",
+                    modifier = Modifier.padding(paddingValues),
+                )
+            } else {
+                CartContentList(
+                    cartItems = cartItems,
+                    onIncrementQuantity = onIncrementQuantity,
+                    onDecrementQuantity = onDecrementQuantity,
+                    onRemoveItem = onRemoveItem,
+                    paddingValues = paddingValues,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CartContentList(
+    cartItems: List<CartItemUi>,
+    onIncrementQuantity: (Long) -> Unit,
+    onDecrementQuantity: (Long) -> Unit,
+    onRemoveItem: (Long) -> Unit,
+    paddingValues: PaddingValues,
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .padding(horizontal = 16.dp),
+            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        ,
     ) {
         item {
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        items(
+        itemsIndexed(
             items = cartItems,
-            key = { it.id }
-        ) { item ->
-            CartItemRow(
+            key = { _, item -> item.id }
+        ) { index, item ->
+            CartItem(
                 item = item,
                 onIncrementQuantity = { onIncrementQuantity(item.id) },
                 onDecrementQuantity = { onDecrementQuantity(item.id) },
                 onRemoveItem = { onRemoveItem(item.id) },
             )
-            YVStoreHorizontalDivider(
-                modifier = Modifier.padding(vertical = 12.dp),
-            )
+            if (index < cartItems.lastIndex) {
+                YVStoreHorizontalDivider(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                )
+            }
         }
+    }
+}
 
-        item {
+@Composable
+private fun CartBottomBar(
+    subtotal: String,
+    deliveryFee: String,
+    total: String,
+    onCheckout: () -> Unit,
+) {
+    BottomFrameCard {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        ) {
+            OrderSummary(
+                subtotal = subtotal,
+                deliveryFee = deliveryFee,
+                total = total,
+            )
             Spacer(modifier = Modifier.height(16.dp))
+            YVStorePrimaryButton(
+                text = "Checkout",
+                onClick = onCheckout,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
@@ -250,139 +271,6 @@ private fun ClearCartDialog(
             secondaryButtonText = "Cancel",
             iconColorFilter = ColorFilter.tint(MaterialTheme.colorScheme.error),
         )
-    }
-}
-
-@Composable
-private fun CartItemRow(
-    item: CartItemUi,
-    onIncrementQuantity: () -> Unit,
-    onDecrementQuantity: () -> Unit,
-    onRemoveItem: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        AsyncImage(
-            model = item.imageUrl,
-            contentDescription = item.name,
-            modifier = Modifier
-                .size(80.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
-            contentScale = ContentScale.Fit,
-        )
-
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top,
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Text(
-                        text = item.name,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                        ),
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = item.formattedPrice,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                        ),
-                    )
-                }
-
-                IconButton(
-                    onClick = onRemoveItem,
-                    modifier = Modifier.size(24.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_close),
-                        contentDescription = "Remove item",
-                        modifier = Modifier.size(20.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            QuantitySelector(
-                quantity = item.quantity,
-                onIncrement = onIncrementQuantity,
-                onDecrement = onDecrementQuantity,
-            )
-        }
-    }
-}
-
-@Composable
-private fun QuantitySelector(
-    quantity: Int,
-    onIncrement: () -> Unit,
-    onDecrement: () -> Unit,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = CircleShape,
-                )
-                .clickable(onClick = onDecrement),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "−",
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                ),
-            )
-        }
-
-        Text(
-            text = quantity.toString(),
-            style = MaterialTheme.typography.bodyMedium.copy(
-                fontWeight = FontWeight.Bold,
-            ),
-        )
-
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape,
-                )
-                .clickable(onClick = onIncrement),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "+",
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                ),
-            )
-        }
     }
 }
 

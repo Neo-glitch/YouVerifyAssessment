@@ -13,7 +13,6 @@ import org.neo.yvstore.core.data.mapper.toUser
 import org.neo.yvstore.core.data.model.CacheUser
 import org.neo.yvstore.core.domain.manager.UserManager
 import org.neo.yvstore.core.domain.model.User
-import org.neo.yvstore.features.auth.data.datasource.local.AuthLocalDatasourceImpl.Companion.KEY_AUTH_USER
 
 class UserManagerImpl(
     private val appCache: AppCache

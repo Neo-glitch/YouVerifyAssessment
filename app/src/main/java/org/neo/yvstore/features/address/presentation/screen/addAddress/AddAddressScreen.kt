@@ -94,17 +94,11 @@ private fun AddAddressScreen(
             )
         },
         bottomBar = {
-            BottomFrameCard {
-                YVStorePrimaryButton(
-                    text = "Save Address",
-                    onClick = onSave,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    loading = isSaving,
-                    enabled = uiState.isFormValid && !isSaving,
-                )
-            }
+            SaveAddressBottomBar(
+                onSave = onSave,
+                isSaving = isSaving,
+                isFormValid = uiState.isFormValid,
+            )
         }
     ) { paddingValues ->
         Column(
@@ -155,11 +149,30 @@ private fun AddAddressScreen(
 }
 
 @Composable
+private fun SaveAddressBottomBar(
+    onSave: () -> Unit,
+    isSaving: Boolean,
+    isFormValid: Boolean,
+) {
+    BottomFrameCard {
+        YVStorePrimaryButton(
+            text = "Save Address",
+            onClick = onSave,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            loading = isSaving,
+            enabled = isFormValid && !isSaving,
+        )
+    }
+}
+
+@Composable
 private fun AddAddressHeader() {
     Text(
         text = "Enter delivery address",
         style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        color = YVStoreTheme.colors.textColors.textPrimary
     )
 }
 

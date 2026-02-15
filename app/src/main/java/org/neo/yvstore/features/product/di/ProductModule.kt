@@ -20,17 +20,14 @@ import org.neo.yvstore.features.product.presentation.screen.productList.HomeProd
 import org.neo.yvstore.features.product.presentation.screen.searchProductList.SearchProductListViewModel
 
 val productModule = module {
-    // Data layer
     factoryOf(::ProductRemoteDatasourceImpl) { bind<ProductRemoteDatasource>() }
     factoryOf(::ProductRepositoryImpl) { bind<ProductRepository>() }
 
-    // Domain layer - Use cases
     factoryOf(::ObserveProductsUseCase)
     factoryOf(::RefreshProductsUseCase)
     factoryOf(::SearchProductsUseCase)
     factoryOf(::GetProductUseCase)
 
-    // Presentation layer
     viewModelOf(::AllProductListViewModel)
     viewModel { params ->
         ProductDetailsViewModel(

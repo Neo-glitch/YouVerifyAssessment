@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.neo.yvstore.features.address.domain.model.Address
+import org.neo.yvstore.core.domain.model.Address
 import org.neo.yvstore.features.address.domain.usecase.AddAddressUseCase
 
 class AddAddressViewModel(
