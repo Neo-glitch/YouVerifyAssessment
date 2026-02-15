@@ -22,7 +22,7 @@ class SearchProductsUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         val products = listOf(
             Product("1", "Shoe", "Desc", 99.0, "url", 4.5, 10, "2024-01-01")
         )
@@ -36,7 +36,7 @@ class SearchProductsUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         coEvery { repository.searchProducts("test") } returns Resource.Error("Network error")
 
         val result = useCase(query = "test")

@@ -25,7 +25,7 @@ class AuthRepositoryImplUnitTest {
     // ── signUp ──
 
     @Test
-    fun `signUp returns success when datasource succeeds`() = runTest {
+    fun `signUp should return success when datasource succeeds`() = runTest {
         coEvery {
             remoteDatasource.signUp("a@b.com", "pass123", "John", "Doe")
         } returns Unit
@@ -39,7 +39,7 @@ class AuthRepositoryImplUnitTest {
     }
 
     @Test
-    fun `signUp returns error when datasource throws`() = runTest {
+    fun `signUp should return error when datasource throws`() = runTest {
         coEvery {
             remoteDatasource.signUp("a@b.com", "pass123", "John", "Doe")
         } throws RuntimeException("fail")
@@ -53,7 +53,7 @@ class AuthRepositoryImplUnitTest {
     // ── signIn ──
 
     @Test
-    fun `signIn returns success with mapped user`() = runTest {
+    fun `signIn should return success with mapped user`() = runTest {
         val dto = UserDto(uid = "1", email = "a@b.com", firstName = "John", lastName = "Doe")
         coEvery { remoteDatasource.signIn("a@b.com", "pass123") } returns dto
 
@@ -65,7 +65,7 @@ class AuthRepositoryImplUnitTest {
     }
 
     @Test
-    fun `signIn returns error when datasource throws`() = runTest {
+    fun `signIn should return error when datasource throws`() = runTest {
         coEvery {
             remoteDatasource.signIn("a@b.com", "wrong")
         } throws RuntimeException("auth failed")

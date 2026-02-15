@@ -38,7 +38,7 @@ class HomeProductListViewModelUnitTest {
     }
 
     @Test
-    fun `init loads products and sets loaded state`() = runTest {
+    fun `init should load products and set loaded state`() = runTest {
         every { observeProductsUseCase(10) } returns flowOf(Resource.Success(listOf(product)))
         coEvery { refreshProductsUseCase() } returns Resource.Success(Unit)
         every { observeCartItemCountUseCase() } returns flowOf(Resource.Success(0))
@@ -53,7 +53,7 @@ class HomeProductListViewModelUnitTest {
     }
 
     @Test
-    fun `init with empty cache and refresh error shows error state`() = runTest {
+    fun `init with empty cache and refresh error should show error state`() = runTest {
         every { observeProductsUseCase(10) } returns flowOf(Resource.Success(emptyList()))
         coEvery { refreshProductsUseCase() } returns Resource.Error("Network error")
         every { observeCartItemCountUseCase() } returns flowOf(Resource.Success(0))
@@ -67,7 +67,7 @@ class HomeProductListViewModelUnitTest {
     }
 
     @Test
-    fun `cart item count is observed`() = runTest {
+    fun `init should observe cart item count`() = runTest {
         every { observeProductsUseCase(10) } returns flowOf(Resource.Success(listOf(product)))
         coEvery { refreshProductsUseCase() } returns Resource.Success(Unit)
         every { observeCartItemCountUseCase() } returns flowOf(Resource.Success(5))
@@ -79,7 +79,7 @@ class HomeProductListViewModelUnitTest {
     }
 
     @Test
-    fun `init with cached products and refresh error shows toast`() = runTest {
+    fun `init with cached products and refresh error should show toast`() = runTest {
         every { observeProductsUseCase(10) } returns flowOf(Resource.Success(listOf(product)))
         coEvery { refreshProductsUseCase() } returns Resource.Error("Timeout")
         every { observeCartItemCountUseCase() } returns flowOf(Resource.Success(0))

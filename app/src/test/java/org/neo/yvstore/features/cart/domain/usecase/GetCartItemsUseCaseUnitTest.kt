@@ -22,7 +22,7 @@ class GetCartItemsUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         val items = listOf(
             CartItem(1L, "p1", "Shoe", "url", 99.0, 2)
         )
@@ -36,7 +36,7 @@ class GetCartItemsUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         coEvery { repository.getCartItems() } returns Resource.Error("Database error")
 
         val result = useCase()

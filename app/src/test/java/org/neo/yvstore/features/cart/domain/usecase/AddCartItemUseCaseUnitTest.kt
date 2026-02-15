@@ -22,7 +22,7 @@ class AddCartItemUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         val entity = CartItemEntity(
             id = 0, productId = "p1", productName = "Shoe",
             productImageUrl = "url", unitPrice = 99.0, quantity = 1
@@ -36,7 +36,7 @@ class AddCartItemUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         val entity = CartItemEntity(
             id = 0, productId = "p1", productName = "Shoe",
             productImageUrl = "url", unitPrice = 99.0, quantity = 1

@@ -42,7 +42,7 @@ class SignUpViewModelUnitTest {
     }
 
     @Test
-    fun `signUp success emits success event`() = runTest {
+    fun `signUp should emit success event on success`() = runTest {
         coEvery { signUpUseCase(any(), any(), any(), any()) } returns Resource.Success(Unit)
 
         fillValidForm()
@@ -55,7 +55,7 @@ class SignUpViewModelUnitTest {
     }
 
     @Test
-    fun `signUp error updates load state`() = runTest {
+    fun `signUp should update load state on error`() = runTest {
         coEvery { signUpUseCase(any(), any(), any(), any()) } returns Resource.Error("Email in use")
 
         fillValidForm()
@@ -67,14 +67,14 @@ class SignUpViewModelUnitTest {
     }
 
     @Test
-    fun `signUp does nothing when inputs are invalid`() = runTest {
+    fun `signUp should do nothing when inputs are invalid`() = runTest {
         viewModel.signUp()
 
         assertThat(viewModel.uiState.value.loadState).isEqualTo(SignUpLoadState.Idle)
     }
 
     @Test
-    fun `password mismatch shows error on confirm password`() {
+    fun `password mismatch should show error on confirm password`() {
         viewModel.onPasswordChange("password123")
         viewModel.onPasswordBlur()
         viewModel.onConfirmPasswordChange("different")
@@ -84,7 +84,7 @@ class SignUpViewModelUnitTest {
     }
 
     @Test
-    fun `dismissError resets load state`() = runTest {
+    fun `dismissError should reset load state`() = runTest {
         coEvery { signUpUseCase(any(), any(), any(), any()) } returns Resource.Error("error")
 
         fillValidForm()
@@ -95,14 +95,14 @@ class SignUpViewModelUnitTest {
     }
 
     @Test
-    fun `togglePasswordVisibility toggles state`() {
+    fun `togglePasswordVisibility should toggle state`() {
         assertThat(viewModel.uiState.value.isPasswordVisible).isFalse()
         viewModel.togglePasswordVisibility()
         assertThat(viewModel.uiState.value.isPasswordVisible).isTrue()
     }
 
     @Test
-    fun `toggleConfirmPasswordVisibility toggles state`() {
+    fun `toggleConfirmPasswordVisibility should toggle state`() {
         assertThat(viewModel.uiState.value.isConfirmPasswordVisible).isFalse()
         viewModel.toggleConfirmPasswordVisibility()
         assertThat(viewModel.uiState.value.isConfirmPasswordVisible).isTrue()

@@ -22,7 +22,7 @@ class PlaceOrderUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         val items = listOf(
             OrderLineItem("p1", "Shoe", 99.0, 2)
         )
@@ -44,7 +44,7 @@ class PlaceOrderUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         val items = listOf(
             OrderLineItem("p1", "Shoe", 99.0, 2)
         )

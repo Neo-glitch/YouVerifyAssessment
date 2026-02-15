@@ -32,7 +32,7 @@ class LoginViewModelUnitTest {
     }
 
     @Test
-    fun `login success saves user and emits event`() = runTest {
+    fun `login should save user and emit event on success`() = runTest {
         val user = User("1", "test@test.com", "John", "Doe")
         coEvery { loginUseCase(any(), any()) } returns Resource.Success(user)
 
@@ -52,7 +52,7 @@ class LoginViewModelUnitTest {
     }
 
     @Test
-    fun `login error updates load state`() = runTest {
+    fun `login should update load state on error`() = runTest {
         coEvery { loginUseCase(any(), any()) } returns Resource.Error("Invalid email or password")
 
         viewModel.onEmailChange("test@test.com")
@@ -68,7 +68,7 @@ class LoginViewModelUnitTest {
     }
 
     @Test
-    fun `login does nothing when inputs are invalid`() = runTest {
+    fun `login should do nothing when inputs are invalid`() = runTest {
         viewModel.login()
 
         val state = viewModel.uiState.value
@@ -76,7 +76,7 @@ class LoginViewModelUnitTest {
     }
 
     @Test
-    fun `onEmailChange updates email value`() {
+    fun `onEmailChange should update email value`() {
         viewModel.onEmailChange("test@test.com")
 
         assertThat(viewModel.uiState.value.email.value).isEqualTo("test@test.com")
@@ -84,7 +84,7 @@ class LoginViewModelUnitTest {
     }
 
     @Test
-    fun `onEmailBlur validates and shows error for invalid email`() {
+    fun `onEmailBlur should validate and show error for invalid email`() {
         viewModel.onEmailChange("invalid")
         viewModel.onEmailBlur()
 
@@ -93,7 +93,7 @@ class LoginViewModelUnitTest {
     }
 
     @Test
-    fun `dismissError resets load state to idle`() = runTest {
+    fun `dismissError should reset load state to idle`() = runTest {
         coEvery { loginUseCase(any(), any()) } returns Resource.Error("error")
 
         viewModel.onEmailChange("test@test.com")
@@ -108,7 +108,7 @@ class LoginViewModelUnitTest {
     }
 
     @Test
-    fun `togglePasswordVisibility toggles state`() {
+    fun `togglePasswordVisibility should toggle state`() {
         assertThat(viewModel.uiState.value.isPasswordVisible).isFalse()
         viewModel.togglePasswordVisibility()
         assertThat(viewModel.uiState.value.isPasswordVisible).isTrue()

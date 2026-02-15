@@ -28,7 +28,7 @@ class OrderRepositoryImplUnitTest {
     }
 
     @Test
-    fun `placeOrder returns success with orderId`() = runTest {
+    fun `placeOrder should return success with orderId`() = runTest {
         coEvery { userManager.getUser() } returns user
         coEvery { remoteDatasource.createOrder(any()) } returns "order123"
 
@@ -47,7 +47,7 @@ class OrderRepositoryImplUnitTest {
     }
 
     @Test
-    fun `placeOrder returns error when user is null`() = runTest {
+    fun `placeOrder should return error when user is null`() = runTest {
         coEvery { userManager.getUser() } returns null
 
         val result = repository.placeOrder(198.0, "123 Main, City", items)
@@ -57,7 +57,7 @@ class OrderRepositoryImplUnitTest {
     }
 
     @Test
-    fun `placeOrder returns error when remote throws`() = runTest {
+    fun `placeOrder should return error when remote throws`() = runTest {
         coEvery { userManager.getUser() } returns user
         coEvery { remoteDatasource.createOrder(any()) } throws RuntimeException("network")
 

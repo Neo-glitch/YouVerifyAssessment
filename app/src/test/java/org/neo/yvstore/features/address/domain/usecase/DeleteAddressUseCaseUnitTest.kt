@@ -21,7 +21,7 @@ class DeleteAddressUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         coEvery { repository.deleteAddress("addr1") } returns Resource.Success(Unit)
 
         val result = useCase(addressId = "addr1")
@@ -31,7 +31,7 @@ class DeleteAddressUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         coEvery { repository.deleteAddress("addr1") } returns Resource.Error("Network error")
 
         val result = useCase(addressId = "addr1")

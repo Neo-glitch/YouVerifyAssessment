@@ -21,7 +21,7 @@ class DeleteCartItemUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         coEvery { repository.deleteCartItem(1L) } returns Resource.Success(Unit)
 
         val result = useCase(id = 1L)
@@ -31,7 +31,7 @@ class DeleteCartItemUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         coEvery { repository.deleteCartItem(1L) } returns Resource.Error("A local storage error occurred")
 
         val result = useCase(id = 1L)

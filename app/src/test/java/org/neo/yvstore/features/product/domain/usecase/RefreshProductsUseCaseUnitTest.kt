@@ -21,7 +21,7 @@ class RefreshProductsUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         coEvery { repository.refreshProducts() } returns Resource.Success(Unit)
 
         val result = useCase()
@@ -31,7 +31,7 @@ class RefreshProductsUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         coEvery { repository.refreshProducts() } returns Resource.Error("Timeout")
 
         val result = useCase()

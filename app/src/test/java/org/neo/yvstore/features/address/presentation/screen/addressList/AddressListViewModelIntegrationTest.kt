@@ -80,7 +80,7 @@ class AddressListViewModelIntegrationTest {
     }
 
     @Test
-    fun `init should send toast when refresh fails but cached addresses exist`() = runTest {
+    fun `init with cached addresses and refresh failure should send toast event`() = runTest {
         // Arrange - emit addresses but set refresh to fail
         val testAddressRepository = TestAddressRepository()
         testAddressRepository.refreshResult = Resource.Error("Failed to refresh")
@@ -96,8 +96,8 @@ class AddressListViewModelIntegrationTest {
         // Assert
         viewModel.uiEvent.test {
             val event = awaitItem()
-            assertThat(event).isInstanceOf(AddressListUiEvent.ShowToast::class.java)
-            assertThat((event as AddressListUiEvent.ShowToast).message).isEqualTo("Failed to refresh")
+            assertThat(event).isInstanceOf(AddressListUiEvent.Error::class.java)
+            assertThat((event as AddressListUiEvent.Error).message).isEqualTo("Failed to refresh")
             cancelAndConsumeRemainingEvents()
         }
 
@@ -106,7 +106,7 @@ class AddressListViewModelIntegrationTest {
     }
 
     @Test
-    fun `onDeleteAddress should optimistically remove then confirm`() = runTest {
+    fun `onDeleteAddress should optimistically remove address from list`() = runTest {
         // Arrange
         val testAddressRepository = TestAddressRepository()
         testAddressRepository.refreshResult = Resource.Success(Unit)
@@ -127,11 +127,10 @@ class AddressListViewModelIntegrationTest {
         // Assert - address should be removed
         assertThat(viewModel.uiState.value.addresses).hasSize(1)
         assertThat(viewModel.uiState.value.addresses[0].id).isEqualTo("a2")
-        assertThat(viewModel.uiState.value.deleteError).isNull()
     }
 
     @Test
-    fun `onDeleteAddress should restore address on failure and set deleteError`() = runTest {
+    fun `onDeleteAddress should restore address on failure and emit ShowToast`() = runTest {
         // Arrange
         val testAddressRepository = TestAddressRepository()
         testAddressRepository.refreshResult = Resource.Success(Unit)
@@ -146,37 +145,18 @@ class AddressListViewModelIntegrationTest {
 
         val addressToDelete = viewModel.uiState.value.addresses[0]
 
-        // Act
-        viewModel.onDeleteAddress(addressToDelete)
+        // Act & Assert
+        viewModel.uiEvent.test {
+            viewModel.onDeleteAddress(addressToDelete)
 
-        // Assert - address should be restored and error set
+            val event = awaitItem()
+            assertThat(event).isInstanceOf(AddressListUiEvent.Error::class.java)
+            assertThat((event as AddressListUiEvent.Error).message).isEqualTo("Failed to delete address")
+            cancelAndConsumeRemainingEvents()
+        }
+
+        // Address should be restored
         assertThat(viewModel.uiState.value.addresses).hasSize(2)
-        assertThat(viewModel.uiState.value.deleteError).isEqualTo("Failed to delete address")
         assertThat(viewModel.uiState.value.addresses.any { it.id == "a1" }).isTrue()
-    }
-
-    @Test
-    fun `onDismissDeleteError should clear deleteError`() = runTest {
-        // Arrange
-        val testAddressRepository = TestAddressRepository()
-        testAddressRepository.refreshResult = Resource.Success(Unit)
-        testAddressRepository.deleteResult = Resource.Error("Failed to delete")
-        testAddressRepository.emit(createTestAddresses())
-
-        val viewModel = AddressListViewModel(
-            getAddressesUseCase = GetAddressesUseCase(testAddressRepository),
-            deleteAddressUseCase = DeleteAddressUseCase(testAddressRepository),
-            refreshAddressesUseCase = RefreshAddressesUseCase(testAddressRepository)
-        )
-
-        val addressToDelete = viewModel.uiState.value.addresses[0]
-        viewModel.onDeleteAddress(addressToDelete)
-        assertThat(viewModel.uiState.value.deleteError).isNotNull()
-
-        // Act
-        viewModel.onDismissDeleteError()
-
-        // Assert
-        assertThat(viewModel.uiState.value.deleteError).isNull()
     }
 }

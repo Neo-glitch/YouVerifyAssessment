@@ -37,7 +37,7 @@ class ProductRepositoryImplUnitTest {
     // ── observeProducts ──
 
     @Test
-    fun `observeProducts emits success with mapped products`() = runTest {
+    fun `observeProducts should emit success with mapped products`() = runTest {
         every { productDao.observeProducts(10) } returns flowOf(listOf(entity))
 
         repository.observeProducts(10).test {
@@ -52,7 +52,7 @@ class ProductRepositoryImplUnitTest {
     }
 
     @Test
-    fun `observeProducts emits error when dao throws`() = runTest {
+    fun `observeProducts should emit error when dao throws`() = runTest {
         every { productDao.observeProducts(null) } returns flow {
             throw RuntimeException("db error")
         }
@@ -68,7 +68,7 @@ class ProductRepositoryImplUnitTest {
     // ── searchProducts ──
 
     @Test
-    fun `searchProducts returns success with mapped products`() = runTest {
+    fun `searchProducts should return success with mapped products`() = runTest {
         val dto = ProductDto(
             id = "1", name = "Shoe", description = "Desc", price = 99.0,
             imageUrl = "url", rating = 4.5, reviewCount = 10, createdAt = "2024-01-01"
@@ -84,7 +84,7 @@ class ProductRepositoryImplUnitTest {
     }
 
     @Test
-    fun `searchProducts returns error when remote throws`() = runTest {
+    fun `searchProducts should return error when remote throws`() = runTest {
         coEvery { remoteDatasource.searchProducts("test") } throws RuntimeException("network")
 
         val result = repository.searchProducts("test")
@@ -96,7 +96,7 @@ class ProductRepositoryImplUnitTest {
     // ── refreshProducts ──
 
     @Test
-    fun `refreshProducts clears then inserts and returns success`() = runTest {
+    fun `refreshProducts should clear then insert and return success`() = runTest {
         val dto = ProductDto(
             id = "1", name = "Shoe", description = "Desc", price = 99.0,
             imageUrl = "url", rating = 4.5, reviewCount = 10, createdAt = "2024-01-01"
@@ -115,7 +115,7 @@ class ProductRepositoryImplUnitTest {
     }
 
     @Test
-    fun `refreshProducts returns error when remote throws`() = runTest {
+    fun `refreshProducts should return error when remote throws`() = runTest {
         coEvery { remoteDatasource.getProducts() } throws RuntimeException("timeout")
 
         val result = repository.refreshProducts()
@@ -127,7 +127,7 @@ class ProductRepositoryImplUnitTest {
     // ── getProduct ──
 
     @Test
-    fun `getProduct returns success when found`() = runTest {
+    fun `getProduct should return success when found`() = runTest {
         coEvery { productDao.getProductById("1") } returns entity
 
         val result = repository.getProduct("1")
@@ -137,7 +137,7 @@ class ProductRepositoryImplUnitTest {
     }
 
     @Test
-    fun `getProduct returns error when not found`() = runTest {
+    fun `getProduct should return error when not found`() = runTest {
         coEvery { productDao.getProductById("999") } returns null
 
         val result = repository.getProduct("999")
@@ -147,7 +147,7 @@ class ProductRepositoryImplUnitTest {
     }
 
     @Test
-    fun `getProduct returns error when dao throws`() = runTest {
+    fun `getProduct should return error when dao throws`() = runTest {
         coEvery { productDao.getProductById("1") } throws RuntimeException("db")
 
         val result = repository.getProduct("1")

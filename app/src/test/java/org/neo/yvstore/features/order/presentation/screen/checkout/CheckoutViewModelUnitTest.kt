@@ -44,7 +44,7 @@ class CheckoutViewModelUnitTest {
     }
 
     @Test
-    fun `init loads cart items and address`() = runTest {
+    fun `init should load cart items and address`() = runTest {
         coEvery { getCartItemsUseCase() } returns Resource.Success(listOf(cartItem))
         coEvery { getAddressByIdUseCase("a1") } returns Resource.Success(address)
 
@@ -58,7 +58,7 @@ class CheckoutViewModelUnitTest {
     }
 
     @Test
-    fun `init with cart error and address error sets error state`() = runTest {
+    fun `init with cart error and address error should set error state`() = runTest {
         coEvery { getCartItemsUseCase() } returns Resource.Error("Database error")
         coEvery { getAddressByIdUseCase("a1") } returns Resource.Error("Address not found")
 
@@ -69,7 +69,7 @@ class CheckoutViewModelUnitTest {
     }
 
     @Test
-    fun `init with address error sets error state`() = runTest {
+    fun `init with address error should set error state`() = runTest {
         coEvery { getCartItemsUseCase() } returns Resource.Success(listOf(cartItem))
         coEvery { getAddressByIdUseCase("a1") } returns Resource.Error("Address not found")
 
@@ -80,7 +80,7 @@ class CheckoutViewModelUnitTest {
     }
 
     @Test
-    fun `placeOrder success clears cart and emits event`() = runTest {
+    fun `placeOrder should clear cart and emit event on success`() = runTest {
         coEvery { getCartItemsUseCase() } returns Resource.Success(listOf(cartItem))
         coEvery { getAddressByIdUseCase("a1") } returns Resource.Success(address)
         coEvery { placeOrderUseCase(any(), any(), any()) } returns Resource.Success("order123")
@@ -100,7 +100,7 @@ class CheckoutViewModelUnitTest {
     }
 
     @Test
-    fun `placeOrder error updates placeOrderState`() = runTest {
+    fun `placeOrder should update placeOrderState on error`() = runTest {
         coEvery { getCartItemsUseCase() } returns Resource.Success(listOf(cartItem))
         coEvery { getAddressByIdUseCase("a1") } returns Resource.Success(address)
         coEvery { placeOrderUseCase(any(), any(), any()) } returns Resource.Error("Network error")
@@ -115,7 +115,7 @@ class CheckoutViewModelUnitTest {
     }
 
     @Test
-    fun `dismissError resets placeOrderState`() = runTest {
+    fun `dismissError should reset placeOrderState`() = runTest {
         coEvery { getCartItemsUseCase() } returns Resource.Success(listOf(cartItem))
         coEvery { getAddressByIdUseCase("a1") } returns Resource.Success(address)
         coEvery { placeOrderUseCase(any(), any(), any()) } returns Resource.Error("error")

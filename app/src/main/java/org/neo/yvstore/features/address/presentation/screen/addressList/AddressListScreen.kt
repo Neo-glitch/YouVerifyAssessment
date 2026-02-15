@@ -14,13 +14,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -50,7 +46,7 @@ fun AddressListScreen(
 
     ObserveAsEvents(viewModel.uiEvent) { event ->
         when (event) {
-            is AddressListUiEvent.ShowToast -> {
+            is AddressListUiEvent.Error -> {
                 Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             }
         }
@@ -59,12 +55,10 @@ fun AddressListScreen(
     AddressListScreen(
         addresses = uiState.addresses,
         loadState = uiState.loadState,
-        deleteError = uiState.deleteError,
         onNavigateBack = onNavigateBack,
         onAddAddress = onAddAddress,
         onAddressSelected = onAddressSelected,
-        onDeleteAddress = viewModel::onDeleteAddress,
-        onDismissDeleteError = viewModel::onDismissDeleteError
+        onDeleteAddress = viewModel::onDeleteAddress
     )
 }
 
@@ -72,72 +66,39 @@ fun AddressListScreen(
 private fun AddressListScreen(
     addresses: List<AddressUi>,
     loadState: AddressListLoadState,
-    deleteError: String?,
     onNavigateBack: () -> Unit,
     onAddAddress: () -> Unit,
     onAddressSelected: (String) -> Unit,
-    onDeleteAddress: (AddressUi) -> Unit,
-    onDismissDeleteError: () -> Unit
+    onDeleteAddress: (AddressUi) -> Unit
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    DeleteErrorEffect(
-        deleteError = deleteError,
-        snackbarHostState = snackbarHostState,
-        onDismiss = onDismissDeleteError
-    )
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        YVStoreScaffold(
-            topBar = {
-                YVStoreTopBar(
-                    title = "Delivery Address",
-                    onNavigationClick = onNavigateBack,
-                    isCenteredAligned = true
-                )
-            },
-            floatingActionButton = {
-                AddAddressFab(
-                    visible = addresses.isNotEmpty(),
-                    onClick = onAddAddress
-                )
-            }
-        ) { paddingValues ->
-            if (addresses.isEmpty()) {
-                EmptyStateContent(
-                    loadState = loadState,
-                    onAddAddress = onAddAddress,
-                    paddingValues = paddingValues
-                )
-            } else {
-                AddressListLoadedContent(
-                    addresses = addresses,
-                    onAddressSelected = onAddressSelected,
-                    onDeleteAddress = onDeleteAddress,
-                    modifier = Modifier.padding(paddingValues)
-                )
-            }
+    YVStoreScaffold(
+        topBar = {
+            YVStoreTopBar(
+                title = "Delivery Address",
+                onNavigationClick = onNavigateBack,
+                isCenteredAligned = true
+            )
+        },
+        floatingActionButton = {
+            AddAddressFab(
+                visible = addresses.isNotEmpty(),
+                onClick = onAddAddress
+            )
         }
-
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-        )
-    }
-}
-
-@Composable
-private fun DeleteErrorEffect(
-    deleteError: String?,
-    snackbarHostState: SnackbarHostState,
-    onDismiss: () -> Unit
-) {
-    LaunchedEffect(deleteError) {
-        if (deleteError != null) {
-            snackbarHostState.showSnackbar(deleteError)
-            onDismiss()
+    ) { paddingValues ->
+        if (addresses.isEmpty()) {
+            EmptyStateContent(
+                loadState = loadState,
+                onAddAddress = onAddAddress,
+                paddingValues = paddingValues
+            )
+        } else {
+            AddressListLoadedContent(
+                addresses = addresses,
+                onAddressSelected = onAddressSelected,
+                onDeleteAddress = onDeleteAddress,
+                modifier = Modifier.padding(paddingValues)
+            )
         }
     }
 }
@@ -272,12 +233,10 @@ private fun AddressListScreenPopulatedPreview() {
         AddressListScreen(
             addresses = sampleAddresses,
             loadState = AddressListLoadState.Loaded,
-            deleteError = null,
             onNavigateBack = {},
             onAddAddress = {},
             onAddressSelected = {},
             onDeleteAddress = {},
-            onDismissDeleteError = {},
         )
     }
 }
@@ -289,12 +248,10 @@ private fun AddressListScreenEmptyPreview() {
         AddressListScreen(
             addresses = emptyList(),
             loadState = AddressListLoadState.Loaded,
-            deleteError = null,
             onNavigateBack = {},
             onAddAddress = {},
             onAddressSelected = {},
             onDeleteAddress = {},
-            onDismissDeleteError = {},
         )
     }
 }
@@ -306,12 +263,10 @@ private fun AddressListScreenLoadingPreview() {
         AddressListScreen(
             addresses = emptyList(),
             loadState = AddressListLoadState.Loading,
-            deleteError = null,
             onNavigateBack = {},
             onAddAddress = {},
             onAddressSelected = {},
             onDeleteAddress = {},
-            onDismissDeleteError = {},
         )
     }
 }
@@ -323,12 +278,10 @@ private fun AddressListScreenErrorPreview() {
         AddressListScreen(
             addresses = emptyList(),
             loadState = AddressListLoadState.Error("Failed to load addresses"),
-            deleteError = null,
             onNavigateBack = {},
             onAddAddress = {},
             onAddressSelected = {},
             onDeleteAddress = {},
-            onDismissDeleteError = {},
         )
     }
 }

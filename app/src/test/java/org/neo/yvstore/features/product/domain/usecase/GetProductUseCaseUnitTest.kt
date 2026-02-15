@@ -22,7 +22,7 @@ class GetProductUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         val product = Product("1", "Shoe", "Desc", 99.0, "url", 4.5, 10, "2024-01-01")
         coEvery { repository.getProduct("1") } returns Resource.Success(product)
 
@@ -34,7 +34,7 @@ class GetProductUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         coEvery { repository.getProduct("999") } returns Resource.Error("Product not found")
 
         val result = useCase(id = "999")

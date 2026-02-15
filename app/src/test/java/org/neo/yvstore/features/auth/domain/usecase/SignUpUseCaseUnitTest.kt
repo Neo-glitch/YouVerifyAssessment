@@ -21,7 +21,7 @@ class SignUpUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         coEvery {
             repository.signUp("a@b.com", "pass123", "John", "Doe")
         } returns Resource.Success(Unit)
@@ -40,7 +40,7 @@ class SignUpUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         coEvery {
             repository.signUp("a@b.com", "pass123", "John", "Doe")
         } returns Resource.Error("An account with this email already exists")

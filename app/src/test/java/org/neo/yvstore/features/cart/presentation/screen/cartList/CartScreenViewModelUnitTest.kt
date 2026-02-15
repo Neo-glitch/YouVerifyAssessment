@@ -44,7 +44,7 @@ class CartScreenViewModelUnitTest {
     }
 
     @Test
-    fun `init observes cart items and sets loaded state`() = runTest {
+    fun `init should observe cart items and set loaded state`() = runTest {
         every { observeCartItemsUseCase() } returns flowOf(Resource.Success(listOf(cartItem)))
 
         val viewModel = createViewModel()
@@ -57,7 +57,7 @@ class CartScreenViewModelUnitTest {
     }
 
     @Test
-    fun `init with error sets error state`() = runTest {
+    fun `init with error should set error state`() = runTest {
         every { observeCartItemsUseCase() } returns flowOf(Resource.Error("Database error"))
 
         val viewModel = createViewModel()
@@ -67,7 +67,7 @@ class CartScreenViewModelUnitTest {
     }
 
     @Test
-    fun `onIncrementQuantity calls update with incremented value`() = runTest {
+    fun `onIncrementQuantity should call update with incremented value`() = runTest {
         every { observeCartItemsUseCase() } returns flowOf(Resource.Success(listOf(cartItem)))
         coEvery { updateCartItemQuantityUseCase(1L, 3) } returns Resource.Success(Unit)
 
@@ -81,7 +81,7 @@ class CartScreenViewModelUnitTest {
     }
 
     @Test
-    fun `onDecrementQuantity with quantity gt 1 decrements`() = runTest {
+    fun `onDecrementQuantity with quantity gt 1 should decrement`() = runTest {
         every { observeCartItemsUseCase() } returns flowOf(Resource.Success(listOf(cartItem)))
         coEvery { updateCartItemQuantityUseCase(1L, 1) } returns Resource.Success(Unit)
 
@@ -95,7 +95,7 @@ class CartScreenViewModelUnitTest {
     }
 
     @Test
-    fun `onDecrementQuantity with quantity 1 does nothing`() = runTest {
+    fun `onDecrementQuantity with quantity 1 should do nothing`() = runTest {
         val itemWithQty1 = cartItem.copy(quantity = 1)
         every { observeCartItemsUseCase() } returns flowOf(Resource.Success(listOf(itemWithQty1)))
 
@@ -109,7 +109,7 @@ class CartScreenViewModelUnitTest {
     }
 
     @Test
-    fun `onRemoveItem calls delete use case`() = runTest {
+    fun `onRemoveItem should call delete use case`() = runTest {
         every { observeCartItemsUseCase() } returns flowOf(Resource.Success(listOf(cartItem)))
         coEvery { deleteCartItemUseCase(1L) } returns Resource.Success(Unit)
 
@@ -123,7 +123,7 @@ class CartScreenViewModelUnitTest {
     }
 
     @Test
-    fun `onShowClearCartDialog sets flag to true`() = runTest {
+    fun `onShowClearCartDialog should set flag to true`() = runTest {
         every { observeCartItemsUseCase() } returns flowOf(Resource.Success(emptyList()))
 
         val viewModel = createViewModel()
@@ -135,7 +135,7 @@ class CartScreenViewModelUnitTest {
     }
 
     @Test
-    fun `onDismissClearCartDialog sets flag to false`() = runTest {
+    fun `onDismissClearCartDialog should set flag to false`() = runTest {
         every { observeCartItemsUseCase() } returns flowOf(Resource.Success(emptyList()))
 
         val viewModel = createViewModel()
@@ -148,7 +148,7 @@ class CartScreenViewModelUnitTest {
     }
 
     @Test
-    fun `onConfirmClearCart calls deleteAll and hides dialog`() = runTest {
+    fun `onConfirmClearCart should call deleteAll and hide dialog`() = runTest {
         every { observeCartItemsUseCase() } returns flowOf(Resource.Success(listOf(cartItem)))
         coEvery { deleteAllCartItemsUseCase() } returns Resource.Success(Unit)
 

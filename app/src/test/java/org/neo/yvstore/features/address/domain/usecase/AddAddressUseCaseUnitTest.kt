@@ -22,7 +22,7 @@ class AddAddressUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         val address = Address("", "", "123 Main", "City", "State", "Country")
         coEvery { repository.addAddress(address) } returns Resource.Success(Unit)
 
@@ -33,7 +33,7 @@ class AddAddressUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         val address = Address("", "", "123 Main", "City", "State", "Country")
         coEvery { repository.addAddress(address) } returns Resource.Error("User not found")
 

@@ -22,7 +22,7 @@ class ObserveProductsUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke with count forwards exact flow from repository`() {
+    fun `invoke with count should forward exact flow from repository`() {
         val flow = flowOf(Resource.Success(emptyList<Product>()))
         every { repository.observeProducts(10) } returns flow
 
@@ -33,7 +33,7 @@ class ObserveProductsUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke with null count forwards to repository`() {
+    fun `invoke with null count should forward to repository`() {
         val flow = flowOf(Resource.Success(emptyList<Product>()))
         every { repository.observeProducts(null) } returns flow
 

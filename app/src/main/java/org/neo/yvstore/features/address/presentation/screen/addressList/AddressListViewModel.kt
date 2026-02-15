@@ -89,7 +89,7 @@ class AddressListViewModel(
                     it.copy(loadState = AddressListLoadState.Error(message))
                 }
             } else if (currentState.addresses.isNotEmpty()) {
-                _uiEvent.send(AddressListUiEvent.ShowToast(message))
+                _uiEvent.send(AddressListUiEvent.Error(message))
             }
         }
     }
@@ -99,7 +99,6 @@ class AddressListViewModel(
         _uiState.update {
             it.copy(
                 addresses = it.addresses.filter { item -> item.id != address.id },
-                deleteError = null
             )
         }
 
@@ -112,14 +111,11 @@ class AddressListViewModel(
                 _uiState.update {
                     it.copy(
                         addresses = (it.addresses + address).sortedBy { item -> item.id },
-                        deleteError = message
                     )
                 }
+                _uiEvent.send(AddressListUiEvent.Error(message))
             }
         }
     }
 
-    fun onDismissDeleteError() {
-        _uiState.update { it.copy(deleteError = null) }
-    }
 }

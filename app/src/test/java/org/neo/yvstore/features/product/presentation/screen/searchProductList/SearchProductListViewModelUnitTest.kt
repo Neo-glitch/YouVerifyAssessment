@@ -29,14 +29,14 @@ class SearchProductListViewModelUnitTest {
     }
 
     @Test
-    fun `onQueryChanged updates query in state`() {
+    fun `onQueryChanged should update query in state`() {
         viewModel.onQueryChanged("shoes")
 
         assertThat(viewModel.uiState.value.query).isEqualTo("shoes")
     }
 
     @Test
-    fun `onQueryChanged with empty resets to idle`() {
+    fun `onQueryChanged with empty should reset to idle`() {
         viewModel.onQueryChanged("shoes")
         viewModel.onQueryChanged("")
 
@@ -44,7 +44,7 @@ class SearchProductListViewModelUnitTest {
     }
 
     @Test
-    fun `onSearch with results sets loaded state`() = runTest {
+    fun `onSearch with results should set loaded state`() = runTest {
         val products = listOf(
             Product("1", "Shoe", "Desc", 99.0, "url", 4.5, 10, "2024-01-01")
         )
@@ -61,7 +61,7 @@ class SearchProductListViewModelUnitTest {
     }
 
     @Test
-    fun `onSearch with empty results sets empty state`() = runTest {
+    fun `onSearch with empty results should set empty state`() = runTest {
         coEvery { searchProductsUseCase(any()) } returns Resource.Success(emptyList())
 
         viewModel.onQueryChanged("xyz")
@@ -73,7 +73,7 @@ class SearchProductListViewModelUnitTest {
     }
 
     @Test
-    fun `onSearch error sets error state`() = runTest {
+    fun `onSearch error should set error state`() = runTest {
         coEvery { searchProductsUseCase(any()) } returns Resource.Error("Network error")
 
         viewModel.onQueryChanged("test")

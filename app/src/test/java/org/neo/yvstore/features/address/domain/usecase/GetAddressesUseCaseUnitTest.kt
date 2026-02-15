@@ -22,7 +22,7 @@ class GetAddressesUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke forwards exact flow from repository`() {
+    fun `invoke should forward exact flow from repository`() {
         val flow = flowOf(Resource.Success(emptyList<Address>()))
         every { repository.getAddresses() } returns flow
 

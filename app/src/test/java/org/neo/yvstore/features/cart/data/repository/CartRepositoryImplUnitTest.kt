@@ -33,7 +33,7 @@ class CartRepositoryImplUnitTest {
     // ── observeCartItems ──
 
     @Test
-    fun `observeCartItems emits success with mapped items`() = runTest {
+    fun `observeCartItems should emit success with mapped items`() = runTest {
         every { cartItemDao.observeAllCartItems() } returns flowOf(listOf(entity))
 
         repository.observeCartItems().test {
@@ -48,7 +48,7 @@ class CartRepositoryImplUnitTest {
     }
 
     @Test
-    fun `observeCartItems emits error when dao throws`() = runTest {
+    fun `observeCartItems should emit error when dao throws`() = runTest {
         every { cartItemDao.observeAllCartItems() } returns flow {
             throw RuntimeException("db")
         }
@@ -64,7 +64,7 @@ class CartRepositoryImplUnitTest {
     // ── getCartItems ──
 
     @Test
-    fun `getCartItems returns success with mapped items`() = runTest {
+    fun `getCartItems should return success with mapped items`() = runTest {
         coEvery { cartItemDao.getCartItems() } returns listOf(entity)
 
         val result = repository.getCartItems()
@@ -74,7 +74,7 @@ class CartRepositoryImplUnitTest {
     }
 
     @Test
-    fun `getCartItems returns error when dao throws`() = runTest {
+    fun `getCartItems should return error when dao throws`() = runTest {
         coEvery { cartItemDao.getCartItems() } throws RuntimeException("db")
 
         val result = repository.getCartItems()
@@ -86,7 +86,7 @@ class CartRepositoryImplUnitTest {
     // ── observeCartItemCount ──
 
     @Test
-    fun `observeCartItemCount emits success with count`() = runTest {
+    fun `observeCartItemCount should emit success with count`() = runTest {
         every { cartItemDao.observeCartItemCount() } returns flowOf(3)
 
         repository.observeCartItemCount().test {
@@ -100,7 +100,7 @@ class CartRepositoryImplUnitTest {
     // ── addCartItem ──
 
     @Test
-    fun `addCartItem returns success`() = runTest {
+    fun `addCartItem should return success`() = runTest {
         coEvery { cartItemDao.insertCartItem(entity) } returns Unit
 
         val result = repository.addCartItem(entity)
@@ -110,7 +110,7 @@ class CartRepositoryImplUnitTest {
     }
 
     @Test
-    fun `addCartItem returns error when dao throws`() = runTest {
+    fun `addCartItem should return error when dao throws`() = runTest {
         coEvery { cartItemDao.insertCartItem(entity) } throws RuntimeException("db")
 
         val result = repository.addCartItem(entity)
@@ -122,7 +122,7 @@ class CartRepositoryImplUnitTest {
     // ── updateQuantity ──
 
     @Test
-    fun `updateQuantity returns success`() = runTest {
+    fun `updateQuantity should return success`() = runTest {
         coEvery { cartItemDao.updateQuantity(1L, 5) } returns Unit
 
         val result = repository.updateQuantity(1L, 5)
@@ -134,7 +134,7 @@ class CartRepositoryImplUnitTest {
     // ── deleteCartItem ──
 
     @Test
-    fun `deleteCartItem returns success`() = runTest {
+    fun `deleteCartItem should return success`() = runTest {
         coEvery { cartItemDao.deleteCartItem(1L) } returns Unit
 
         val result = repository.deleteCartItem(1L)
@@ -146,7 +146,7 @@ class CartRepositoryImplUnitTest {
     // ── deleteAllCartItems ──
 
     @Test
-    fun `deleteAllCartItems returns success`() = runTest {
+    fun `deleteAllCartItems should return success`() = runTest {
         coEvery { cartItemDao.deleteAllCartItems() } returns Unit
 
         val result = repository.deleteAllCartItems()
@@ -158,7 +158,7 @@ class CartRepositoryImplUnitTest {
     // ── observeCartItemByProductId ──
 
     @Test
-    fun `observeCartItemByProductId emits success with mapped item`() = runTest {
+    fun `observeCartItemByProductId should emit success with mapped item`() = runTest {
         every { cartItemDao.observeCartItemByProductId("p1") } returns flowOf(entity)
 
         repository.observeCartItemByProductId("p1").test {
@@ -170,7 +170,7 @@ class CartRepositoryImplUnitTest {
     }
 
     @Test
-    fun `observeCartItemByProductId emits success with null when not found`() = runTest {
+    fun `observeCartItemByProductId should emit success with null when not found`() = runTest {
         every { cartItemDao.observeCartItemByProductId("p2") } returns flowOf(null)
 
         repository.observeCartItemByProductId("p2").test {

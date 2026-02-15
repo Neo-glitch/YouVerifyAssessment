@@ -22,7 +22,7 @@ class GetAddressByIdUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         val address = Address("a1", "u1", "123 Main", "City", "State", "Country")
         coEvery { repository.getAddressById("a1") } returns Resource.Success(address)
 
@@ -34,7 +34,7 @@ class GetAddressByIdUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         coEvery { repository.getAddressById("a1") } returns Resource.Error("Address not found")
 
         val result = useCase(id = "a1")

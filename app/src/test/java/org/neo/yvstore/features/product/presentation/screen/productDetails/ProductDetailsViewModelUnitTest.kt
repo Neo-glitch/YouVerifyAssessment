@@ -48,7 +48,7 @@ class ProductDetailsViewModelUnitTest {
     }
 
     @Test
-    fun `init loads product and sets loaded state`() = runTest {
+    fun `init should load product and set loaded state`() = runTest {
         coEvery { getProductUseCase("p1") } returns Resource.Success(product)
         every { observeCartItemByProductIdUseCase("p1") } returns flowOf(Resource.Success(null))
 
@@ -61,7 +61,7 @@ class ProductDetailsViewModelUnitTest {
     }
 
     @Test
-    fun `init with product error sets error state`() = runTest {
+    fun `init with product error should set error state`() = runTest {
         coEvery { getProductUseCase("p1") } returns Resource.Error("Product not found")
         every { observeCartItemByProductIdUseCase("p1") } returns flowOf(Resource.Success(null))
 
@@ -73,7 +73,7 @@ class ProductDetailsViewModelUnitTest {
     }
 
     @Test
-    fun `cart item observation updates quantity and cartItemId`() = runTest {
+    fun `cart item observation should update quantity and cartItemId`() = runTest {
         val cartItem = CartItem(1L, "p1", "Shoe", "url", 99.0, 3)
         coEvery { getProductUseCase("p1") } returns Resource.Success(product)
         every { observeCartItemByProductIdUseCase("p1") } returns flowOf(Resource.Success(cartItem))
@@ -87,7 +87,7 @@ class ProductDetailsViewModelUnitTest {
     }
 
     @Test
-    fun `onAddToCart calls addCartItemUseCase`() = runTest {
+    fun `onAddToCart should call addCartItemUseCase`() = runTest {
         coEvery { getProductUseCase("p1") } returns Resource.Success(product)
         every { observeCartItemByProductIdUseCase("p1") } returns flowOf(Resource.Success(null))
         coEvery { addCartItemUseCase(any()) } returns Resource.Success(Unit)
@@ -102,7 +102,7 @@ class ProductDetailsViewModelUnitTest {
     }
 
     @Test
-    fun `onIncrementQuantity updates quantity`() = runTest {
+    fun `onIncrementQuantity should update quantity`() = runTest {
         val cartItem = CartItem(1L, "p1", "Shoe", "url", 99.0, 2)
         coEvery { getProductUseCase("p1") } returns Resource.Success(product)
         every { observeCartItemByProductIdUseCase("p1") } returns flowOf(Resource.Success(cartItem))
@@ -118,7 +118,7 @@ class ProductDetailsViewModelUnitTest {
     }
 
     @Test
-    fun `onDecrementQuantity with quantity gt 1 decrements`() = runTest {
+    fun `onDecrementQuantity with quantity gt 1 should decrement`() = runTest {
         val cartItem = CartItem(1L, "p1", "Shoe", "url", 99.0, 2)
         coEvery { getProductUseCase("p1") } returns Resource.Success(product)
         every { observeCartItemByProductIdUseCase("p1") } returns flowOf(Resource.Success(cartItem))
@@ -134,7 +134,7 @@ class ProductDetailsViewModelUnitTest {
     }
 
     @Test
-    fun `onDecrementQuantity with quantity 1 deletes item`() = runTest {
+    fun `onDecrementQuantity with quantity 1 should delete item`() = runTest {
         val cartItem = CartItem(1L, "p1", "Shoe", "url", 99.0, 1)
         coEvery { getProductUseCase("p1") } returns Resource.Success(product)
         every { observeCartItemByProductIdUseCase("p1") } returns flowOf(Resource.Success(cartItem))
@@ -150,7 +150,7 @@ class ProductDetailsViewModelUnitTest {
     }
 
     @Test
-    fun `onAddToCart error emits error event`() = runTest {
+    fun `onAddToCart error should emit error event`() = runTest {
         coEvery { getProductUseCase("p1") } returns Resource.Success(product)
         every { observeCartItemByProductIdUseCase("p1") } returns flowOf(Resource.Success(null))
         coEvery { addCartItemUseCase(any()) } returns Resource.Error("Database error")

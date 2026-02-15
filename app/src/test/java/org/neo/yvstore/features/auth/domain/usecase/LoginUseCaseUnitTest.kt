@@ -22,7 +22,7 @@ class LoginUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         val user = User(uid = "1", email = "a@b.com", firstName = "John", lastName = "Doe")
         coEvery { repository.signIn("a@b.com", "pass123") } returns Resource.Success(user)
 
@@ -34,7 +34,7 @@ class LoginUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         coEvery { repository.signIn("a@b.com", "wrong") } returns Resource.Error("Invalid email or password")
 
         val result = useCase(email = "a@b.com", password = "wrong")

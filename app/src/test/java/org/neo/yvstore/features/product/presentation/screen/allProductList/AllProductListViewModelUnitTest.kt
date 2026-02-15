@@ -32,7 +32,7 @@ class AllProductListViewModelUnitTest {
     }
 
     @Test
-    fun `init loads all products with null count`() = runTest {
+    fun `init should load all products with null count`() = runTest {
         every { observeProductsUseCase(count = null) } returns flowOf(Resource.Success(listOf(product)))
         coEvery { refreshProductsUseCase() } returns Resource.Success(Unit)
 
@@ -45,7 +45,7 @@ class AllProductListViewModelUnitTest {
     }
 
     @Test
-    fun `init with empty cache and refresh error shows error`() = runTest {
+    fun `init with empty cache and refresh error should show error`() = runTest {
         every { observeProductsUseCase(count = null) } returns flowOf(Resource.Success(emptyList()))
         coEvery { refreshProductsUseCase() } returns Resource.Error("Network error")
 
@@ -57,7 +57,7 @@ class AllProductListViewModelUnitTest {
     }
 
     @Test
-    fun `init with cached products and refresh error keeps products visible`() = runTest {
+    fun `init with cached products and refresh error should keep products visible`() = runTest {
         every { observeProductsUseCase(count = null) } returns flowOf(Resource.Success(listOf(product)))
         coEvery { refreshProductsUseCase() } returns Resource.Error("Timeout")
 

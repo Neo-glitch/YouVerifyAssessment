@@ -21,7 +21,7 @@ class UpdateCartItemQuantityUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns success from repository`() = runTest {
+    fun `invoke should return success from repository`() = runTest {
         coEvery { repository.updateQuantity(1L, 5) } returns Resource.Success(Unit)
 
         val result = useCase(id = 1L, quantity = 5)
@@ -31,7 +31,7 @@ class UpdateCartItemQuantityUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke returns error from repository`() = runTest {
+    fun `invoke should return error from repository`() = runTest {
         coEvery { repository.updateQuantity(1L, 5) } returns Resource.Error("Database error")
 
         val result = useCase(id = 1L, quantity = 5)

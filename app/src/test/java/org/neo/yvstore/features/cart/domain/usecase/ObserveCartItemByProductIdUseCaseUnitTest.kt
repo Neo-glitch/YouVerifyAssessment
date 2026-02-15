@@ -22,7 +22,7 @@ class ObserveCartItemByProductIdUseCaseUnitTest {
     }
 
     @Test
-    fun `invoke forwards exact flow from repository`() {
+    fun `invoke should forward exact flow from repository`() {
         val flow = flowOf(Resource.Success<CartItem?>(null))
         every { repository.observeCartItemByProductId("p1") } returns flow
 

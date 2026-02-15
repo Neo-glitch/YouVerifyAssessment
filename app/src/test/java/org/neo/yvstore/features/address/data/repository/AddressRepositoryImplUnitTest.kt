@@ -39,7 +39,7 @@ class AddressRepositoryImplUnitTest {
     // ── getAddresses ──
 
     @Test
-    fun `getAddresses emits success with mapped addresses`() = runTest {
+    fun `getAddresses should emit success with mapped addresses`() = runTest {
         every { addressDao.observeAllAddresses() } returns flowOf(listOf(entity))
 
         repository.getAddresses().test {
@@ -53,7 +53,7 @@ class AddressRepositoryImplUnitTest {
     }
 
     @Test
-    fun `getAddresses emits error when dao throws`() = runTest {
+    fun `getAddresses should emit error when dao throws`() = runTest {
         every { addressDao.observeAllAddresses() } returns flow {
             throw RuntimeException("db error")
         }
@@ -69,7 +69,7 @@ class AddressRepositoryImplUnitTest {
     // ── getAddressById ──
 
     @Test
-    fun `getAddressById returns success when found`() = runTest {
+    fun `getAddressById should return success when found`() = runTest {
         coEvery { addressDao.getAddressById("a1") } returns entity
 
         val result = repository.getAddressById("a1")
@@ -79,7 +79,7 @@ class AddressRepositoryImplUnitTest {
     }
 
     @Test
-    fun `getAddressById returns error when not found`() = runTest {
+    fun `getAddressById should return error when not found`() = runTest {
         coEvery { addressDao.getAddressById("a99") } returns null
 
         val result = repository.getAddressById("a99")
@@ -91,7 +91,7 @@ class AddressRepositoryImplUnitTest {
     // ── addAddress ──
 
     @Test
-    fun `addAddress returns success when user exists`() = runTest {
+    fun `addAddress should return success when user exists`() = runTest {
         coEvery { userManager.getUser() } returns user
         coEvery { remoteDatasource.addAddress("u1", any()) } returns "new-addr-id"
         coEvery { addressDao.insertAddress(any()) } returns Unit
@@ -105,7 +105,7 @@ class AddressRepositoryImplUnitTest {
     }
 
     @Test
-    fun `addAddress returns error when user is null`() = runTest {
+    fun `addAddress should return error when user is null`() = runTest {
         coEvery { userManager.getUser() } returns null
 
         val address = Address("", "", "123 Main", "City", "State", "Country")
@@ -116,7 +116,7 @@ class AddressRepositoryImplUnitTest {
     }
 
     @Test
-    fun `addAddress returns error when remote throws`() = runTest {
+    fun `addAddress should return error when remote throws`() = runTest {
         coEvery { userManager.getUser() } returns user
         coEvery { remoteDatasource.addAddress("u1", any()) } throws RuntimeException("network")
 
@@ -130,7 +130,7 @@ class AddressRepositoryImplUnitTest {
     // ── deleteAddress ──
 
     @Test
-    fun `deleteAddress deletes from remote then local`() = runTest {
+    fun `deleteAddress should delete from remote then local`() = runTest {
         coEvery { remoteDatasource.deleteAddress("a1") } returns Unit
         coEvery { addressDao.deleteAddressById("a1") } returns Unit
 
@@ -144,7 +144,7 @@ class AddressRepositoryImplUnitTest {
     }
 
     @Test
-    fun `deleteAddress returns error when remote throws`() = runTest {
+    fun `deleteAddress should return error when remote throws`() = runTest {
         coEvery { remoteDatasource.deleteAddress("a1") } throws RuntimeException("network")
 
         val result = repository.deleteAddress("a1")
@@ -156,7 +156,7 @@ class AddressRepositoryImplUnitTest {
     // ── refreshAddresses ──
 
     @Test
-    fun `refreshAddresses clears then inserts and returns success`() = runTest {
+    fun `refreshAddresses should clear then insert and return success`() = runTest {
         val dto = AddressDto("a1", "u1", "123 Main", "City", "State", "Country")
         coEvery { userManager.getUser() } returns user
         coEvery { remoteDatasource.getAddresses("u1") } returns listOf(dto)
@@ -173,7 +173,7 @@ class AddressRepositoryImplUnitTest {
     }
 
     @Test
-    fun `refreshAddresses returns error when user is null`() = runTest {
+    fun `refreshAddresses should return error when user is null`() = runTest {
         coEvery { userManager.getUser() } returns null
 
         val result = repository.refreshAddresses()
@@ -183,7 +183,7 @@ class AddressRepositoryImplUnitTest {
     }
 
     @Test
-    fun `refreshAddresses returns error when remote throws`() = runTest {
+    fun `refreshAddresses should return error when remote throws`() = runTest {
         coEvery { userManager.getUser() } returns user
         coEvery { remoteDatasource.getAddresses("u1") } throws RuntimeException("network")
 

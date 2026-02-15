@@ -1,7 +1,7 @@
 package org.neo.yvstore.features.address.presentation.screen.addressList
 
+import app.cash.turbine.test
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,7 +15,6 @@ import org.neo.yvstore.core.domain.model.Resource
 import org.neo.yvstore.features.address.domain.usecase.DeleteAddressUseCase
 import org.neo.yvstore.features.address.domain.usecase.GetAddressesUseCase
 import org.neo.yvstore.features.address.domain.usecase.RefreshAddressesUseCase
-import org.neo.yvstore.features.address.presentation.model.AddressUi
 import org.neo.yvstore.testUtils.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 
@@ -40,7 +39,7 @@ class AddressListViewModelUnitTest {
     }
 
     @Test
-    fun `init loads addresses and sets loaded state`() = runTest {
+    fun `init should load addresses and set loaded state`() = runTest {
         every { getAddressesUseCase() } returns flowOf(Resource.Success(listOf(address)))
         coEvery { refreshAddressesUseCase() } returns Resource.Success(Unit)
 
@@ -53,7 +52,7 @@ class AddressListViewModelUnitTest {
     }
 
     @Test
-    fun `init with empty cache and refresh error shows error`() = runTest {
+    fun `init with empty cache and refresh error should show error state`() = runTest {
         every { getAddressesUseCase() } returns flowOf(Resource.Success(emptyList()))
         coEvery { refreshAddressesUseCase() } returns Resource.Error("User not found")
 
@@ -64,7 +63,7 @@ class AddressListViewModelUnitTest {
     }
 
     @Test
-    fun `onDeleteAddress optimistically removes address from list`() = runTest {
+    fun `onDeleteAddress should optimistically remove address from list`() = runTest {
         every { getAddressesUseCase() } returns flowOf(Resource.Success(listOf(address)))
         coEvery { refreshAddressesUseCase() } returns Resource.Success(Unit)
         coEvery { deleteAddressUseCase("a1") } returns Resource.Success(Unit)
@@ -79,7 +78,7 @@ class AddressListViewModelUnitTest {
     }
 
     @Test
-    fun `onDeleteAddress rolls back on error`() = runTest {
+    fun `onDeleteAddress should roll back and emit ShowToast on error`() = runTest {
         every { getAddressesUseCase() } returns flowOf(Resource.Success(listOf(address)))
         coEvery { refreshAddressesUseCase() } returns Resource.Success(Unit)
         coEvery { deleteAddressUseCase("a1") } returns Resource.Error("Network error")
@@ -88,28 +87,15 @@ class AddressListViewModelUnitTest {
         advanceUntilIdle()
 
         val addressUi = viewModel.uiState.value.addresses[0]
-        viewModel.onDeleteAddress(addressUi)
-        advanceUntilIdle()
+        viewModel.uiEvent.test {
+            viewModel.onDeleteAddress(addressUi)
+            advanceUntilIdle()
 
-        assertThat(viewModel.uiState.value.addresses).hasSize(1)
-        assertThat(viewModel.uiState.value.deleteError).isEqualTo("Network error")
-    }
-
-    @Test
-    fun `onDismissDeleteError clears error`() = runTest {
-        every { getAddressesUseCase() } returns flowOf(Resource.Success(listOf(address)))
-        coEvery { refreshAddressesUseCase() } returns Resource.Success(Unit)
-        coEvery { deleteAddressUseCase("a1") } returns Resource.Error("Network error")
-
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        val addressUi = viewModel.uiState.value.addresses[0]
-        viewModel.onDeleteAddress(addressUi)
-        advanceUntilIdle()
-
-        viewModel.onDismissDeleteError()
-
-        assertThat(viewModel.uiState.value.deleteError).isNull()
+            assertThat(viewModel.uiState.value.addresses).hasSize(1)
+            val event = awaitItem()
+            assertThat(event).isInstanceOf(AddressListUiEvent.Error::class.java)
+            assertThat((event as AddressListUiEvent.Error).message).isEqualTo("Network error")
+            cancelAndConsumeRemainingEvents()
+        }
     }
 }

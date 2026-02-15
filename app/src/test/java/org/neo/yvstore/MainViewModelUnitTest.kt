@@ -22,7 +22,7 @@ class MainViewModelUnitTest {
     private val userManager: UserManager = mockk()
 
     @Test
-    fun `initial state is LOADING`() {
+    fun `init should set LOADING state`() {
         every { userManager.observeUser() } returns flowOf()
         val viewModel = MainViewModel(userManager)
 
@@ -30,7 +30,7 @@ class MainViewModelUnitTest {
     }
 
     @Test
-    fun `authenticated user sets AUTHENTICATED state`() = runTest {
+    fun `init with authenticated user should set AUTHENTICATED state`() = runTest {
         val user = User("1", "a@b.com", "John", "Doe")
         every { userManager.observeUser() } returns flowOf(user)
 
@@ -41,7 +41,7 @@ class MainViewModelUnitTest {
     }
 
     @Test
-    fun `null user sets UNAUTHENTICATED state`() = runTest {
+    fun `init with null user should set UNAUTHENTICATED state`() = runTest {
         every { userManager.observeUser() } returns flowOf(null)
 
         val viewModel = MainViewModel(userManager)
