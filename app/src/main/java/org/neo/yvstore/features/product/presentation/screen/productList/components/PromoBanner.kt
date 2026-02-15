@@ -22,8 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
+import org.neo.yvstore.core.ui.component.image.YVStoreImage
 
 @Composable
 fun PromoBanner(
@@ -93,8 +93,8 @@ private fun PromoBannerImage(
     imageUrl: String,
     modifier: Modifier = Modifier,
 ) {
-    AsyncImage(
-        model = imageUrl,
+    YVStoreImage(
+        imageUrl = imageUrl,
         contentDescription = "Promotional product",
         modifier = modifier.size(120.dp),
         contentScale = ContentScale.Fit,

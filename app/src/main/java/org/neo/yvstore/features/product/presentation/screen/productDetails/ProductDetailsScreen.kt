@@ -31,10 +31,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
+import org.neo.yvstore.core.ui.component.image.YVStoreImage
 import org.neo.yvstore.core.ui.component.card.BottomFrameCard
 import org.neo.yvstore.core.ui.component.dialog.YVStoreErrorDialog
 import org.neo.yvstore.core.ui.component.divider.YVStoreHorizontalDivider
@@ -206,8 +206,8 @@ private fun ProductDetailsContent(
 
 @Composable
 private fun ProductImageSection(imageUrl: String) {
-    AsyncImage(
-        model = imageUrl,
+    YVStoreImage(
+        imageUrl = imageUrl,
         contentDescription = "Product image",
         modifier = Modifier
             .fillMaxWidth()

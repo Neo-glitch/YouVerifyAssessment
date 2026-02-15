@@ -174,7 +174,7 @@ private fun ErrorContent(
 ) {
     CenteredContent(modifier = modifier) {
         YVStoreEmptyErrorStateView(
-            image = android.R.drawable.ic_dialog_alert,
+            image = R.drawable.ic_error_alert,
             title = "Search Error",
             description = message,
         )

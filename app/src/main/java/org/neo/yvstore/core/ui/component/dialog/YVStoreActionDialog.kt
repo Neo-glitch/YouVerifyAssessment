@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.button.YVStorePrimaryButton
 import org.neo.yvstore.core.ui.component.button.YVStoreSecondaryButton
@@ -148,7 +149,7 @@ private fun DialogActionButtons(
 private fun DialogContentPreview() {
     YVStoreTheme {
         DialogContent(
-            icon = android.R.drawable.ic_dialog_info,
+            icon = R.drawable.ic_empty_box,
             title = "Success!",
             description = {
                 Text(

@@ -17,9 +17,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.card.YVStoreElevatedCard
+import org.neo.yvstore.core.ui.component.image.YVStoreImage
 
 @Composable
 fun ProductItemCard(
@@ -49,8 +49,8 @@ private fun ProductItemImage(
     name: String,
     modifier: Modifier = Modifier,
 ) {
-    AsyncImage(
-        model = imageUrl,
+    YVStoreImage(
+        imageUrl = imageUrl,
         contentDescription = name,
         modifier = modifier
             .fillMaxWidth()

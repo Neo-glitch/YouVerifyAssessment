@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.designSystem.util.DISABLED_CONTENT_ALPHA
 import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
@@ -389,7 +390,7 @@ private fun YVStorePrimaryIconButtonEnabledPreview() {
         ) {
             YVStorePrimaryIconButton(
                 onClick = {},
-                icon = android.R.drawable.ic_menu_add,
+                icon = R.drawable.ic_add,
                 contentDescription = "Add",
             )
         }
@@ -406,7 +407,7 @@ private fun YVStoreSecondaryIconButtonEnabledPreview() {
         ) {
             YVStoreSecondaryIconButton(
                 onClick = {},
-                icon = android.R.drawable.ic_menu_add,
+                icon = R.drawable.ic_add,
                 contentDescription = "Add",
             )
         }

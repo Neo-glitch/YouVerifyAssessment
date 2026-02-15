@@ -18,6 +18,8 @@ fun YVStoreApp(
 
     val authState by viewModel.authState.collectAsStateWithLifecycle()
 
+    if (authState == AppAuthState.LOADING) return
+
     val startDestination = if (authState == AppAuthState.AUTHENTICATED) {
         AppRoute.MainGraph
     } else {

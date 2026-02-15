@@ -34,10 +34,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
+import org.neo.yvstore.core.ui.component.image.YVStoreImage
 import org.neo.yvstore.core.ui.component.button.YVStoreTextButton
 import org.neo.yvstore.core.ui.component.grid.NonlazyGrid
 import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
@@ -145,14 +145,14 @@ private fun EmptyStateContent(
             }
             is HomeProductListLoadState.Error -> {
                 YVStoreEmptyErrorStateView(
-                    image = android.R.drawable.ic_dialog_alert,
+                    image = R.drawable.ic_error_alert,
                     title = "Unable to Load Products",
                     description = loadState.message,
                 )
             }
             HomeProductListLoadState.Loaded -> {
                 YVStoreEmptyErrorStateView(
-                    image = android.R.drawable.ic_dialog_info,
+                    image = R.drawable.ic_empty_box,
                     title = "No Products Available",
                     description = "Check back later for new products.",
                 )
@@ -279,8 +279,8 @@ fun PromoBanner(
             }
 
             Spacer(modifier = Modifier.width(16.dp))
-            AsyncImage(
-                model = imageUrl,
+            YVStoreImage(
+                imageUrl = imageUrl,
                 contentDescription = "Promotional product",
                 modifier = Modifier.size(120.dp),
                 contentScale = ContentScale.Fit,

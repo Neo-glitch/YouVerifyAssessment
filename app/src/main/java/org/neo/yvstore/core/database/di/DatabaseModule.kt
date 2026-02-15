@@ -8,7 +8,7 @@ import org.neo.yvstore.core.database.YVStoreDatabase
 val databaseModule = module {
     single {
         Room.databaseBuilder(
-            androidContext(),
+            get(),
             YVStoreDatabase::class.java,
             "yvstore_database"
         ).fallbackToDestructiveMigration(dropAllTables = true)

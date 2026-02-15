@@ -85,7 +85,7 @@ fun YVStoreEmptyErrorStateView(
 private fun YVStoreEmptyErrorStateViewWithButtonPreview() {
     YVStoreTheme {
         YVStoreEmptyErrorStateView(
-            image = android.R.drawable.ic_dialog_info,
+            image = R.drawable.ic_empty_box,
             title = "No Results Found",
             description = "We couldn't find any products matching your search.",
             actionButtonText = "Add New Product",
@@ -99,7 +99,7 @@ private fun YVStoreEmptyErrorStateViewWithButtonPreview() {
 private fun YVStoreEmptyErrorStateViewWithoutButtonPreview() {
     YVStoreTheme {
         YVStoreEmptyErrorStateView(
-            image = android.R.drawable.ic_dialog_info,
+            image = R.drawable.ic_empty_box,
             title = "No Data Available",
             description = "There is no data to display at this time. Please check back later.",
         )
@@ -111,7 +111,7 @@ private fun YVStoreEmptyErrorStateViewWithoutButtonPreview() {
 private fun YVStoreEmptyErrorStateViewTitleOnlyPreview() {
     YVStoreTheme {
         YVStoreEmptyErrorStateView(
-            image = android.R.drawable.ic_dialog_info,
+            image = R.drawable.ic_empty_box,
             title = "Empty State",
         )
     }

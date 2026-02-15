@@ -25,9 +25,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
+import org.neo.yvstore.core.ui.component.image.YVStoreImage
 import org.neo.yvstore.features.cart.presentation.model.CartItemUi
 
 @Composable
@@ -41,8 +41,8 @@ internal fun CartItem(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        AsyncImage(
-            model = item.imageUrl,
+        YVStoreImage(
+            imageUrl = item.imageUrl,
             contentDescription = item.name,
             modifier = Modifier
                 .size(80.dp)

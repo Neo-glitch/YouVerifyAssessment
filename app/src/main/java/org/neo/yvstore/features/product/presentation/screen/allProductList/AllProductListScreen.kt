@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
+import org.neo.yvstore.R
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.navigation.YVStoreTopBar
 import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
@@ -100,14 +101,14 @@ private fun EmptyStateContent(
             }
             is AllProductListLoadState.Error -> {
                 YVStoreEmptyErrorStateView(
-                    image = android.R.drawable.ic_dialog_alert,
+                    image = R.drawable.ic_error_alert,
                     title = "Unable to Load Products",
                     description = loadState.message,
                 )
             }
             AllProductListLoadState.Loaded -> {
                 YVStoreEmptyErrorStateView(
-                    image = android.R.drawable.ic_dialog_info,
+                    image = R.drawable.ic_empty_box,
                     title = "No Products Available",
                     description = "Check back later for new products.",
                 )
