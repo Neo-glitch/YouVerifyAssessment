@@ -15,7 +15,7 @@ val md_theme_dark_onSecondaryContainer = Color(0xFFCDE7EC)
 val md_theme_dark_background = Color(0xFF191C1D)
 val md_theme_dark_onBackground = Color(0xFFE1E3E3)
 
-val md_theme_dark_surface = Color(0xFF191C1D)
+val md_theme_dark_surface = Color(0xFF1F2224)
 val md_theme_dark_onSurface = Color(0xFFE1E3E3)
 val md_theme_dark_surfaceVariant = Color(0xFF3F484A)
 val md_theme_dark_onSurfaceVariant = Color(0xFFBFC8CA)
@@ -29,6 +29,10 @@ val md_theme_dark_onErrorContainer = Color(0xFFFFDAD6)
 
 val md_theme_dark_success = Color(0xFF81C784)
 val md_theme_dark_warning = Color(0xFFFFF59D)
+
+val md_theme_dark_surfaceContainer = Color(0xFF1E2122)
+val md_theme_dark_surfaceContainerHigh = Color(0xFF252829)
+val md_theme_dark_surfaceContainerHighest = Color(0xFF313435)
 
 val md_theme_dark_appbarIconBackground = Color(0xFF2C2C2C)
 val md_theme_dark_cardShadow = Color(0x33000000) // Black with 20% alpha

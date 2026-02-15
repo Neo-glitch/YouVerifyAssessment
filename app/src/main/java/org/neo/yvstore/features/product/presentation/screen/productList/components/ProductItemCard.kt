@@ -31,12 +31,15 @@ fun ProductItemCard(
 ) {
     YVStoreElevatedCard(
         modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .fillMaxWidth(),
         elevation = 2.dp,
         shape = RoundedCornerShape(16.dp),
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .clickable(onClick = onClick)
+                .padding(vertical = 8.dp)
+        ) {
             ProductItemImage(imageUrl = imageUrl, name = name)
             ProductItemInfo(name = name, price = price)
         }

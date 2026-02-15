@@ -7,7 +7,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color.Companion.White
 import org.neo.yvstore.core.designSystem.color.DarkYVStoreColors
 import org.neo.yvstore.core.designSystem.color.LightYVStoreColors
 import org.neo.yvstore.core.designSystem.color.LocalYVStoreColors
@@ -49,7 +48,13 @@ import org.neo.yvstore.core.designSystem.color.token.md_theme_light_primaryConta
 import org.neo.yvstore.core.designSystem.color.token.md_theme_light_secondary
 import org.neo.yvstore.core.designSystem.color.token.md_theme_light_secondaryContainer
 import org.neo.yvstore.core.designSystem.color.token.md_theme_light_surface
+import org.neo.yvstore.core.designSystem.color.token.md_theme_light_surfaceContainer
+import org.neo.yvstore.core.designSystem.color.token.md_theme_light_surfaceContainerHigh
+import org.neo.yvstore.core.designSystem.color.token.md_theme_light_surfaceContainerHighest
 import org.neo.yvstore.core.designSystem.color.token.md_theme_light_surfaceVariant
+import org.neo.yvstore.core.designSystem.color.token.md_theme_dark_surfaceContainer
+import org.neo.yvstore.core.designSystem.color.token.md_theme_dark_surfaceContainerHigh
+import org.neo.yvstore.core.designSystem.color.token.md_theme_dark_surfaceContainerHighest
 import org.neo.yvstore.core.designSystem.typography.Typography
 
 val LightColorScheme = lightColorScheme(
@@ -78,11 +83,11 @@ val LightColorScheme = lightColorScheme(
     errorContainer = md_theme_light_errorContainer,
     onErrorContainer = md_theme_light_onErrorContainer,
     // default for nav bars
-    surfaceContainer = White,
+    surfaceContainer = md_theme_light_surfaceContainer,
     // dialog surface colors
-    surfaceContainerHigh = White,
+    surfaceContainerHigh = md_theme_light_surfaceContainerHigh,
     // surface for text fields
-    surfaceContainerHighest = White,
+    surfaceContainerHighest = md_theme_light_surfaceContainerHighest,
 )
 
 val DarkColorScheme = darkColorScheme(
@@ -111,11 +116,11 @@ val DarkColorScheme = darkColorScheme(
     errorContainer = md_theme_dark_errorContainer,
     onErrorContainer = md_theme_dark_onErrorContainer,
     // default for nav bars
-    surfaceContainer = White,
+    surfaceContainer = md_theme_dark_surfaceContainer,
     // dialog surface colors
-    surfaceContainerHigh = White,
+    surfaceContainerHigh = md_theme_dark_surfaceContainerHigh,
     // surface for text fields
-    surfaceContainerHighest = White,
+    surfaceContainerHighest = md_theme_dark_surfaceContainerHighest,
 )
 
 @Composable

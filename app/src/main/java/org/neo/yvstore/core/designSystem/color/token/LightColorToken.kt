@@ -15,7 +15,7 @@ val md_theme_light_onSecondaryContainer = Color(0xFF051F23)
 val md_theme_light_background = Color(0xFFFAFDFD)
 val md_theme_light_onBackground = Color(0xFF191C1D)
 
-val md_theme_light_surface = Color(0xFFFAFDFD)
+val md_theme_light_surface = Color(0xFFFFFFFF)
 val md_theme_light_onSurface = Color(0xFF191C1D)
 val md_theme_light_surfaceVariant = Color(0xFFDBE4E6)
 val md_theme_light_onSurfaceVariant = Color(0xFF3F484A)
@@ -29,6 +29,10 @@ val md_theme_light_onErrorContainer = Color(0xFF410002)
 
 val md_theme_light_success = Color(0xFF2E7D32)
 val md_theme_light_warning = Color(0xFFF9A825)
+
+val md_theme_light_surfaceContainer = Color(0xFFFFFFFF)
+val md_theme_light_surfaceContainerHigh = Color(0xFFFFFFFF)
+val md_theme_light_surfaceContainerHighest = Color(0xFFFFFFFF)
 
 val md_theme_light_appbarIconBackground = Color(0xFFF5F5F5)
 val md_theme_light_cardShadow = Color(0x1A000000) // Black with 10% alpha
