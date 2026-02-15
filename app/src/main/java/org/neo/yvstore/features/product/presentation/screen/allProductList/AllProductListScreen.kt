@@ -101,14 +101,14 @@ private fun EmptyStateContent(
             }
             is AllProductListLoadState.Error -> {
                 YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_error_alert,
+                    image = R.drawable.ic_error,
                     title = "Unable to Load Products",
                     description = loadState.message,
                 )
             }
             AllProductListLoadState.Loaded -> {
                 YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_empty_box,
+                    image = R.drawable.ic_empty_products,
                     title = "No Products Available",
                     description = "Check back later for new products.",
                 )

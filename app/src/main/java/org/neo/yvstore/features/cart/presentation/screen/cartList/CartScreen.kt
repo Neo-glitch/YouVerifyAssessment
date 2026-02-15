@@ -153,7 +153,7 @@ private fun CartScreenContent(
         }
         is CartScreenLoadState.Error -> {
             YVStoreEmptyErrorStateView(
-                image = R.drawable.ic_empty_cart,
+                image = R.drawable.ic_error,
                 title = "Error loading cart",
                 description = loadState.message,
                 modifier = Modifier.padding(paddingValues),

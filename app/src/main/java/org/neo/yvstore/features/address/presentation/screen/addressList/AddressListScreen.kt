@@ -198,7 +198,7 @@ private fun AddressListErrorContent(
     modifier: Modifier = Modifier
 ) {
     YVStoreEmptyErrorStateView(
-        image = R.drawable.ic_empty_cart,
+        image = R.drawable.ic_error,
         title = "Error loading addresses",
         description = message,
         modifier = modifier
@@ -211,7 +211,7 @@ private fun AddressListEmptyContent(
     modifier: Modifier = Modifier
 ) {
     YVStoreEmptyErrorStateView(
-        image = R.drawable.ic_empty_cart,
+        image = R.drawable.ic_empty_address,
         title = "No addresses yet",
         description = "Add a delivery address to continue",
         actionButtonText = "Add Address",

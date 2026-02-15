@@ -174,7 +174,7 @@ private fun ErrorContent(
 ) {
     CenteredContent(modifier = modifier) {
         YVStoreEmptyErrorStateView(
-            image = R.drawable.ic_error_alert,
+            image = R.drawable.ic_error,
             title = "Search Error",
             description = message,
         )
@@ -188,7 +188,7 @@ private fun EmptySearchContent(
 ) {
     CenteredContent(modifier = modifier) {
         YVStoreEmptyErrorStateView(
-            image = R.drawable.ic_search,
+            image = R.drawable.ic_empty_products,
             title = "No results found",
             description = "We couldn't find any products matching \"$query\"",
         )
