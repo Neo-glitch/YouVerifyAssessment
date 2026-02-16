@@ -85,7 +85,7 @@ private fun AddressListScreen(
         },
         floatingActionButton = {
             AddAddressFab(
-                visible = loadState is AddressListLoadState.Loaded,
+                visible = addresses.isNotEmpty(),
                 onClick = onAddAddress
             )
         }

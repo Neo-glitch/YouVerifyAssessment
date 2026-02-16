@@ -31,7 +31,7 @@ object ExceptionHandler {
     private const val RE_AUTH_REQUIRED_MSG = "Please sign in again to continue"
     private const val PERMISSION_DENIED_MSG = "You don't have permission to perform this action"
     private const val DATA_NOT_FOUND_MSG = "The requested data was not found"
-    private const val SERVICE_UNAVAILABLE_MSG = "Service temporarily unavailable. Please try again"
+    private const val SERVICE_UNAVAILABLE_MSG = "Service unavailable. Please Check your internet and try again"
     private const val NO_INTERNET_MSG = "No internet connection. Please check your network"
     private const val NETWORK_ERROR_MSG = "A network error occurred. Please try again"
     private const val DATABASE_ERROR_MSG = "A local storage error occurred"
