@@ -1,30 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
-                android:type="linear">
-                <item
-                    android:color="#44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1.0" />
-            </gradient>
-        </aapt:attr>
-    </path>
-    <path
-        android:fillColor="#FFFFFF"
-        android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
-        android:strokeWidth="1"
-        android:strokeColor="#00000000" />
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+  <group android:scaleX="0.79"
+      android:scaleY="0.79"
+      android:translateX="10.5"
+      android:translateY="10.5">
+
+      <!-- Rounded square background -->
+      <path
+          android:fillColor="#006874"
+          android:pathData="M20,2 L80,2 Q98,2 98,20 L98,80 Q98,98 80,98 L20,98 Q2,98 2,80 L2,20 Q2,2 20,2 Z" />
+
+      <!-- Shopping bag body -->
+      <path
+          android:fillColor="#FFFFFF"
+          android:pathData="M30,44 L70,44 L67,74 Q67,78 63,78 L37,78 Q33,78 33,74 Z" />
+
+      <!-- Shopping bag handle -->
+      <path
+          android:fillColor="#00000000"
+          android:strokeColor="#FFFFFF"
+          android:strokeWidth="3.5"
+          android:strokeLineCap="round"
+          android:pathData="M38,44 C38,28 62,28 62,44" />
+
+      <!-- Bag fold line for depth -->
+      <path
+          android:fillColor="#00000000"
+          android:strokeColor="#006874"
+          android:strokeWidth="1.5"
+          android:pathData="M32,50 L68,50" />
+
+      <!-- Small accent tag hanging from handle -->
+      <path
+          android:fillColor="#9EEFF9"
+          android:pathData="M60,34 L67,30 L69,35 L62,39 Z" />
+
+      <!-- Tag hole -->
+      <path
+          android:fillColor="#006874"
+          android:pathData="M64.5,33 A1.2,1.2 0 1,1 64.5,33.01 Z" />
+
+  </group>
 </vector>
