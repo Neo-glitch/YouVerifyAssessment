@@ -122,7 +122,6 @@ fun YVStoreInputLabel(text: String, modifier: Modifier = Modifier) {
 fun YVStoreInputSensitiveIcon(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    colorFilter: ColorFilter? = null,
     showSensitiveInfo: Boolean = false,
 ) {
     IconButton(
