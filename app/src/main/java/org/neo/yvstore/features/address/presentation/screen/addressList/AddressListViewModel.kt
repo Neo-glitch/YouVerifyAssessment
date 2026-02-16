@@ -31,28 +31,9 @@ class AddressListViewModel(
     private var pendingDeleteAddress: AddressUi? = null
 
     init {
+        observeAddresses()
         viewModelScope.launch {
-            loadCachedAddresses()
-            observeAddresses()
             refreshAddresses()
-        }
-    }
-
-    private suspend fun loadCachedAddresses() {
-        val initialResult = getAddressesUseCase().first()
-        initialResult.onSuccess { addresses ->
-            if (addresses.isNotEmpty()) {
-                _uiState.update {
-                    it.copy(
-                        addresses = addresses.map { address -> address.toAddressUi() },
-                        loadState = AddressListLoadState.Loaded,
-                    )
-                }
-            }
-        }.onError { error ->
-            _uiState.update {
-                it.copy(loadState = AddressListLoadState.Error(error))
-            }
         }
     }
 
@@ -60,15 +41,23 @@ class AddressListViewModel(
         viewModelScope.launch {
             getAddressesUseCase().collect { resource ->
                 resource.onSuccess { addresses ->
-                    val allAddresses = addresses.map { address -> address.toAddressUi() }
                     val pending = pendingDeleteAddress
+                    val allAddresses = addresses.map { address -> address.toAddressUi() }
+
+                    val filteredAddress = if (pending != null) {
+                        allAddresses.filter { address -> address.id != pending.id }
+                    } else {
+                        allAddresses
+                    }
+
                     _uiState.update {
                         it.copy(
-                            addresses = if (pending != null) {
-                                allAddresses.filter { address -> address.id != pending.id }
-                            } else {
-                                allAddresses
-                            },
+                            addresses = filteredAddress,
+                            loadState = when {
+                                it.loadState is AddressListLoadState.Loading -> it.loadState
+                                filteredAddress.isNotEmpty() -> AddressListLoadState.Loaded
+                                else -> AddressListLoadState.Empty
+                            }
                         )
                     }
                 }
@@ -86,27 +75,28 @@ class AddressListViewModel(
     }
 
     private suspend fun refreshAddresses() {
-        val result = refreshAddressesUseCase()
-        result.onSuccess {
-            val currentState = _uiState.value
-            _uiState.update {
-                it.copy(
-                    loadState = if (currentState.addresses.isEmpty()) {
-                        AddressListLoadState.Empty
-                    } else {
-                        AddressListLoadState.Loaded
-                    }
-                )
+        refreshAddressesUseCase()
+            .onSuccess { handleRefreshSuccess() }
+            .onError { message -> handleRefreshError(message) }
+    }
+
+    private suspend fun handleRefreshSuccess() {
+        val addresses = getAddressesUseCase().first()
+        addresses.onSuccess { items ->
+            val loadState = if (items.isEmpty()) {
+                AddressListLoadState.Empty
+            } else {
+                AddressListLoadState.Loaded
             }
-        }.onError { message ->
-            val currentState = _uiState.value
-            if (currentState.addresses.isEmpty() && currentState.loadState !is AddressListLoadState.Error) {
-                _uiState.update {
-                    it.copy(loadState = AddressListLoadState.Error(message))
-                }
-            } else if (currentState.addresses.isNotEmpty()) {
-                _uiEvent.send(AddressListUiEvent.Error(message))
-            }
+            _uiState.update { it.copy(loadState = loadState) }
+        }
+    }
+
+    private suspend fun handleRefreshError(message: String) {
+        if (_uiState.value.addresses.isEmpty()) {
+            _uiState.update { it.copy(loadState = AddressListLoadState.Error(message)) }
+        } else {
+            _uiEvent.send(AddressListUiEvent.Error(message))
         }
     }
 
