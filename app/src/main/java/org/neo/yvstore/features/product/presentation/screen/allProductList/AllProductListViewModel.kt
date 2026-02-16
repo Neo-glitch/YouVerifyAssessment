@@ -15,6 +15,7 @@ import org.neo.yvstore.features.product.domain.model.Product
 import org.neo.yvstore.features.product.domain.usecase.ObserveProductsUseCase
 import org.neo.yvstore.features.product.domain.usecase.RefreshProductsUseCase
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
+import org.neo.yvstore.features.product.presentation.screen.productList.HomeProductListLoadState
 
 class AllProductListViewModel(
     private val observeProductsUseCase: ObserveProductsUseCase,
@@ -28,28 +29,9 @@ class AllProductListViewModel(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
+        observeProducts()
         viewModelScope.launch {
-            loadCachedProducts()
-            observeProducts()
             refreshProducts()
-        }
-    }
-
-    private suspend fun loadCachedProducts() {
-        val initialResult = observeProductsUseCase(count = null).first()
-        initialResult.onSuccess { products ->
-            if (products.isNotEmpty()) {
-                _uiState.update {
-                    it.copy(
-                        products = products.map { product -> product.toProductItemUi() },
-                        loadState = AllProductListLoadState.Loaded,
-                    )
-                }
-            }
-        }.onError { error ->
-            _uiState.update {
-                it.copy(loadState = AllProductListLoadState.Error(error))
-            }
         }
     }
 
@@ -77,27 +59,28 @@ class AllProductListViewModel(
     }
 
     private suspend fun refreshProducts() {
-        val result = refreshProductsUseCase()
-        result.onSuccess {
-            val currentState = _uiState.value
-            _uiState.update {
-                it.copy(
-                    loadState = if (currentState.products.isEmpty()) {
-                        AllProductListLoadState.Empty
-                    } else {
-                        AllProductListLoadState.Loaded
-                    }
-                )
+        refreshProductsUseCase()
+            .onSuccess { handleRefreshSuccess() }
+            .onError { message -> handleRefreshError(message) }
+    }
+
+    private suspend fun handleRefreshSuccess() {
+        val products = observeProductsUseCase(count = null).first()
+        products.onSuccess { items ->
+            val loadState = if (items.isEmpty()) {
+                AllProductListLoadState.Empty
+            } else {
+                AllProductListLoadState.Loaded
             }
-        }.onError { message ->
-            val currentState = _uiState.value
-            if (currentState.products.isEmpty() && currentState.loadState !is AllProductListLoadState.Error) {
-                _uiState.update {
-                    it.copy(loadState = AllProductListLoadState.Error(message))
-                }
-            } else if (currentState.products.isNotEmpty()) {
-                _uiEvent.send(AllProductListUiEvent.Error(message))
-            }
+            _uiState.update { it.copy(loadState = loadState) }
+        }
+    }
+
+    private suspend fun handleRefreshError(message: String) {
+        if (_uiState.value.products.isEmpty()) {
+            _uiState.update { it.copy(loadState = AllProductListLoadState.Error(message)) }
+        } else {
+            _uiEvent.send(AllProductListUiEvent.Error(message))
         }
     }
 

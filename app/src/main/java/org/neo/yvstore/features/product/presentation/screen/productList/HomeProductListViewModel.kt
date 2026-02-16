@@ -34,10 +34,9 @@ class HomeProductListViewModel(
     }
 
     init {
+        observeProducts()
+        observeCartItemCount()
         viewModelScope.launch {
-            loadCachedProducts()
-            observeProducts()
-            observeCartItemCount()
             refreshProducts()
         }
     }
@@ -54,24 +53,6 @@ class HomeProductListViewModel(
         }
     }
 
-    private suspend fun loadCachedProducts() {
-        val initialResult = observeProductsUseCase(PRODUCT_COUNT).first()
-        initialResult.onSuccess { products ->
-            if (products.isNotEmpty()) {
-                _uiState.update {
-                    it.copy(
-                        products = products.map { product -> product.toProductItemUi() },
-                        loadState = HomeProductListLoadState.Loaded,
-                    )
-                }
-            }
-        }.onError { error ->
-            _uiState.update {
-                it.copy(loadState = HomeProductListLoadState.Error(error))
-            }
-        }
-    }
-
     private fun observeProducts() {
         viewModelScope.launch {
             observeProductsUseCase(count = PRODUCT_COUNT).collect { resource ->
@@ -80,6 +61,10 @@ class HomeProductListViewModel(
                         it.copy(
                             products = products.map { product -> product.toProductItemUi() },
                         )
+                    }
+                }.onError { error ->
+                    _uiState.update {
+                        it.copy(loadState = HomeProductListLoadState.Error(error))
                     }
                 }
             }
@@ -96,27 +81,28 @@ class HomeProductListViewModel(
     }
 
     private suspend fun refreshProducts() {
-        val result = refreshProductsUseCase()
-        result.onSuccess {
-            val currentState = _uiState.value
-            _uiState.update {
-                it.copy(
-                    loadState = if (currentState.products.isEmpty()) {
-                        HomeProductListLoadState.Empty
-                    } else {
-                        HomeProductListLoadState.Loaded
-                    }
-                )
+        refreshProductsUseCase()
+            .onSuccess { handleRefreshSuccess() }
+            .onError { message -> handleRefreshError(message) }
+    }
+
+    private suspend fun handleRefreshSuccess() {
+        val products = observeProductsUseCase(PRODUCT_COUNT).first()
+        products.onSuccess { items ->
+            val loadState = if (items.isEmpty()) {
+                HomeProductListLoadState.Empty
+            } else {
+                HomeProductListLoadState.Loaded
             }
-        }.onError { message ->
-            val currentState = _uiState.value
-            if (currentState.products.isEmpty() && currentState.loadState !is HomeProductListLoadState.Error) {
-                _uiState.update {
-                    it.copy(loadState = HomeProductListLoadState.Error(message))
-                }
-            } else if (currentState.products.isNotEmpty()) {
-                _uiEvent.send(HomeProductListUiEvent.Error(message))
-            }
+            _uiState.update { it.copy(loadState = loadState) }
+        }
+    }
+
+    private suspend fun handleRefreshError(message: String) {
+        if (_uiState.value.products.isEmpty()) {
+            _uiState.update { it.copy(loadState = HomeProductListLoadState.Error(message)) }
+        } else {
+            _uiEvent.send(HomeProductListUiEvent.Error(message))
         }
     }
 
