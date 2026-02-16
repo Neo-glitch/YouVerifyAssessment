@@ -7,12 +7,6 @@ import org.neo.yvstore.core.network.utils.awaitWithTimeout
 import org.neo.yvstore.features.auth.data.datasource.remote.model.UserDto
 import org.neo.yvstore.features.auth.data.datasource.remote.model.UserSignUpRequest
 
-/**
- * Implementation of AuthRemoteDatasource using Firebase Auth and Firestore.
- *
- * @property auth FirebaseAuth instance for authentication
- * @property firestore FirebaseFirestore instance for user profile storage
- */
 class AuthRemoteDatasourceImpl(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,

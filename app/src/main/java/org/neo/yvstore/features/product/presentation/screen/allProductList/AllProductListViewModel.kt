@@ -16,13 +16,6 @@ import org.neo.yvstore.features.product.domain.usecase.ObserveProductsUseCase
 import org.neo.yvstore.features.product.domain.usecase.RefreshProductsUseCase
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
 
-/**
- * ViewModel for the All Products List screen.
- * Manages UI state for displaying all products with 3-step initialization:
- * 1. Load cached products immediately
- * 2. Observe products from Room for live updates
- * 3. Refresh products from remote datasource
- */
 class AllProductListViewModel(
     private val observeProductsUseCase: ObserveProductsUseCase,
     private val refreshProductsUseCase: RefreshProductsUseCase,

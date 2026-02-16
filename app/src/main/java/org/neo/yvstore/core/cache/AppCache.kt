@@ -5,7 +5,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.serializer
 
 /**
- * Interface for application-level caching using DataStore Preferences.
+ * Interface for application-level caching.
  * Supports storing and retrieving objects using Kotlinx Serialization.
  */
 interface AppCache {

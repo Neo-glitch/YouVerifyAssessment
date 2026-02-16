@@ -7,11 +7,6 @@ import org.neo.yvstore.core.common.dispatcher.DispatcherProvider
 import org.neo.yvstore.core.network.utils.awaitWithTimeout
 import org.neo.yvstore.features.product.data.datasource.remote.model.ProductDto
 
-/**
- * Implementation of ProductRemoteDatasource using Firestore.
- *
- * @property firestore FirebaseFirestore instance for product data retrieval
- */
 class ProductRemoteDatasourceImpl(
     private val firestore: FirebaseFirestore,
     private val dispatcherProvider: DispatcherProvider
