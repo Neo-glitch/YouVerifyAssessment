@@ -3,6 +3,7 @@ package org.neo.yvstore.core.ui.component.card
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -15,7 +16,8 @@ import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 @Composable
 fun BottomFrameCard(modifier: Modifier = Modifier, content: @Composable (BoxScope.() -> Unit)) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
+            .navigationBarsPadding(),
     ) {
         Box(
             modifier = Modifier
