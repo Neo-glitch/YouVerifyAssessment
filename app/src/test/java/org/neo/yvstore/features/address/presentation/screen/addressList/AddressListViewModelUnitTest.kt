@@ -63,14 +63,15 @@ class AddressListViewModelUnitTest {
     }
 
     @Test
-    fun `init with empty cache and successful refresh should set Empty state`() = runTest {
+    fun `init with empty cache and successful refresh should set Loaded state`() = runTest {
         every { getAddressesUseCase() } returns flowOf(Resource.Success(emptyList()))
         coEvery { refreshAddressesUseCase() } returns Resource.Success(Unit)
 
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        assertThat(viewModel.uiState.value.loadState).isEqualTo(AddressListLoadState.Empty)
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(AddressListLoadState.Loaded)
+        assertThat(viewModel.uiState.value.addresses).isEmpty()
     }
 
     @Test

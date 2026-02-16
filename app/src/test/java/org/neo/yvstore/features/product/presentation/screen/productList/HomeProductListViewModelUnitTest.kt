@@ -80,7 +80,7 @@ class HomeProductListViewModelUnitTest {
     }
 
     @Test
-    fun `init with cached products and refresh error should show toast`() = runTest {
+    fun `init with cached products and refresh error should keep products visible`() = runTest {
         every { observeProductsUseCase(10) } returns flowOf(Resource.Success(listOf(product)))
         coEvery { refreshProductsUseCase() } returns Resource.Error("Timeout")
         every { observeCartItemCountUseCase() } returns flowOf(Resource.Success(0))
@@ -90,10 +90,18 @@ class HomeProductListViewModelUnitTest {
 
         // Products should still be shown despite refresh error
         assertThat(viewModel.uiState.value.products).hasSize(1)
+
+        // Error event should be sent for toast display
+        viewModel.uiEvent.test {
+            val event = awaitItem()
+            assertThat(event).isInstanceOf(HomeProductListUiEvent.Error::class.java)
+            assertThat((event as HomeProductListUiEvent.Error).message).isEqualTo("Timeout")
+            cancelAndConsumeRemainingEvents()
+        }
     }
 
     @Test
-    fun `init with empty cache and successful refresh should set Empty state`() = runTest {
+    fun `init with empty cache and successful refresh should set Loaded state`() = runTest {
         every { observeProductsUseCase(10) } returns flowOf(Resource.Success(emptyList()))
         coEvery { refreshProductsUseCase() } returns Resource.Success(Unit)
         every { observeCartItemCountUseCase() } returns flowOf(Resource.Success(0))
@@ -101,7 +109,8 @@ class HomeProductListViewModelUnitTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        assertThat(viewModel.uiState.value.loadState).isEqualTo(HomeProductListLoadState.Empty)
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(HomeProductListLoadState.Loaded)
+        assertThat(viewModel.uiState.value.products).isEmpty()
     }
 
     @Test

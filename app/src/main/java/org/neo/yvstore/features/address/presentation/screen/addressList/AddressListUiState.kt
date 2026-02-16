@@ -11,6 +11,5 @@ data class AddressListUiState(
 sealed class AddressListLoadState {
     data object Loading : AddressListLoadState()
     data object Loaded : AddressListLoadState()
-    data object Empty : AddressListLoadState()
     data class Error(val message: String) : AddressListLoadState()
 }

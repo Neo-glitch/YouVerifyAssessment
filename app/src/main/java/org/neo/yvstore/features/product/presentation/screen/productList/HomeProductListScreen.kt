@@ -158,24 +158,25 @@ private fun HomeProductListContent(
                 )
             }
         }
-        HomeProductListLoadState.Empty -> {
-            CenteredContent(modifier = Modifier.fillMaxSize()) {
-                YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_empty_products,
-                    title = "No Products Available",
-                    description = "Check back later for new products.",
+        HomeProductListLoadState.Loaded -> {
+            if (products.isEmpty()) {
+                CenteredContent(modifier = Modifier.fillMaxSize()) {
+                    YVStoreEmptyErrorStateView(
+                        image = R.drawable.ic_empty_products,
+                        title = "No Products Available",
+                        description = "Check back later for new products.",
+                    )
+                }
+            } else {
+                ProductListContent(
+                    products = products,
+                    promoTitle = promoTitle,
+                    promoDiscountText = promoDiscountText,
+                    promoImageUrl = promoImageUrl,
+                    onNavigateToProductDetails = onNavigateToProductDetails,
+                    onViewAllClick = onViewAllClick,
                 )
             }
-        }
-        HomeProductListLoadState.Loaded -> {
-            ProductListContent(
-                products = products,
-                promoTitle = promoTitle,
-                promoDiscountText = promoDiscountText,
-                promoImageUrl = promoImageUrl,
-                onNavigateToProductDetails = onNavigateToProductDetails,
-                onViewAllClick = onViewAllClick,
-            )
         }
     }
 }

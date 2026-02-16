@@ -31,9 +31,24 @@ class AddressListViewModel(
     private var pendingDeleteAddress: AddressUi? = null
 
     init {
-        observeAddresses()
         viewModelScope.launch {
+            checkLocalAddresses()
+            observeAddresses()
             refreshAddresses()
+        }
+    }
+
+    private suspend fun checkLocalAddresses() {
+        val addresses = getAddressesUseCase().first()
+        addresses.onSuccess { items ->
+            if (items.isNotEmpty()) {
+                _uiState.update {
+                    it.copy(
+                        addresses = items.map { address -> address.toAddressUi() },
+                        loadState = AddressListLoadState.Loaded
+                    )
+                }
+            }
         }
     }
 
@@ -51,14 +66,7 @@ class AddressListViewModel(
                     }
 
                     _uiState.update {
-                        it.copy(
-                            addresses = filteredAddress,
-                            loadState = when {
-                                it.loadState is AddressListLoadState.Loading -> it.loadState
-                                filteredAddress.isNotEmpty() -> AddressListLoadState.Loaded
-                                else -> AddressListLoadState.Empty
-                            }
-                        )
+                        it.copy(addresses = filteredAddress)
                     }
                 }
             }
@@ -81,15 +89,7 @@ class AddressListViewModel(
     }
 
     private suspend fun handleRefreshSuccess() {
-        val addresses = getAddressesUseCase().first()
-        addresses.onSuccess { items ->
-            val loadState = if (items.isEmpty()) {
-                AddressListLoadState.Empty
-            } else {
-                AddressListLoadState.Loaded
-            }
-            _uiState.update { it.copy(loadState = loadState) }
-        }
+        _uiState.update { it.copy(loadState = AddressListLoadState.Loaded) }
     }
 
     private suspend fun handleRefreshError(message: String) {

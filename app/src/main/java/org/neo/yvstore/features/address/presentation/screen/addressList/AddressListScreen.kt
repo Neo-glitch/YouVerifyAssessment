@@ -137,26 +137,27 @@ private fun AddressListContent(
                 )
             }
         }
-        AddressListLoadState.Empty -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_empty_address,
-                    title = "No addresses yet",
-                    description = "Add a delivery address to continue",
-                    actionButtonText = "Add Address",
-                    onActionButtonClick = onAddAddress,
+        AddressListLoadState.Loaded -> {
+            if (addresses.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    YVStoreEmptyErrorStateView(
+                        image = R.drawable.ic_empty_address,
+                        title = "No addresses yet",
+                        description = "Add a delivery address to continue",
+                        actionButtonText = "Add Address",
+                        onActionButtonClick = onAddAddress,
+                    )
+                }
+            } else {
+                AddressListLoadedContent(
+                    addresses = addresses,
+                    onAddressSelected = onAddressSelected,
+                    onDeleteAddress = onDeleteAddress,
                 )
             }
-        }
-        AddressListLoadState.Loaded -> {
-            AddressListLoadedContent(
-                addresses = addresses,
-                onAddressSelected = onAddressSelected,
-                onDeleteAddress = onDeleteAddress,
-            )
         }
     }
 }
@@ -268,7 +269,7 @@ private fun AddressListScreenEmptyPreview() {
     YVStoreTheme {
         AddressListScreen(
             addresses = emptyList(),
-            loadState = AddressListLoadState.Empty,
+            loadState = AddressListLoadState.Loaded,
             isRefreshing = false,
             onNavigateBack = {},
             onAddAddress = {},

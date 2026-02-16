@@ -72,7 +72,7 @@ class AllProductListViewModelIntegrationTest {
     }
 
     @Test
-    fun `init should show Error when cache fails and no products`() = runTest {
+    fun `init should show Error when cache empty and refresh fails`() = runTest {
         // Arrange - don't emit products, set refresh to fail
         val testProductRepository = TestProductRepository()
         testProductRepository.refreshResult = Resource.Error("Network error")
@@ -91,7 +91,7 @@ class AllProductListViewModelIntegrationTest {
     }
 
     @Test
-    fun `init with empty cache and successful refresh should set Empty state`() = runTest {
+    fun `init with empty cache and successful refresh should set Loaded state`() = runTest {
         val testProductRepository = TestProductRepository()
         testProductRepository.refreshResult = Resource.Success(Unit)
 
@@ -100,7 +100,7 @@ class AllProductListViewModelIntegrationTest {
             refreshProductsUseCase = RefreshProductsUseCase(testProductRepository)
         )
 
-        assertThat(viewModel.uiState.value.loadState).isEqualTo(AllProductListLoadState.Empty)
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(AllProductListLoadState.Loaded)
         assertThat(viewModel.uiState.value.products).isEmpty()
     }
 

@@ -69,14 +69,15 @@ class AllProductListViewModelUnitTest {
     }
 
     @Test
-    fun `init with empty cache and successful refresh should set Empty state`() = runTest {
+    fun `init with empty cache and successful refresh should set Loaded state`() = runTest {
         every { observeProductsUseCase(count = null) } returns flowOf(Resource.Success(emptyList()))
         coEvery { refreshProductsUseCase() } returns Resource.Success(Unit)
 
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        assertThat(viewModel.uiState.value.loadState).isEqualTo(AllProductListLoadState.Empty)
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(AllProductListLoadState.Loaded)
+        assertThat(viewModel.uiState.value.products).isEmpty()
     }
 
     @Test

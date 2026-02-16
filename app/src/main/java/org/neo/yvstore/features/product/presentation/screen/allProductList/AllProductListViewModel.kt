@@ -16,6 +16,7 @@ import org.neo.yvstore.features.product.domain.usecase.ObserveProductsUseCase
 import org.neo.yvstore.features.product.domain.usecase.RefreshProductsUseCase
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
 import org.neo.yvstore.features.product.presentation.screen.productList.HomeProductListLoadState
+import kotlin.collections.map
 
 class AllProductListViewModel(
     private val observeProductsUseCase: ObserveProductsUseCase,
@@ -29,9 +30,25 @@ class AllProductListViewModel(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
-        observeProducts()
         viewModelScope.launch {
+            checkLocalProducts()
+            observeProducts()
             refreshProducts()
+        }
+    }
+
+    private suspend fun checkLocalProducts() {
+        val products = observeProductsUseCase(count = null).first()
+        products.onSuccess { items ->
+            if (items.isNotEmpty()) {
+                _uiState.update {
+                    it.copy(
+                        products = items.map { product -> product.toProductItemUi() },
+                        loadState =
+                            AllProductListLoadState.Loaded
+                    )
+                }
+            }
         }
     }
 
@@ -65,15 +82,7 @@ class AllProductListViewModel(
     }
 
     private suspend fun handleRefreshSuccess() {
-        val products = observeProductsUseCase(count = null).first()
-        products.onSuccess { items ->
-            val loadState = if (items.isEmpty()) {
-                AllProductListLoadState.Empty
-            } else {
-                AllProductListLoadState.Loaded
-            }
-            _uiState.update { it.copy(loadState = loadState) }
-        }
+        _uiState.update { it.copy(loadState = AllProductListLoadState.Loaded) }
     }
 
     private suspend fun handleRefreshError(message: String) {

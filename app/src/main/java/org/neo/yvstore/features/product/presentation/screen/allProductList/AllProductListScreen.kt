@@ -117,23 +117,24 @@ private fun AllProductListContent(
                 )
             }
         }
-        AllProductListLoadState.Empty -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_empty_products,
-                    title = "No Products Available",
-                    description = "Check back later for new products.",
+        AllProductListLoadState.Loaded -> {
+            if (products.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    YVStoreEmptyErrorStateView(
+                        image = R.drawable.ic_empty_products,
+                        title = "No Products Available",
+                        description = "Check back later for new products.",
+                    )
+                }
+            } else {
+                ProductsGrid(
+                    products = products,
+                    onProductClick = onProductClick,
                 )
             }
-        }
-        AllProductListLoadState.Loaded -> {
-            ProductsGrid(
-                products = products,
-                onProductClick = onProductClick,
-            )
         }
     }
 }
@@ -228,7 +229,7 @@ private fun AllProductListScreenEmptyPreview() {
     YVStoreTheme {
         AllProductListScreen(
             products = emptyList(),
-            loadState = AllProductListLoadState.Empty,
+            loadState = AllProductListLoadState.Loaded,
             isRefreshing = false,
             onBackClick = {},
             onProductClick = {},

@@ -16,6 +16,7 @@ import org.neo.yvstore.features.product.domain.model.Product
 import org.neo.yvstore.features.product.domain.usecase.ObserveProductsUseCase
 import org.neo.yvstore.features.product.domain.usecase.RefreshProductsUseCase
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
+import kotlin.collections.map
 
 class HomeProductListViewModel(
     private val observeProductsUseCase: ObserveProductsUseCase,
@@ -34,10 +35,24 @@ class HomeProductListViewModel(
     }
 
     init {
-        observeProducts()
-        observeCartItemCount()
         viewModelScope.launch {
+            checkLocalProducts()
+            observeProducts()
+            observeCartItemCount()
             refreshProducts()
+        }
+    }
+
+    private suspend fun checkLocalProducts() {
+        val products = observeProductsUseCase(PRODUCT_COUNT).first()
+        products.onSuccess { items ->
+            if (items.isNotEmpty()) {
+                _uiState.update {
+                    it.copy(
+                        products = items.map { product -> product.toProductItemUi() },
+                        loadState = HomeProductListLoadState.Loaded)
+                }
+            }
         }
     }
 
@@ -86,16 +101,8 @@ class HomeProductListViewModel(
             .onError { message -> handleRefreshError(message) }
     }
 
-    private suspend fun handleRefreshSuccess() {
-        val products = observeProductsUseCase(PRODUCT_COUNT).first()
-        products.onSuccess { items ->
-            val loadState = if (items.isEmpty()) {
-                HomeProductListLoadState.Empty
-            } else {
-                HomeProductListLoadState.Loaded
-            }
-            _uiState.update { it.copy(loadState = loadState) }
-        }
+    private fun handleRefreshSuccess() {
+        _uiState.update { it.copy(loadState = HomeProductListLoadState.Loaded) }
     }
 
     private suspend fun handleRefreshError(message: String) {

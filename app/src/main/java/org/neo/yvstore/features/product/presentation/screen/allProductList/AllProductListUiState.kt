@@ -12,6 +12,5 @@ data class AllProductListUiState(
 sealed class AllProductListLoadState {
     data object Loading : AllProductListLoadState()
     data object Loaded : AllProductListLoadState()
-    data object Empty : AllProductListLoadState()
     data class Error(val message: String) : AllProductListLoadState()
 }

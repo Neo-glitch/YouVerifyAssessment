@@ -12,6 +12,5 @@ data class HomeProductListUiState(
 sealed class HomeProductListLoadState {
     data object Loading : HomeProductListLoadState()
     data object Loaded : HomeProductListLoadState()
-    data object Empty : HomeProductListLoadState()
     data class Error(val message: String) : HomeProductListLoadState()
 }
