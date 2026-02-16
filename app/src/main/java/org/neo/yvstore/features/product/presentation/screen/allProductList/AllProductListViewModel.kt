@@ -67,7 +67,8 @@ class AllProductListViewModel(
     }
 
     fun onRefresh() {
-        if (_uiState.value.loadState is AllProductListLoadState.Loading) return
+        val disableRefresh = _uiState.value.loadState is AllProductListLoadState.Loading && _uiState.value.products.isEmpty()
+        if (disableRefresh) return
         viewModelScope.launch {
             _uiState.update { it.copy(isRefreshing = true) }
             refreshProductsUseCase()

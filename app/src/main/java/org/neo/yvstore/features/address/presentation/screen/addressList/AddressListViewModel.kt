@@ -74,7 +74,8 @@ class AddressListViewModel(
     }
 
     fun onRefresh() {
-        if (_uiState.value.loadState is AddressListLoadState.Loading) return
+        val disableRefresh = _uiState.value.loadState is AddressListLoadState.Loading && _uiState.value.addresses.isEmpty()
+        if (disableRefresh) return
         viewModelScope.launch {
             _uiState.update { it.copy(isRefreshing = true) }
             refreshAddressesUseCase()

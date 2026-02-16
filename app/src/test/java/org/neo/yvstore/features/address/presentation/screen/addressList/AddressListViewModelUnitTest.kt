@@ -90,7 +90,7 @@ class AddressListViewModelUnitTest {
     }
 
     @Test
-    fun `onRefresh should not trigger when loadState is Loading`() = runTest {
+    fun `onRefresh should not trigger when loadState is Loading and list is empty`() = runTest {
         every { getAddressesUseCase() } returns flowOf(Resource.Success(emptyList()))
         coEvery { refreshAddressesUseCase() } coAnswers {
             kotlinx.coroutines.delay(10_000)

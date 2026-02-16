@@ -130,7 +130,7 @@ class HomeProductListViewModelUnitTest {
     }
 
     @Test
-    fun `onRefresh should not trigger when loadState is Loading`() = runTest {
+    fun `onRefresh should not trigger when loadState is Loading and list is empty`() = runTest {
         every { observeProductsUseCase(10) } returns flowOf(Resource.Success(emptyList()))
         coEvery { refreshProductsUseCase() } coAnswers {
             kotlinx.coroutines.delay(10_000)
