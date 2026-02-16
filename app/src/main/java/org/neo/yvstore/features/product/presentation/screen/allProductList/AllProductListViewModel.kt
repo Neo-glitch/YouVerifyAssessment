@@ -74,16 +74,36 @@ class AllProductListViewModel(
         }
     }
 
+    fun onRefresh() {
+        if (_uiState.value.loadState is AllProductListLoadState.Loading) return
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            refreshProductsUseCase()
+            _uiState.update { it.copy(isRefreshing = false) }
+        }
+    }
+
     private suspend fun refreshProducts() {
         val result = refreshProductsUseCase()
-        result.onError { message ->
+        result.onSuccess {
+            val currentState = _uiState.value
+            _uiState.update {
+                it.copy(
+                    loadState = if (currentState.products.isEmpty()) {
+                        AllProductListLoadState.Empty
+                    } else {
+                        AllProductListLoadState.Loaded
+                    }
+                )
+            }
+        }.onError { message ->
             val currentState = _uiState.value
             if (currentState.products.isEmpty() && currentState.loadState !is AllProductListLoadState.Error) {
                 _uiState.update {
                     it.copy(loadState = AllProductListLoadState.Error(message))
                 }
             } else if (currentState.products.isNotEmpty()) {
-                _uiEvent.send(AllProductListUiEvent.ShowToast(message))
+                _uiEvent.send(AllProductListUiEvent.Error(message))
             }
         }
     }

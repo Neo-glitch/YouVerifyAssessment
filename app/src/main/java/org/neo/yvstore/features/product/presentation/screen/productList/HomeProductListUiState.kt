@@ -6,10 +6,12 @@ data class HomeProductListUiState(
     val products: List<ProductItemUi> = emptyList(),
     val loadState: HomeProductListLoadState = HomeProductListLoadState.Loading,
     val cartItemCount: Int = 0,
+    val isRefreshing: Boolean = false,
 )
 
 sealed class HomeProductListLoadState {
     data object Loading : HomeProductListLoadState()
     data object Loaded : HomeProductListLoadState()
+    data object Empty : HomeProductListLoadState()
     data class Error(val message: String) : HomeProductListLoadState()
 }

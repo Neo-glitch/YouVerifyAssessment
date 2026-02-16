@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,7 +41,7 @@ fun AllProductListScreen(
 
     ObserveAsEvents(viewModel.uiEvent) { event ->
         when (event) {
-            is AllProductListUiEvent.ShowToast -> {
+            is AllProductListUiEvent.Error -> {
                 Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             }
         }
@@ -48,18 +50,23 @@ fun AllProductListScreen(
     AllProductListScreen(
         products = uiState.products,
         loadState = uiState.loadState,
+        isRefreshing = uiState.isRefreshing,
         onBackClick = onBackClick,
         onProductClick = onProductClick,
+        onRefresh = viewModel::onRefresh,
     )
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AllProductListScreen(
     products: List<ProductItemUi>,
     loadState: AllProductListLoadState,
+    isRefreshing: Boolean,
     onBackClick: () -> Unit,
     onProductClick: (String) -> Unit,
+    onRefresh: () -> Unit,
 ) {
     YVStoreScaffold(
         topBar = {
@@ -69,49 +76,52 @@ private fun AllProductListScreen(
             )
         }
     ) { paddingValues ->
-        if (products.isEmpty()) {
-            EmptyStateContent(
-                loadState = loadState,
-                paddingValues = paddingValues,
-            )
-        } else {
-            ProductsGrid(
-                products = products,
-                onProductClick = onProductClick,
-                paddingValues = paddingValues,
-            )
-        }
-    }
-}
-
-@Composable
-private fun EmptyStateContent(
-    loadState: AllProductListLoadState,
-    paddingValues: PaddingValues,
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
-        contentAlignment = Alignment.Center,
-    ) {
-        when (loadState) {
-            AllProductListLoadState.Loading -> {
-                YVStoreCircleProgressIndicator(size = 48.dp)
-            }
-            is AllProductListLoadState.Error -> {
-                YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_error,
-                    title = "Unable to Load Products",
-                    description = loadState.message,
-                )
-            }
-            AllProductListLoadState.Loaded -> {
-                YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_empty_products,
-                    title = "No Products Available",
-                    description = "Check back later for new products.",
-                )
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+        ) {
+            when (loadState) {
+                AllProductListLoadState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        YVStoreCircleProgressIndicator(size = 48.dp)
+                    }
+                }
+                is AllProductListLoadState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        YVStoreEmptyErrorStateView(
+                            image = R.drawable.ic_error,
+                            title = "Unable to Load Products",
+                            description = loadState.message,
+                        )
+                    }
+                }
+                AllProductListLoadState.Empty -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        YVStoreEmptyErrorStateView(
+                            image = R.drawable.ic_empty_products,
+                            title = "No Products Available",
+                            description = "Check back later for new products.",
+                        )
+                    }
+                }
+                AllProductListLoadState.Loaded -> {
+                    ProductsGrid(
+                        products = products,
+                        onProductClick = onProductClick,
+                    )
+                }
             }
         }
     }
@@ -121,16 +131,10 @@ private fun EmptyStateContent(
 private fun ProductsGrid(
     products: List<ProductItemUi>,
     onProductClick: (String) -> Unit,
-    paddingValues: PaddingValues,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(
-            start = 16.dp,
-            end = 16.dp,
-            top = paddingValues.calculateTopPadding() + 16.dp,
-            bottom = paddingValues.calculateBottomPadding() + 16.dp,
-        ),
+        contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.fillMaxSize(),
@@ -169,8 +173,10 @@ private fun AllProductListScreenPreview() {
         AllProductListScreen(
             products = placeholderProducts,
             loadState = AllProductListLoadState.Loaded,
+            isRefreshing = false,
             onBackClick = {},
             onProductClick = {},
+            onRefresh = {},
         )
     }
 }
@@ -182,8 +188,10 @@ private fun AllProductListScreenLoadingPreview() {
         AllProductListScreen(
             products = emptyList(),
             loadState = AllProductListLoadState.Loading,
+            isRefreshing = false,
             onBackClick = {},
             onProductClick = {},
+            onRefresh = {},
         )
     }
 }
@@ -195,8 +203,10 @@ private fun AllProductListScreenErrorPreview() {
         AllProductListScreen(
             products = emptyList(),
             loadState = AllProductListLoadState.Error("Failed to load products. Please check your internet connection."),
+            isRefreshing = false,
             onBackClick = {},
             onProductClick = {},
+            onRefresh = {},
         )
     }
 }
@@ -207,9 +217,11 @@ private fun AllProductListScreenEmptyPreview() {
     YVStoreTheme {
         AllProductListScreen(
             products = emptyList(),
-            loadState = AllProductListLoadState.Loaded,
+            loadState = AllProductListLoadState.Empty,
+            isRefreshing = false,
             onBackClick = {},
             onProductClick = {},
+            onRefresh = {},
         )
     }
 }

@@ -5,10 +5,12 @@ import org.neo.yvstore.features.address.presentation.model.AddressUi
 data class AddressListUiState(
     val addresses: List<AddressUi> = emptyList(),
     val loadState: AddressListLoadState = AddressListLoadState.Loading,
+    val isRefreshing: Boolean = false,
 )
 
 sealed class AddressListLoadState {
     data object Loading : AddressListLoadState()
     data object Loaded : AddressListLoadState()
+    data object Empty : AddressListLoadState()
     data class Error(val message: String) : AddressListLoadState()
 }

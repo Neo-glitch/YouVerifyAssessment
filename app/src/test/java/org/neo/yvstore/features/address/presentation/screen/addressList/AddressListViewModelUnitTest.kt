@@ -63,6 +63,64 @@ class AddressListViewModelUnitTest {
     }
 
     @Test
+    fun `init with empty cache and successful refresh should set Empty state`() = runTest {
+        every { getAddressesUseCase() } returns flowOf(Resource.Success(emptyList()))
+        coEvery { refreshAddressesUseCase() } returns Resource.Success(Unit)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(AddressListLoadState.Empty)
+    }
+
+    @Test
+    fun `onRefresh should set isRefreshing true then false on success`() = runTest {
+        every { getAddressesUseCase() } returns flowOf(Resource.Success(listOf(address)))
+        coEvery { refreshAddressesUseCase() } returns Resource.Success(Unit)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onRefresh()
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.isRefreshing).isFalse()
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(AddressListLoadState.Loaded)
+    }
+
+    @Test
+    fun `onRefresh should not trigger when loadState is Loading`() = runTest {
+        every { getAddressesUseCase() } returns flowOf(Resource.Success(emptyList()))
+        coEvery { refreshAddressesUseCase() } coAnswers {
+            kotlinx.coroutines.delay(10_000)
+            Resource.Success(Unit)
+        }
+
+        val viewModel = createViewModel()
+
+        viewModel.onRefresh()
+
+        assertThat(viewModel.uiState.value.isRefreshing).isFalse()
+    }
+
+    @Test
+    fun `onRefresh with error and existing addresses should set isRefreshing false`() = runTest {
+        every { getAddressesUseCase() } returns flowOf(Resource.Success(listOf(address)))
+        coEvery { refreshAddressesUseCase() } returns Resource.Success(Unit)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        coEvery { refreshAddressesUseCase() } returns Resource.Error("Network error")
+
+        viewModel.onRefresh()
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.isRefreshing).isFalse()
+        assertThat(viewModel.uiState.value.addresses).hasSize(1)
+    }
+
+    @Test
     fun `onDeleteAddress should optimistically remove address from list`() = runTest {
         every { getAddressesUseCase() } returns flowOf(Resource.Success(listOf(address)))
         coEvery { refreshAddressesUseCase() } returns Resource.Success(Unit)

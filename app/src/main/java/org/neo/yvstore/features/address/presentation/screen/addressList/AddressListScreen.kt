@@ -4,17 +4,18 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -55,21 +56,26 @@ fun AddressListScreen(
     AddressListScreen(
         addresses = uiState.addresses,
         loadState = uiState.loadState,
+        isRefreshing = uiState.isRefreshing,
         onNavigateBack = onNavigateBack,
         onAddAddress = onAddAddress,
         onAddressSelected = onAddressSelected,
-        onDeleteAddress = viewModel::onDeleteAddress
+        onDeleteAddress = viewModel::onDeleteAddress,
+        onRefresh = viewModel::onRefresh,
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddressListScreen(
     addresses: List<AddressUi>,
     loadState: AddressListLoadState,
+    isRefreshing: Boolean,
     onNavigateBack: () -> Unit,
     onAddAddress: () -> Unit,
     onAddressSelected: (String) -> Unit,
-    onDeleteAddress: (AddressUi) -> Unit
+    onDeleteAddress: (AddressUi) -> Unit,
+    onRefresh: () -> Unit,
 ) {
     YVStoreScaffold(
         topBar = {
@@ -81,24 +87,61 @@ private fun AddressListScreen(
         },
         floatingActionButton = {
             AddAddressFab(
-                visible = addresses.isNotEmpty(),
+                visible = loadState is AddressListLoadState.Loaded,
                 onClick = onAddAddress
             )
         }
     ) { paddingValues ->
-        if (addresses.isEmpty()) {
-            EmptyStateContent(
-                loadState = loadState,
-                onAddAddress = onAddAddress,
-                paddingValues = paddingValues
-            )
-        } else {
-            AddressListLoadedContent(
-                addresses = addresses,
-                onAddressSelected = onAddressSelected,
-                onDeleteAddress = onDeleteAddress,
-                modifier = Modifier.padding(paddingValues)
-            )
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+        ) {
+            when (loadState) {
+                AddressListLoadState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        YVStoreCircleProgressIndicator(size = 48.dp)
+                    }
+                }
+                is AddressListLoadState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        YVStoreEmptyErrorStateView(
+                            image = R.drawable.ic_error,
+                            title = "Error loading addresses",
+                            description = loadState.message,
+                        )
+                    }
+                }
+                AddressListLoadState.Empty -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        YVStoreEmptyErrorStateView(
+                            image = R.drawable.ic_empty_address,
+                            title = "No addresses yet",
+                            description = "Add a delivery address to continue",
+                            actionButtonText = "Add Address",
+                            onActionButtonClick = onAddAddress,
+                        )
+                    }
+                }
+                AddressListLoadState.Loaded -> {
+                    AddressListLoadedContent(
+                        addresses = addresses,
+                        onAddressSelected = onAddressSelected,
+                        onDeleteAddress = onDeleteAddress,
+                    )
+                }
+            }
         }
     }
 }
@@ -123,51 +166,12 @@ private fun AddAddressFab(
 }
 
 @Composable
-private fun EmptyStateContent(
-    loadState: AddressListLoadState,
-    onAddAddress: () -> Unit,
-    paddingValues: PaddingValues
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
-        contentAlignment = Alignment.Center
-    ) {
-        when (loadState) {
-            is AddressListLoadState.Loading -> {
-                YVStoreCircleProgressIndicator(size = 48.dp)
-            }
-
-            is AddressListLoadState.Error -> {
-                YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_error,
-                    title = "Error loading addresses",
-                    description = loadState.message,
-                )
-            }
-
-            is AddressListLoadState.Loaded -> {
-                YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_empty_address,
-                    title = "No addresses yet",
-                    description = "Add a delivery address to continue",
-                    actionButtonText = "Add Address",
-                    onActionButtonClick = onAddAddress,
-                )
-            }
-        }
-    }
-}
-
-@Composable
 private fun AddressListLoadedContent(
     addresses: List<AddressUi>,
     onAddressSelected: (String) -> Unit,
     onDeleteAddress: (AddressUi) -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Text(
             text = "Select delivery address",
             style = MaterialTheme.typography.titleMedium,
@@ -233,10 +237,12 @@ private fun AddressListScreenPopulatedPreview() {
         AddressListScreen(
             addresses = sampleAddresses,
             loadState = AddressListLoadState.Loaded,
+            isRefreshing = false,
             onNavigateBack = {},
             onAddAddress = {},
             onAddressSelected = {},
             onDeleteAddress = {},
+            onRefresh = {},
         )
     }
 }
@@ -247,11 +253,13 @@ private fun AddressListScreenEmptyPreview() {
     YVStoreTheme {
         AddressListScreen(
             addresses = emptyList(),
-            loadState = AddressListLoadState.Loaded,
+            loadState = AddressListLoadState.Empty,
+            isRefreshing = false,
             onNavigateBack = {},
             onAddAddress = {},
             onAddressSelected = {},
             onDeleteAddress = {},
+            onRefresh = {},
         )
     }
 }
@@ -263,10 +271,12 @@ private fun AddressListScreenLoadingPreview() {
         AddressListScreen(
             addresses = emptyList(),
             loadState = AddressListLoadState.Loading,
+            isRefreshing = false,
             onNavigateBack = {},
             onAddAddress = {},
             onAddressSelected = {},
             onDeleteAddress = {},
+            onRefresh = {},
         )
     }
 }
@@ -278,10 +288,12 @@ private fun AddressListScreenErrorPreview() {
         AddressListScreen(
             addresses = emptyList(),
             loadState = AddressListLoadState.Error("Failed to load addresses"),
+            isRefreshing = false,
             onNavigateBack = {},
             onAddAddress = {},
             onAddressSelected = {},
             onDeleteAddress = {},
+            onRefresh = {},
         )
     }
 }

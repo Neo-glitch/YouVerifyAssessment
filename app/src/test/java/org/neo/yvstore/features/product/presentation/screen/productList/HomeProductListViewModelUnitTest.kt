@@ -1,5 +1,6 @@
 package org.neo.yvstore.features.product.presentation.screen.productList
 
+import app.cash.turbine.test
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -88,6 +89,68 @@ class HomeProductListViewModelUnitTest {
         advanceUntilIdle()
 
         // Products should still be shown despite refresh error
+        assertThat(viewModel.uiState.value.products).hasSize(1)
+    }
+
+    @Test
+    fun `init with empty cache and successful refresh should set Empty state`() = runTest {
+        every { observeProductsUseCase(10) } returns flowOf(Resource.Success(emptyList()))
+        coEvery { refreshProductsUseCase() } returns Resource.Success(Unit)
+        every { observeCartItemCountUseCase() } returns flowOf(Resource.Success(0))
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(HomeProductListLoadState.Empty)
+    }
+
+    @Test
+    fun `onRefresh should set isRefreshing true then false on success`() = runTest {
+        every { observeProductsUseCase(10) } returns flowOf(Resource.Success(listOf(product)))
+        coEvery { refreshProductsUseCase() } returns Resource.Success(Unit)
+        every { observeCartItemCountUseCase() } returns flowOf(Resource.Success(0))
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onRefresh()
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.isRefreshing).isFalse()
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(HomeProductListLoadState.Loaded)
+    }
+
+    @Test
+    fun `onRefresh should not trigger when loadState is Loading`() = runTest {
+        every { observeProductsUseCase(10) } returns flowOf(Resource.Success(emptyList()))
+        coEvery { refreshProductsUseCase() } coAnswers {
+            kotlinx.coroutines.delay(10_000)
+            Resource.Success(Unit)
+        }
+        every { observeCartItemCountUseCase() } returns flowOf(Resource.Success(0))
+
+        val viewModel = createViewModel()
+
+        viewModel.onRefresh()
+
+        assertThat(viewModel.uiState.value.isRefreshing).isFalse()
+    }
+
+    @Test
+    fun `onRefresh with error and existing products should set isRefreshing false`() = runTest {
+        every { observeProductsUseCase(10) } returns flowOf(Resource.Success(listOf(product)))
+        coEvery { refreshProductsUseCase() } returns Resource.Success(Unit)
+        every { observeCartItemCountUseCase() } returns flowOf(Resource.Success(0))
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        coEvery { refreshProductsUseCase() } returns Resource.Error("Network error")
+
+        viewModel.onRefresh()
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.isRefreshing).isFalse()
         assertThat(viewModel.uiState.value.products).hasSize(1)
     }
 }

@@ -76,11 +76,27 @@ class AddressListViewModel(
         }
     }
 
+    fun onRefresh() {
+        if (_uiState.value.loadState is AddressListLoadState.Loading) return
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            refreshAddressesUseCase()
+            _uiState.update { it.copy(isRefreshing = false) }
+        }
+    }
+
     private suspend fun refreshAddresses() {
         val result = refreshAddressesUseCase()
         result.onSuccess {
+            val currentState = _uiState.value
             _uiState.update {
-                it.copy(loadState = AddressListLoadState.Loaded)
+                it.copy(
+                    loadState = if (currentState.addresses.isEmpty()) {
+                        AddressListLoadState.Empty
+                    } else {
+                        AddressListLoadState.Loaded
+                    }
+                )
             }
         }.onError { message ->
             val currentState = _uiState.value

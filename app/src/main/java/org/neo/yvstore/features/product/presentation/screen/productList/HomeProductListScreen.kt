@@ -2,8 +2,6 @@ package org.neo.yvstore.features.product.presentation.screen.productList
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,9 +16,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -28,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -62,7 +60,7 @@ fun HomeProductListScreen(
 
     ObserveAsEvents(viewModel.uiEvent) { event ->
         when (event) {
-            is HomeProductListUiEvent.ShowToast -> {
+            is HomeProductListUiEvent.Error -> {
                 Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             }
         }
@@ -72,6 +70,7 @@ fun HomeProductListScreen(
         products = uiState.products,
         loadState = uiState.loadState,
         cartItemCount = uiState.cartItemCount,
+        isRefreshing = uiState.isRefreshing,
         promoTitle = "Clearance Sales",
         promoDiscountText = "Up to 50%",
         promoImageUrl = "https://picsum.photos/seed/promo/200/200",
@@ -79,14 +78,17 @@ fun HomeProductListScreen(
         onNavigateToSearch = onNavigateToSearch,
         onNavigateToProductDetails = onNavigateToProductDetails,
         onViewAllClick = onViewAllClick,
+        onRefresh = viewModel::onRefresh,
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeProductListScreen(
     products: List<ProductItemUi>,
     loadState: HomeProductListLoadState,
     cartItemCount: Int,
+    isRefreshing: Boolean,
     promoTitle: String,
     promoDiscountText: String,
     promoImageUrl: String,
@@ -94,6 +96,7 @@ private fun HomeProductListScreen(
     onNavigateToSearch: () -> Unit,
     onNavigateToProductDetails: (String) -> Unit,
     onViewAllClick: () -> Unit,
+    onRefresh: () -> Unit,
 ) {
     YVStoreScaffold { paddingValues ->
         Column(
@@ -113,49 +116,46 @@ private fun HomeProductListScreen(
                 onClick = onNavigateToSearch,
             )
 
-            if (products.isEmpty()) {
-                EmptyStateContent(
-                    loadState = loadState,
-                    modifier = Modifier.weight(1f),
-                )
-            } else {
-                ProductListContent(
-                    products = products,
-                    promoTitle = promoTitle,
-                    promoDiscountText = promoDiscountText,
-                    promoImageUrl = promoImageUrl,
-                    onNavigateToProductDetails = onNavigateToProductDetails,
-                    onViewAllClick = onViewAllClick,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun EmptyStateContent(
-    loadState: HomeProductListLoadState,
-    modifier: Modifier = Modifier,
-) {
-    CenteredContent(modifier = modifier) {
-        when (loadState) {
-            HomeProductListLoadState.Loading -> {
-                YVStoreCircleProgressIndicator(size = 48.dp)
-            }
-            is HomeProductListLoadState.Error -> {
-                YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_error,
-                    title = "Unable to Load Products",
-                    description = loadState.message,
-                )
-            }
-            HomeProductListLoadState.Loaded -> {
-                YVStoreEmptyErrorStateView(
-                    image = R.drawable.ic_empty_products,
-                    title = "No Products Available",
-                    description = "Check back later for new products.",
-                )
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
+                modifier = Modifier.weight(1f),
+            ) {
+                when (loadState) {
+                    HomeProductListLoadState.Loading -> {
+                        CenteredContent(modifier = Modifier.fillMaxSize()) {
+                            YVStoreCircleProgressIndicator(size = 48.dp)
+                        }
+                    }
+                    is HomeProductListLoadState.Error -> {
+                        CenteredContent(modifier = Modifier.fillMaxSize()) {
+                            YVStoreEmptyErrorStateView(
+                                image = R.drawable.ic_error,
+                                title = "Unable to Load Products",
+                                description = loadState.message,
+                            )
+                        }
+                    }
+                    HomeProductListLoadState.Empty -> {
+                        CenteredContent(modifier = Modifier.fillMaxSize()) {
+                            YVStoreEmptyErrorStateView(
+                                image = R.drawable.ic_empty_products,
+                                title = "No Products Available",
+                                description = "Check back later for new products.",
+                            )
+                        }
+                    }
+                    HomeProductListLoadState.Loaded -> {
+                        ProductListContent(
+                            products = products,
+                            promoTitle = promoTitle,
+                            promoDiscountText = promoDiscountText,
+                            promoImageUrl = promoImageUrl,
+                            onNavigateToProductDetails = onNavigateToProductDetails,
+                            onViewAllClick = onViewAllClick,
+                        )
+                    }
+                }
             }
         }
     }
@@ -169,10 +169,11 @@ private fun ProductListContent(
     promoImageUrl: String,
     onNavigateToProductDetails: (String) -> Unit,
     onViewAllClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.verticalScroll(rememberScrollState()),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
     ) {
         Spacer(modifier = Modifier.height(16.dp))
         PromoBanner(
@@ -385,12 +386,14 @@ private fun PreviewContent(
     products: List<ProductItemUi> = placeholderProducts,
     loadState: HomeProductListLoadState = HomeProductListLoadState.Loaded,
     cartItemCount: Int = 0,
+    isRefreshing: Boolean = false,
 ) {
     YVStoreTheme {
         HomeProductListScreen(
             products = products,
             loadState = loadState,
             cartItemCount = cartItemCount,
+            isRefreshing = isRefreshing,
             promoTitle = "Clearance Sales",
             promoDiscountText = "Up to 50%",
             promoImageUrl = "https://picsum.photos/seed/promo/200/200",
@@ -398,6 +401,7 @@ private fun PreviewContent(
             onNavigateToSearch = {},
             onNavigateToProductDetails = {},
             onViewAllClick = {},
+            onRefresh = {},
         )
     }
 }

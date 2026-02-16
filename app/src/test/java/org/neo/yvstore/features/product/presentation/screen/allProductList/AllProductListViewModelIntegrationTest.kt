@@ -91,7 +91,38 @@ class AllProductListViewModelIntegrationTest {
     }
 
     @Test
-    fun `init should send toast when refresh fails but cached products exist`() = runTest {
+    fun `init with empty cache and successful refresh should set Empty state`() = runTest {
+        val testProductRepository = TestProductRepository()
+        testProductRepository.refreshResult = Resource.Success(Unit)
+
+        val viewModel = AllProductListViewModel(
+            observeProductsUseCase = ObserveProductsUseCase(testProductRepository),
+            refreshProductsUseCase = RefreshProductsUseCase(testProductRepository)
+        )
+
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(AllProductListLoadState.Empty)
+        assertThat(viewModel.uiState.value.products).isEmpty()
+    }
+
+    @Test
+    fun `onRefresh should re-fetch products and set isRefreshing false`() = runTest {
+        val testProductRepository = TestProductRepository()
+        testProductRepository.refreshResult = Resource.Success(Unit)
+        testProductRepository.emit(createTestProducts())
+
+        val viewModel = AllProductListViewModel(
+            observeProductsUseCase = ObserveProductsUseCase(testProductRepository),
+            refreshProductsUseCase = RefreshProductsUseCase(testProductRepository)
+        )
+
+        viewModel.onRefresh()
+
+        assertThat(viewModel.uiState.value.isRefreshing).isFalse()
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(AllProductListLoadState.Loaded)
+    }
+
+    @Test
+    fun `init should send Error when refresh fails but cached products exist`() = runTest {
         // Arrange - emit products but set refresh to fail
         val testProductRepository = TestProductRepository()
         testProductRepository.refreshResult = Resource.Error("Failed to refresh")
@@ -107,8 +138,8 @@ class AllProductListViewModelIntegrationTest {
         // Assert
         viewModel.uiEvent.test {
             val event = awaitItem()
-            assertThat(event).isInstanceOf(AllProductListUiEvent.ShowToast::class.java)
-            assertThat((event as AllProductListUiEvent.ShowToast).message).isEqualTo("Failed to refresh")
+            assertThat(event).isInstanceOf(AllProductListUiEvent.Error::class.java)
+            assertThat((event as AllProductListUiEvent.Error).message).isEqualTo("Failed to refresh")
 
             cancelAndConsumeRemainingEvents()
         }

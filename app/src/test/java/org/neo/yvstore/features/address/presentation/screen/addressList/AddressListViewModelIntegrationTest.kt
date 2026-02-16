@@ -60,6 +60,39 @@ class AddressListViewModelIntegrationTest {
     }
 
     @Test
+    fun `init with empty cache and successful refresh should set Empty state`() = runTest {
+        val testAddressRepository = TestAddressRepository()
+        testAddressRepository.refreshResult = Resource.Success(Unit)
+
+        val viewModel = AddressListViewModel(
+            getAddressesUseCase = GetAddressesUseCase(testAddressRepository),
+            deleteAddressUseCase = DeleteAddressUseCase(testAddressRepository),
+            refreshAddressesUseCase = RefreshAddressesUseCase(testAddressRepository)
+        )
+
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(AddressListLoadState.Empty)
+        assertThat(viewModel.uiState.value.addresses).isEmpty()
+    }
+
+    @Test
+    fun `onRefresh should re-fetch addresses and set isRefreshing false`() = runTest {
+        val testAddressRepository = TestAddressRepository()
+        testAddressRepository.refreshResult = Resource.Success(Unit)
+        testAddressRepository.emit(createTestAddresses())
+
+        val viewModel = AddressListViewModel(
+            getAddressesUseCase = GetAddressesUseCase(testAddressRepository),
+            deleteAddressUseCase = DeleteAddressUseCase(testAddressRepository),
+            refreshAddressesUseCase = RefreshAddressesUseCase(testAddressRepository)
+        )
+
+        viewModel.onRefresh()
+
+        assertThat(viewModel.uiState.value.isRefreshing).isFalse()
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(AddressListLoadState.Loaded)
+    }
+
+    @Test
     fun `init should show Error when cache empty and refresh fails`() = runTest {
         // Arrange - no addresses, refresh fails
         val testAddressRepository = TestAddressRepository()

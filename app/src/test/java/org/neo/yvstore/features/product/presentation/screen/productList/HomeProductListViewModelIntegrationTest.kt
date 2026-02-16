@@ -89,7 +89,7 @@ class HomeProductListViewModelIntegrationTest {
     }
 
     @Test
-    fun `init should send toast when refresh fails but cached products exist`() = runTest {
+    fun `init should send Error when refresh fails but cached products exist`() = runTest {
         // Arrange - emit products but set refresh to fail
         val testProductRepository = TestProductRepository()
         val testCartRepository = TestCartRepository()
@@ -107,14 +107,49 @@ class HomeProductListViewModelIntegrationTest {
         // Assert
         viewModel.uiEvent.test {
             val event = awaitItem()
-            assertThat(event).isInstanceOf(HomeProductListUiEvent.ShowToast::class.java)
-            assertThat((event as HomeProductListUiEvent.ShowToast).message).isEqualTo("Failed to refresh")
+            assertThat(event).isInstanceOf(HomeProductListUiEvent.Error::class.java)
+            assertThat((event as HomeProductListUiEvent.Error).message).isEqualTo("Failed to refresh")
 
             cancelAndConsumeRemainingEvents()
         }
 
         // Products should still be shown
         assertThat(viewModel.uiState.value.products).hasSize(2)
+    }
+
+    @Test
+    fun `init with empty cache and successful refresh should set Empty state`() = runTest {
+        val testProductRepository = TestProductRepository()
+        val testCartRepository = TestCartRepository()
+        testProductRepository.refreshResult = Resource.Success(Unit)
+
+        val viewModel = HomeProductListViewModel(
+            observeProductsUseCase = ObserveProductsUseCase(testProductRepository),
+            refreshProductsUseCase = RefreshProductsUseCase(testProductRepository),
+            observeCartItemCountUseCase = ObserveCartItemCountUseCase(testCartRepository)
+        )
+
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(HomeProductListLoadState.Empty)
+        assertThat(viewModel.uiState.value.products).isEmpty()
+    }
+
+    @Test
+    fun `onRefresh should re-fetch products and set isRefreshing false`() = runTest {
+        val testProductRepository = TestProductRepository()
+        val testCartRepository = TestCartRepository()
+        testProductRepository.refreshResult = Resource.Success(Unit)
+        testProductRepository.emit(createTestProducts())
+
+        val viewModel = HomeProductListViewModel(
+            observeProductsUseCase = ObserveProductsUseCase(testProductRepository),
+            refreshProductsUseCase = RefreshProductsUseCase(testProductRepository),
+            observeCartItemCountUseCase = ObserveCartItemCountUseCase(testCartRepository)
+        )
+
+        viewModel.onRefresh()
+
+        assertThat(viewModel.uiState.value.isRefreshing).isFalse()
+        assertThat(viewModel.uiState.value.loadState).isEqualTo(HomeProductListLoadState.Loaded)
     }
 
     @Test

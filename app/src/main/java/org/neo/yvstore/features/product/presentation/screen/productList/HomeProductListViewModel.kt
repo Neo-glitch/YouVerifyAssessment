@@ -86,16 +86,36 @@ class HomeProductListViewModel(
         }
     }
 
+    fun onRefresh() {
+        if (_uiState.value.loadState is HomeProductListLoadState.Loading) return
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            refreshProductsUseCase()
+            _uiState.update { it.copy(isRefreshing = false) }
+        }
+    }
+
     private suspend fun refreshProducts() {
         val result = refreshProductsUseCase()
-        result.onError { message ->
+        result.onSuccess {
+            val currentState = _uiState.value
+            _uiState.update {
+                it.copy(
+                    loadState = if (currentState.products.isEmpty()) {
+                        HomeProductListLoadState.Empty
+                    } else {
+                        HomeProductListLoadState.Loaded
+                    }
+                )
+            }
+        }.onError { message ->
             val currentState = _uiState.value
             if (currentState.products.isEmpty() && currentState.loadState !is HomeProductListLoadState.Error) {
                 _uiState.update {
                     it.copy(loadState = HomeProductListLoadState.Error(message))
                 }
             } else if (currentState.products.isNotEmpty()) {
-                _uiEvent.send(HomeProductListUiEvent.ShowToast(message))
+                _uiEvent.send(HomeProductListUiEvent.Error(message))
             }
         }
     }
