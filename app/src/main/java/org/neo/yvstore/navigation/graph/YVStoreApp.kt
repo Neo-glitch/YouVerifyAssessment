@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import org.neo.yvstore.AppAuthState
 import org.neo.yvstore.MainViewModel
+import org.neo.yvstore.core.ui.animations.EnterExitTransitions
 import org.neo.yvstore.navigation.routes.AppRoute
 
 @Composable
@@ -28,7 +29,11 @@ fun YVStoreApp(
 
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        enterTransition = { EnterExitTransitions.SlideInFromRight },
+        exitTransition = { EnterExitTransitions.SlideOutToLeft },
+        popEnterTransition = { EnterExitTransitions.SlideInFromLeft },
+        popExitTransition = { EnterExitTransitions.SlideOutToRight },
     ) {
         authGraph(navController)
 
