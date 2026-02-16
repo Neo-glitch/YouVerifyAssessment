@@ -16,10 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -40,6 +38,7 @@ import org.neo.yvstore.core.ui.component.button.YVStoreTextButton
 import org.neo.yvstore.core.ui.component.grid.NonlazyGrid
 import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
 import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
+import org.neo.yvstore.core.ui.component.surface.YVStorePullToRefreshBox
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
@@ -82,7 +81,6 @@ fun HomeProductListScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeProductListScreen(
     products: List<ProductItemUi>,
@@ -116,7 +114,7 @@ private fun HomeProductListScreen(
                 onClick = onNavigateToSearch,
             )
 
-            PullToRefreshBox(
+            YVStorePullToRefreshBox(
                 isRefreshing = isRefreshing,
                 onRefresh = onRefresh,
                 modifier = Modifier.weight(1f),

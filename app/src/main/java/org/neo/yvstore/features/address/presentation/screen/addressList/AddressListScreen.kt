@@ -10,12 +10,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,6 +28,7 @@ import org.neo.yvstore.core.ui.component.navigation.YVStoreTopBar
 import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
 import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
 import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
+import org.neo.yvstore.core.ui.component.surface.YVStorePullToRefreshBox
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.features.address.presentation.model.AddressUi
@@ -65,7 +64,6 @@ fun AddressListScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddressListScreen(
     addresses: List<AddressUi>,
@@ -92,7 +90,7 @@ private fun AddressListScreen(
             )
         }
     ) { paddingValues ->
-        PullToRefreshBox(
+        YVStorePullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
             modifier = Modifier

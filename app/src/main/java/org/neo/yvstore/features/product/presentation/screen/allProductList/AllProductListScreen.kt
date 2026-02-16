@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,6 +23,7 @@ import org.neo.yvstore.core.designSystem.theme.YVStoreTheme
 import org.neo.yvstore.core.ui.component.navigation.YVStoreTopBar
 import org.neo.yvstore.core.ui.component.progress.YVStoreCircleProgressIndicator
 import org.neo.yvstore.core.ui.component.status.YVStoreEmptyErrorStateView
+import org.neo.yvstore.core.ui.component.surface.YVStorePullToRefreshBox
 import org.neo.yvstore.core.ui.component.surface.YVStoreScaffold
 import org.neo.yvstore.core.ui.util.ObserveAsEvents
 import org.neo.yvstore.features.product.presentation.model.ProductItemUi
@@ -58,7 +57,6 @@ fun AllProductListScreen(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AllProductListScreen(
     products: List<ProductItemUi>,
@@ -76,7 +74,7 @@ private fun AllProductListScreen(
             )
         }
     ) { paddingValues ->
-        PullToRefreshBox(
+        YVStorePullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
             modifier = Modifier
