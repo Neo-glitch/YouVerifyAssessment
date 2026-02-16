@@ -136,9 +136,10 @@ fun YVStoreInputSensitiveIcon(
                 R.drawable.ic_eye_closed
             }
 
+
         Image(
             imageVector = ImageVector.vectorResource(drawableRes),
-            colorFilter = colorFilter,
+            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
             contentDescription = if (showSensitiveInfo) "Hide password" else "Show password",
             modifier = Modifier.size(20.dp),
         )
