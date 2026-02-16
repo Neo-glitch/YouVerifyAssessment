@@ -119,42 +119,63 @@ private fun HomeProductListScreen(
                 onRefresh = onRefresh,
                 modifier = Modifier.weight(1f),
             ) {
-                when (loadState) {
-                    HomeProductListLoadState.Loading -> {
-                        CenteredContent(modifier = Modifier.fillMaxSize()) {
-                            YVStoreCircleProgressIndicator(size = 48.dp)
-                        }
-                    }
-                    is HomeProductListLoadState.Error -> {
-                        CenteredContent(modifier = Modifier.fillMaxSize()) {
-                            YVStoreEmptyErrorStateView(
-                                image = R.drawable.ic_error,
-                                title = "Unable to Load Products",
-                                description = loadState.message,
-                            )
-                        }
-                    }
-                    HomeProductListLoadState.Empty -> {
-                        CenteredContent(modifier = Modifier.fillMaxSize()) {
-                            YVStoreEmptyErrorStateView(
-                                image = R.drawable.ic_empty_products,
-                                title = "No Products Available",
-                                description = "Check back later for new products.",
-                            )
-                        }
-                    }
-                    HomeProductListLoadState.Loaded -> {
-                        ProductListContent(
-                            products = products,
-                            promoTitle = promoTitle,
-                            promoDiscountText = promoDiscountText,
-                            promoImageUrl = promoImageUrl,
-                            onNavigateToProductDetails = onNavigateToProductDetails,
-                            onViewAllClick = onViewAllClick,
-                        )
-                    }
-                }
+                HomeProductListContent(
+                    loadState = loadState,
+                    products = products,
+                    promoTitle = promoTitle,
+                    promoDiscountText = promoDiscountText,
+                    promoImageUrl = promoImageUrl,
+                    onNavigateToProductDetails = onNavigateToProductDetails,
+                    onViewAllClick = onViewAllClick,
+                )
             }
+        }
+    }
+}
+
+@Composable
+private fun HomeProductListContent(
+    loadState: HomeProductListLoadState,
+    products: List<ProductItemUi>,
+    promoTitle: String,
+    promoDiscountText: String,
+    promoImageUrl: String,
+    onNavigateToProductDetails: (String) -> Unit,
+    onViewAllClick: () -> Unit,
+) {
+    when (loadState) {
+        HomeProductListLoadState.Loading -> {
+            CenteredContent(modifier = Modifier.fillMaxSize()) {
+                YVStoreCircleProgressIndicator(size = 48.dp)
+            }
+        }
+        is HomeProductListLoadState.Error -> {
+            CenteredContent(modifier = Modifier.fillMaxSize()) {
+                YVStoreEmptyErrorStateView(
+                    image = R.drawable.ic_error,
+                    title = "Unable to Load Products",
+                    description = loadState.message,
+                )
+            }
+        }
+        HomeProductListLoadState.Empty -> {
+            CenteredContent(modifier = Modifier.fillMaxSize()) {
+                YVStoreEmptyErrorStateView(
+                    image = R.drawable.ic_empty_products,
+                    title = "No Products Available",
+                    description = "Check back later for new products.",
+                )
+            }
+        }
+        HomeProductListLoadState.Loaded -> {
+            ProductListContent(
+                products = products,
+                promoTitle = promoTitle,
+                promoDiscountText = promoDiscountText,
+                promoImageUrl = promoImageUrl,
+                onNavigateToProductDetails = onNavigateToProductDetails,
+                onViewAllClick = onViewAllClick,
+            )
         }
     }
 }

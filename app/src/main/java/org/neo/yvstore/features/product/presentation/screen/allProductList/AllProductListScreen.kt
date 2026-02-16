@@ -81,46 +81,59 @@ private fun AllProductListScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-            when (loadState) {
-                AllProductListLoadState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        YVStoreCircleProgressIndicator(size = 48.dp)
-                    }
-                }
-                is AllProductListLoadState.Error -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        YVStoreEmptyErrorStateView(
-                            image = R.drawable.ic_error,
-                            title = "Unable to Load Products",
-                            description = loadState.message,
-                        )
-                    }
-                }
-                AllProductListLoadState.Empty -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        YVStoreEmptyErrorStateView(
-                            image = R.drawable.ic_empty_products,
-                            title = "No Products Available",
-                            description = "Check back later for new products.",
-                        )
-                    }
-                }
-                AllProductListLoadState.Loaded -> {
-                    ProductsGrid(
-                        products = products,
-                        onProductClick = onProductClick,
-                    )
-                }
+            AllProductListContent(
+                loadState = loadState,
+                products = products,
+                onProductClick = onProductClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun AllProductListContent(
+    loadState: AllProductListLoadState,
+    products: List<ProductItemUi>,
+    onProductClick: (String) -> Unit,
+) {
+    when (loadState) {
+        AllProductListLoadState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                YVStoreCircleProgressIndicator(size = 48.dp)
             }
+        }
+        is AllProductListLoadState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                YVStoreEmptyErrorStateView(
+                    image = R.drawable.ic_error,
+                    title = "Unable to Load Products",
+                    description = loadState.message,
+                )
+            }
+        }
+        AllProductListLoadState.Empty -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                YVStoreEmptyErrorStateView(
+                    image = R.drawable.ic_empty_products,
+                    title = "No Products Available",
+                    description = "Check back later for new products.",
+                )
+            }
+        }
+        AllProductListLoadState.Loaded -> {
+            ProductsGrid(
+                products = products,
+                onProductClick = onProductClick,
+            )
         }
     }
 }

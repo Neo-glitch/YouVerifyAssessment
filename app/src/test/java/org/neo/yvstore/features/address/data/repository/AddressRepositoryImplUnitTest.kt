@@ -160,16 +160,12 @@ class AddressRepositoryImplUnitTest {
         val dto = AddressDto("a1", "u1", "123 Main", "City", "State", "Country")
         coEvery { userManager.getUser() } returns user
         coEvery { remoteDatasource.getAddresses("u1") } returns listOf(dto)
-        coEvery { addressDao.deleteAllAddresses() } returns Unit
-        coEvery { addressDao.insertAddresses(any()) } returns Unit
+        coEvery { addressDao.refreshAddresses(any()) } returns Unit
 
         val result = repository.refreshAddresses()
 
         assertThat(result).isInstanceOf(Resource.Success::class.java)
-        coVerifyOrder {
-            addressDao.deleteAllAddresses()
-            addressDao.insertAddresses(any())
-        }
+        coVerify { addressDao.refreshAddresses(any()) }
     }
 
     @Test

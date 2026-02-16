@@ -102,16 +102,12 @@ class ProductRepositoryImplUnitTest {
             imageUrl = "url", rating = 4.5, reviewCount = 10, createdAt = "2024-01-01"
         )
         coEvery { remoteDatasource.getProducts() } returns listOf(dto)
-        coEvery { productDao.clearAllProducts() } returns Unit
-        coEvery { productDao.insertProducts(any()) } returns Unit
+        coEvery { productDao.refreshProducts(any()) } returns Unit
 
         val result = repository.refreshProducts()
 
         assertThat(result).isInstanceOf(Resource.Success::class.java)
-        coVerifyOrder {
-            productDao.clearAllProducts()
-            productDao.insertProducts(any())
-        }
+        coVerify { productDao.refreshProducts(any()) }
     }
 
     @Test

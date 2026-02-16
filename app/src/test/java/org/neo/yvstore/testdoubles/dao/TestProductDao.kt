@@ -37,4 +37,9 @@ class TestProductDao : ProductDao {
     override suspend fun getProductById(id: String): ProductEntity? {
         return products.find { it.id == id }
     }
+
+    override suspend fun refreshProducts(products: List<ProductEntity>) {
+        clearAllProducts()
+        insertProducts(products)
+    }
 }

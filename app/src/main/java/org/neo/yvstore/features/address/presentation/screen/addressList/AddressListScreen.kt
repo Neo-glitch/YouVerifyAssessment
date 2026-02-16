@@ -97,49 +97,66 @@ private fun AddressListScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-            when (loadState) {
-                AddressListLoadState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        YVStoreCircleProgressIndicator(size = 48.dp)
-                    }
-                }
-                is AddressListLoadState.Error -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        YVStoreEmptyErrorStateView(
-                            image = R.drawable.ic_error,
-                            title = "Error loading addresses",
-                            description = loadState.message,
-                        )
-                    }
-                }
-                AddressListLoadState.Empty -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        YVStoreEmptyErrorStateView(
-                            image = R.drawable.ic_empty_address,
-                            title = "No addresses yet",
-                            description = "Add a delivery address to continue",
-                            actionButtonText = "Add Address",
-                            onActionButtonClick = onAddAddress,
-                        )
-                    }
-                }
-                AddressListLoadState.Loaded -> {
-                    AddressListLoadedContent(
-                        addresses = addresses,
-                        onAddressSelected = onAddressSelected,
-                        onDeleteAddress = onDeleteAddress,
-                    )
-                }
+            AddressListContent(
+                loadState = loadState,
+                addresses = addresses,
+                onAddAddress = onAddAddress,
+                onAddressSelected = onAddressSelected,
+                onDeleteAddress = onDeleteAddress,
+            )
+        }
+    }
+}
+
+@Composable
+private fun AddressListContent(
+    loadState: AddressListLoadState,
+    addresses: List<AddressUi>,
+    onAddAddress: () -> Unit,
+    onAddressSelected: (String) -> Unit,
+    onDeleteAddress: (AddressUi) -> Unit,
+) {
+    when (loadState) {
+        AddressListLoadState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                YVStoreCircleProgressIndicator(size = 48.dp)
             }
+        }
+        is AddressListLoadState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                YVStoreEmptyErrorStateView(
+                    image = R.drawable.ic_error,
+                    title = "Error loading addresses",
+                    description = loadState.message,
+                )
+            }
+        }
+        AddressListLoadState.Empty -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                YVStoreEmptyErrorStateView(
+                    image = R.drawable.ic_empty_address,
+                    title = "No addresses yet",
+                    description = "Add a delivery address to continue",
+                    actionButtonText = "Add Address",
+                    onActionButtonClick = onAddAddress,
+                )
+            }
+        }
+        AddressListLoadState.Loaded -> {
+            AddressListLoadedContent(
+                addresses = addresses,
+                onAddressSelected = onAddressSelected,
+                onDeleteAddress = onDeleteAddress,
+            )
         }
     }
 }

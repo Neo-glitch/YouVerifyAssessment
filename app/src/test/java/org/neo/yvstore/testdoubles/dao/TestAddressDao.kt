@@ -42,4 +42,9 @@ class TestAddressDao : AddressDao {
         addresses.clear()
         addressesFlow.emit(emptyList())
     }
+
+    override suspend fun refreshAddresses(addresses: List<AddressEntity>) {
+        deleteAllAddresses()
+        insertAddresses(addresses)
+    }
 }

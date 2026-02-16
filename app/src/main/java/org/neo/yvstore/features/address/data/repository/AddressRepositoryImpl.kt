@@ -81,8 +81,7 @@ class AddressRepositoryImpl(
 
             val addresses = remoteDatasource.getAddresses(userId)
 
-            addressDao.deleteAllAddresses()
-            addressDao.insertAddresses(addresses.map { it.toEntity() })
+            addressDao.refreshAddresses(addresses.map { it.toEntity() })
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error(ExceptionHandler.getErrorMessage(e))

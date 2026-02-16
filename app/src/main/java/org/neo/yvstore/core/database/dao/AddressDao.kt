@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import org.neo.yvstore.core.database.model.AddressEntity
 
@@ -27,4 +28,10 @@ interface AddressDao {
 
     @Query("DELETE FROM addresses")
     suspend fun deleteAllAddresses()
+
+    @Transaction
+    suspend fun refreshAddresses(addresses: List<AddressEntity>) {
+        deleteAllAddresses()
+        insertAddresses(addresses)
+    }
 }
