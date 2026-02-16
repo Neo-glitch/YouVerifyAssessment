@@ -212,7 +212,7 @@ private fun ProductImageSection(imageUrl: String) {
         modifier = Modifier
             .fillMaxWidth()
             .height(280.dp),
-        contentScale = ContentScale.FillBounds,
+        contentScale = ContentScale.Fit,
     )
 }
 
